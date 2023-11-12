@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/open-sans": "^5.0.17",
     "@hookform/resolvers": "^3.3.2",
     "framer-motion": "^10.16.4",
     "helmet": "^7.1.0",
