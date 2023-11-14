@@ -13,17 +13,16 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@fontsource/open-sans": "^5.0.17",
     "@hookform/resolvers": "^3.3.2",
+    "axios": "^1.6.1",
     "framer-motion": "^10.16.4",
-    "helmet": "^7.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-hook-form": "^7.48.2",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.18.0",
-    "zod": "^3.22.4",
-    "zustand": "^4.4.6"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",

@@ -1,12 +1,13 @@
 import ReactDOM from 'react-dom/client';
-import { ChakraProvider, Text } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 
-import theme from './theme/chakraTheme';
+import theme from './utils/chakraTheme';
+import AppRoutes from './routes';
+import Fonts from './utils/chakraFonts';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ChakraProvider theme={theme}>
-    <Text color="violet-1" fontSize="xl">
-      Avian messaging
-    </Text>
+    <Fonts />
+    <AppRoutes />
   </ChakraProvider>
 );
