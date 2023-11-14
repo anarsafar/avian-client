@@ -115,6 +115,7 @@ export default function SignIn() {
             borderRadius="0.5rem"
             mb="1.8rem"
             fontFamily="openSans"
+            fontSize="1.2rem"
             fontWeight="400"
             lineHeight="1.6rem"
             letterSpacing="0.16px"

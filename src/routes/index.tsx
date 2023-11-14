@@ -1,5 +1,6 @@
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import AuthView from '@/pages/auth/AuthView';
+import ErrorPage from '@/pages/layout/Error';
 
 function AppRoutes() {
   return (
@@ -10,7 +11,7 @@ function AppRoutes() {
         <Route path="/" index element={<>home page</>} />
         <Route path="profile" element={<>protected</>} />
         <Route path="/reset-password" element={<>forgot password</>} />
-        <Route path="*" element={<>error page</>} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );
