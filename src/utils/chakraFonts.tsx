@@ -6,12 +6,12 @@ const Fonts = () => (
     styles={`
       @font-face {
         font-family: 'Open Sans';
-        src: url('../../public/fonts/OpenSans.ttf')  format('truetype');
+        src: url('/fonts/OpenSans.ttf')  format('truetype');
       }
 
       @font-face {
         font-family: 'Fredoka';
-        src: url('../../public/fonts/fredoka.ttf')  format('truetype');
+        src: url('/fonts/fredoka.ttf')  format('truetype');
       }
       `}
   />
