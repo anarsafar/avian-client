@@ -1,4 +1,4 @@
-import { Global } from '@emotion/react'
+import { Global } from '@emotion/react';
 
 // eslint-disable-next-line react/function-component-definition
 const Fonts = () => (
@@ -15,6 +15,6 @@ const Fonts = () => (
       }
       `}
   />
-)
+);
 
-export default Fonts
+export default Fonts;

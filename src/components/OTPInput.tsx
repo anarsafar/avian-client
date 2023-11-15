@@ -72,8 +72,8 @@ function OTPInput({ length, onChange }: OTPInputProps) {
   };
 
   return (
-    <InputGroup w={{ base: '30rem', sm: 'auto' }}>
-      <Flex gap="1rem">
+    <InputGroup width={{ base: '25rem', sm: '41.5rem' }}>
+      <Flex gap={{ base: '0.5rem', sm: '1rem' }} margin="auto">
         {Array.from({ length }, (_, index) => (
           <Input
             type="text"
@@ -85,16 +85,15 @@ function OTPInput({ length, onChange }: OTPInputProps) {
             onPaste={handlePaste}
             maxLength={1}
             textAlign="center"
-            padding="2rem"
             backgroundColor="#F8F8F9"
             border="none"
-            borderRadius="1rem"
+            borderRadius="0.5rem"
             fontSize="2rem"
             fontFamily="openSans"
             fontWeight="700"
             color="gray-4"
-            w={{ base: '3rem', sm: '6rem' }}
-            h={{ base: '3rem', sm: '6rem' }}
+            w={{ base: '3.8rem', sm: '6rem' }}
+            h={{ base: '3.8rem', sm: '6rem' }}
           />
         ))}
       </Flex>

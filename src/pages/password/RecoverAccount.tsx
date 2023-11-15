@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import {
   Box,
   Button,
@@ -33,9 +32,18 @@ function RecoverAccount() {
         justifyContent="center"
         background="linear-gradient(180deg, #C1CAFF 0%, #5C6BC0 100%)"
         height="100vh"
-        padding="1rem"
+        padding="2.5rem"
       >
-        <Flex direction="column" alignItems="center" position="absolute">
+        <Flex
+          direction="column"
+          alignItems="center"
+          position="relative"
+          borderRadius="1rem"
+          padding={{ base: '2rem', sm: '3rem' }}
+          backdropFilter="blur(21.5px)"
+          background="linear-gradient(89deg, rgba(242, 242, 242, 0.54) 0.78%, rgba(229, 229, 229, 0.28) 99.34%)"
+          zIndex={2}
+        >
           <Button
             onClick={() => navigate(-1)}
             variant="unstyled"
@@ -66,6 +74,7 @@ function RecoverAccount() {
             color="#fff"
             fontWeight="300"
             mb="4rem"
+            textAlign="center"
           >
             Enter your email to get verification code
           </Heading>
@@ -112,13 +121,13 @@ function RecoverAccount() {
           <Text
             fontFamily="openSans"
             fontWeight={400}
-            lineHeight="1.2rem"
+            fontSize="1.2rem"
             letterSpacing="0.16px"
             color="#fff"
             mt="1.5rem"
           >
             Didn't recieve code?{' '}
-            <Link href="value" as="button" color="gray-3">
+            <Link href="value" as="button" color="violet-3">
               Resend Code
             </Link>
           </Text>

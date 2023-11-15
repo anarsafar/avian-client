@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import {
   Box,
   Button,
@@ -11,9 +10,9 @@ import {
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 
-import emailLogo from '@assets/layout/email.svg';
+import emailLogo from '@assets/layout/icons8-email-94.png';
 import arrowIcon from '@assets/layout/arrow.svg';
-import OTPInput from '@/components/layout/OTPInput';
+import OTPInput from '@/components/OTPInput';
 
 function Verificaton(): JSX.Element {
   const handleOTPChange = (otp: string) => otp;
@@ -34,9 +33,17 @@ function Verificaton(): JSX.Element {
         justifyContent="center"
         background="linear-gradient(180deg, #C1CAFF 0%, #5C6BC0 100%)"
         height="100vh"
-        padding="1rem"
       >
-        <Flex direction="column" alignItems="center" position="absolute">
+        <Flex
+          direction="column"
+          alignItems="center"
+          position="relative"
+          borderRadius="1rem"
+          padding={{ base: '2rem', sm: '3rem' }}
+          backdropFilter="blur(21.5px)"
+          background="linear-gradient(89deg, rgba(242, 242, 242, 0.54) 0.78%, rgba(229, 229, 229, 0.28) 99.34%)"
+          zIndex={2}
+        >
           <Button
             onClick={() => navigate(-1)}
             variant="unstyled"
@@ -76,7 +83,7 @@ function Verificaton(): JSX.Element {
           </Text>
 
           <Button
-            padding="2rem"
+            padding={{ base: '1.8rem 5rem', sm: '2rem 5rem' }}
             backgroundColor="violet-2"
             color="white"
             fontSize="1.2rem"
@@ -94,13 +101,13 @@ function Verificaton(): JSX.Element {
           <Text
             fontFamily="openSans"
             fontWeight={400}
-            lineHeight="1.2rem"
+            fontSize="1.2rem"
             letterSpacing="0.16px"
             color="#fff"
             mt="1rem"
           >
             Didn't recieve code?{' '}
-            <Link href="value" as="button" color="gray-3">
+            <Link href="value" as="button" color="violet-3">
               Resend Code
             </Link>
           </Text>
