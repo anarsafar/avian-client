@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Box, Button, Heading } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
