@@ -1,22 +1,27 @@
+/* eslint-disable @typescript-eslint/no-throw-literal */
 /* eslint-disable no-console */
+import { AxiosError, AxiosResponse } from 'axios';
+
 import { SignupInterface } from '@/schemas/auth.schemas';
 import { instance } from '../instance';
-import { NetworkResponse } from '@/interfaces/response.interface';
+import {
+  ErrorResponse,
+  SuccessResponse,
+} from '@/interfaces/response.interface';
 import handleError from '@/utils/errorHandler';
 
 const authUser = {
-  signUp: async (data: SignupInterface): Promise<NetworkResponse> => {
+  signUp: async (
+    data: SignupInterface
+  ): Promise<SuccessResponse | AxiosError> => {
     try {
-      const response = await instance.post('auth/signup', data);
-      return response.data as NetworkResponse;
+      const result: AxiosResponse = await instance.post('auth/signup', data);
+      return result.data as SuccessResponse;
     } catch (error) {
-      const handledError = handleError<NetworkResponse>(error);
+      console.log(error);
+      const handledError = handleError<ErrorResponse>(error);
 
-      console.error('Sign-up error:', handledError, 'Original Error:', error);
-
-      // You might handle specific types of errors differently here if needed
-
-      return handledError;
+      throw handledError;
     }
   },
 };

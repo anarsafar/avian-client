@@ -2,9 +2,10 @@ import { Button, Image } from '@chakra-ui/react';
 
 interface SocialButtonProps {
   icon: string;
+  isSubmitting: boolean;
 }
 
-function SocialButton({ icon }: SocialButtonProps): JSX.Element {
+function SocialButton({ icon, isSubmitting }: SocialButtonProps): JSX.Element {
   return (
     <Button
       height="4.6rem"

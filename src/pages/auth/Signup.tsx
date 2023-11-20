@@ -7,14 +7,15 @@ import {
   FormLabel,
   Heading,
   Image,
-  Input,
   Link,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 
 import logo from '@assets/logos/bird gradient.svg';
 import google from '@assets/social/icons8-google.svg';
@@ -22,17 +23,53 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
-import { SignupValidate } from '@/schemas/auth.schemas';
+import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
+import authUser from '@/api/auth';
+import { ErrorResponse } from '@/interfaces/response.interface';
+import CustomInput from '@/components/auth/CustomInput';
 
 export default function SignUp() {
   const navigate = useNavigate();
+  const toast = useToast();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<SignupInterface>({
     resolver: zodResolver(SignupValidate),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: SignupInterface) => authUser.signUp(data),
+    mutationKey: ['signup'],
+    onSuccess: () => navigate('/verify'),
+    onError: (error: ErrorResponse) => {
+      toast({
+        duration: 3000,
+        position: 'top-right',
+        render: () => (
+          <Box color="white" p="1.2rem 1.7rem" bg="red-1" borderRadius="12px">
+            <Text
+              fontSize="1.2rem"
+              fontFamily="openSans"
+              fontWeight="700"
+              color="red-5"
+            >
+              Error during sign up
+            </Text>
+            <Text
+              fontSize="1.2rem"
+              fontFamily="openSans"
+              fontWeight="400"
+              color="red-5"
+            >
+              {error.error}
+            </Text>
+          </Box>
+        ),
+      });
+    },
   });
 
   return (
@@ -89,30 +126,12 @@ export default function SignUp() {
             >
               Email
             </FormLabel>
-            <Input
+            <CustomInput
               type="email"
               id="email"
               placeholder="enter your email"
-              padding="2rem"
-              backgroundColor="#F8F8F9"
-              border="1px solid"
-              borderColor={errors.email ? 'red.300' : '#fff'}
-              borderRadius="0.5rem"
-              fontSize="1.2rem"
-              fontFamily="openSans"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              color="gray-4"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-              }}
-              {...register('email')}
+              errors={errors}
+              register={register}
             />
             <Text
               fontFamily="openSans"
@@ -137,30 +156,12 @@ export default function SignUp() {
             >
               Name
             </FormLabel>
-            <Input
+            <CustomInput
               type="text"
               id="name"
               placeholder="enter your name"
-              padding="2rem"
-              backgroundColor="#F8F8F9"
-              border={errors.name ? '1px solid' : 'none'}
-              borderColor={errors.name ? 'red.300' : '#fff'}
-              borderRadius="0.5rem"
-              fontSize="1.2rem"
-              fontFamily="openSans"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              color="gray-4"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-              }}
-              {...register('name')}
+              errors={errors}
+              register={register}
             />
             <Text
               fontFamily="openSans"
@@ -185,30 +186,12 @@ export default function SignUp() {
             >
               Password
             </FormLabel>
-            <Input
+            <CustomInput
               type="password"
               id="password"
               placeholder="enter your password"
-              padding="2rem"
-              backgroundColor="#F8F8F9"
-              color="gray-4"
-              border={errors.name ? '1px solid' : 'none'}
-              borderColor={errors.name ? 'red.300' : '#fff'}
-              borderRadius="0.5rem"
-              fontFamily="openSans"
-              fontSize="1.2rem"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-              }}
-              {...register('password')}
+              errors={errors}
+              register={register}
             />
             <Text
               fontFamily="openSans"
@@ -233,30 +216,12 @@ export default function SignUp() {
             >
               Confirm Password
             </FormLabel>
-            <Input
-              id="confirmPassword"
+            <CustomInput
               type="password"
+              id="confirmPassword"
               placeholder="confirm your password"
-              padding="2rem"
-              backgroundColor="#F8F8F9"
-              color="gray-4"
-              border={errors.name ? '1px solid' : 'none'}
-              borderColor={errors.name ? 'red.300' : '#fff'}
-              borderRadius="0.5rem"
-              fontFamily="openSans"
-              fontSize="1.2rem"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-              }}
-              {...register('confirmPassword')}
+              errors={errors}
+              register={register}
             />
             <Text
               fontFamily="openSans"
@@ -271,9 +236,11 @@ export default function SignUp() {
               {errors.confirmPassword?.message?.toString()}
             </Text>
             <Button
+              isLoading={mutation.isPending}
+              loadingText="Submitting"
               marginTop="1.4rem"
               type="submit"
-              onClick={handleSubmit((d) => console.log(d))}
+              onClick={handleSubmit((data) => mutation.mutate(data))}
               w="100%"
               padding="2rem"
               backgroundColor="violet-2"
@@ -315,9 +282,9 @@ export default function SignUp() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} />
-            <SocialButton icon={facebook} />
-            <SocialButton icon={github} />
+            <SocialButton icon={google} isSubmitting={mutation.isPending} />
+            <SocialButton icon={facebook} isSubmitting={mutation.isPending} />
+            <SocialButton icon={github} isSubmitting={mutation.isPending} />
           </Flex>
 
           <Text
