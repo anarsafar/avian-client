@@ -1,8 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Box, Button, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 import pattern from '@assets/layout/pattern.jpg';
+import errorIcon from '@assets/layout/icons8-broken-robot-94.png';
 
 function ErrorPage() {
   const navigate = useNavigate();
@@ -28,7 +29,9 @@ function ErrorPage() {
         zIndex: -1,
       }}
     >
-      <Box
+      <Flex
+        direction="column"
+        alignItems="center"
         position="absolute"
         width={{ base: '90%', md: '50rem' }}
         top="50%"
@@ -39,7 +42,12 @@ function ErrorPage() {
         backdropFilter="blur(21.5px)"
         background="linear-gradient(89deg, rgba(242, 242, 242, 0.54) 0.78%, rgba(229, 229, 229, 0.28) 99.34%)"
         zIndex={2}
+        textAlign="center"
       >
+        <Box>
+          <Image src={errorIcon} />
+        </Box>
+
         <Heading
           as="h1"
           fontFamily="fredoka"
@@ -48,7 +56,8 @@ function ErrorPage() {
           fontWeight="500"
           lineHeight="normal"
           fontStyle="normal"
-          mb="2rem"
+          mb="1rem"
+          mt="2rem"
         >
           Ups! Page failed to load.
         </Heading>
@@ -61,12 +70,11 @@ function ErrorPage() {
           letterSpacing="0.16px"
           lineHeight="normal"
           fontStyle="normal"
-          mb="2rem"
+          mb="4rem"
         >
           Sorry, We couldn't find the page you looking for
         </Heading>
         <Button
-          w="100%"
           padding="2rem"
           fontSize="1.2rem"
           fontFamily="openSans"
@@ -78,7 +86,7 @@ function ErrorPage() {
         >
           Go Back
         </Button>
-      </Box>
+      </Flex>
     </Box>
   );
 }

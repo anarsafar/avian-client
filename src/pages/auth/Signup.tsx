@@ -13,6 +13,8 @@ import {
 } from '@chakra-ui/react';
 import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import logo from '@assets/logos/bird gradient.svg';
 import google from '@assets/social/icons8-google.svg';
@@ -20,9 +22,19 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
+import { SignupValidate } from '@/schemas/auth.schemas';
 
 export default function SignUp() {
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(SignupValidate),
+  });
+
   return (
     <>
       <Helmet>
@@ -79,10 +91,12 @@ export default function SignUp() {
             </FormLabel>
             <Input
               type="email"
+              id="email"
               placeholder="enter your email"
               padding="2rem"
               backgroundColor="#F8F8F9"
-              border="none"
+              border="1px solid"
+              borderColor={errors.email ? 'red.300' : '#fff'}
               borderRadius="0.5rem"
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -90,7 +104,6 @@ export default function SignUp() {
               lineHeight="1.6rem"
               letterSpacing="0.16px"
               color="gray-4"
-              mb="1.4rem"
               _placeholder={{
                 fontFamily: 'openSans',
                 fontWeight: '400',
@@ -99,8 +112,20 @@ export default function SignUp() {
                 fontSize: '1.2rem',
                 color: 'gray-4',
               }}
+              {...register('email')}
             />
-
+            <Text
+              fontFamily="openSans"
+              fontSize="1rem"
+              fontWeight="300"
+              color="red.300"
+              height="1.4rem"
+              position="relative"
+              top="3px"
+              textAlign="right"
+            >
+              {errors.email?.message?.toString()}
+            </Text>
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -114,10 +139,12 @@ export default function SignUp() {
             </FormLabel>
             <Input
               type="text"
+              id="name"
               placeholder="enter your name"
               padding="2rem"
               backgroundColor="#F8F8F9"
-              border="none"
+              border={errors.name ? '1px solid' : 'none'}
+              borderColor={errors.name ? 'red.300' : '#fff'}
               borderRadius="0.5rem"
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -125,7 +152,6 @@ export default function SignUp() {
               lineHeight="1.6rem"
               letterSpacing="0.16px"
               color="gray-4"
-              mb="1.4rem"
               _placeholder={{
                 fontFamily: 'openSans',
                 fontWeight: '400',
@@ -134,7 +160,20 @@ export default function SignUp() {
                 fontSize: '1.2rem',
                 color: 'gray-4',
               }}
+              {...register('name')}
             />
+            <Text
+              fontFamily="openSans"
+              fontSize="1rem"
+              fontWeight="300"
+              color="red.300"
+              height="1.4rem"
+              position="relative"
+              top="3px"
+              textAlign="right"
+            >
+              {errors.name?.message?.toString()}
+            </Text>
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -148,13 +187,14 @@ export default function SignUp() {
             </FormLabel>
             <Input
               type="password"
+              id="password"
               placeholder="enter your password"
               padding="2rem"
               backgroundColor="#F8F8F9"
               color="gray-4"
-              border="none"
+              border={errors.name ? '1px solid' : 'none'}
+              borderColor={errors.name ? 'red.300' : '#fff'}
               borderRadius="0.5rem"
-              mb="1.8rem"
               fontFamily="openSans"
               fontSize="1.2rem"
               fontWeight="400"
@@ -168,7 +208,20 @@ export default function SignUp() {
                 lineHeight: '1.6rem',
                 letterSpacing: '0.16px',
               }}
+              {...register('password')}
             />
+            <Text
+              fontFamily="openSans"
+              fontSize="1rem"
+              fontWeight="300"
+              color="red.300"
+              height="1.4rem"
+              position="relative"
+              top="3px"
+              textAlign="right"
+            >
+              {errors.password?.message?.toString()}
+            </Text>
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -181,14 +234,15 @@ export default function SignUp() {
               Confirm Password
             </FormLabel>
             <Input
+              id="confirmPassword"
               type="password"
               placeholder="confirm your password"
               padding="2rem"
               backgroundColor="#F8F8F9"
               color="gray-4"
-              border="none"
+              border={errors.name ? '1px solid' : 'none'}
+              borderColor={errors.name ? 'red.300' : '#fff'}
               borderRadius="0.5rem"
-              mb="1.8rem"
               fontFamily="openSans"
               fontSize="1.2rem"
               fontWeight="400"
@@ -202,30 +256,49 @@ export default function SignUp() {
                 lineHeight: '1.6rem',
                 letterSpacing: '0.16px',
               }}
+              {...register('confirmPassword')}
             />
+            <Text
+              fontFamily="openSans"
+              fontSize="1rem"
+              fontWeight="300"
+              color="red.300"
+              height="1.4rem"
+              position="relative"
+              top="3px"
+              textAlign="right"
+            >
+              {errors.confirmPassword?.message?.toString()}
+            </Text>
+            <Button
+              marginTop="1.4rem"
+              type="submit"
+              onClick={handleSubmit((d) => console.log(d))}
+              w="100%"
+              padding="2rem"
+              backgroundColor="violet-2"
+              color="white"
+              fontSize="1.2rem"
+              fontFamily="openSans"
+              fontWeight={400}
+              lineHeight="1.6rem"
+              letterSpacing="0.16px"
+              borderRadius="8px"
+              mb="2.4rem"
+              _hover={{
+                background: 'violet-1',
+              }}
+            >
+              Next
+            </Button>
           </FormControl>
-          <Button
-            w="100%"
-            padding="2rem"
-            backgroundColor="violet-2"
-            color="white"
-            fontSize="1.2rem"
-            fontFamily="openSans"
-            fontWeight={400}
-            lineHeight="1.6rem"
-            letterSpacing="0.16px"
-            borderRadius="8px"
-            onClick={() => navigate('/verification')}
-            mb="2.4rem"
-            _hover={{
-              background: 'violet-1',
-            }}
-          >
-            Next
-          </Button>
 
           <Flex alignItems="center" color="gray-3" gap="1rem">
-            <Divider orientation="horizontal" borderColor="gray-3" />
+            <Divider
+              orientation="horizontal"
+              borderColor="gray-3"
+              variant="dashed"
+            />
             <Text
               fontFamily="openSans"
               fontWeight="400"
@@ -235,7 +308,11 @@ export default function SignUp() {
             >
               or
             </Text>
-            <Divider orientation="horizontal" borderColor="gray-3" />
+            <Divider
+              orientation="horizontal"
+              borderColor="gray-3"
+              variant="dashed"
+            />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
             <SocialButton icon={google} />
