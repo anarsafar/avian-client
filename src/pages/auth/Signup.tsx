@@ -9,13 +9,12 @@ import {
   Image,
   Link,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import logo from '@assets/logos/bird gradient.svg';
 import google from '@assets/social/icons8-google.svg';
@@ -27,10 +26,12 @@ import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
 import authUser from '@/api/auth';
 import { ErrorResponse } from '@/interfaces/response.interface';
 import CustomInput from '@/components/auth/CustomInput';
+import useCustomToast from '@/components/CustomToast';
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const toast = useToast();
+  const toast = useCustomToast();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -40,37 +41,22 @@ export default function SignUp() {
     resolver: zodResolver(SignupValidate),
   });
 
-  const mutation = useMutation({
+  const signup = useMutation({
     mutationFn: (data: SignupInterface) => authUser.signUp(data),
     mutationKey: ['signup'],
-    onSuccess: () => navigate('/verify'),
+    onSuccess: () => {
+      navigate('/verify');
+    },
     onError: (error: ErrorResponse) => {
-      toast({
-        duration: 3000,
-        position: 'top-right',
-        render: () => (
-          <Box color="white" p="1.2rem 1.7rem" bg="red-1" borderRadius="12px">
-            <Text
-              fontSize="1.2rem"
-              fontFamily="openSans"
-              fontWeight="700"
-              color="red-5"
-            >
-              Error during sign up
-            </Text>
-            <Text
-              fontSize="1.2rem"
-              fontFamily="openSans"
-              fontWeight="400"
-              color="red-5"
-            >
-              {error.error}
-            </Text>
-          </Box>
-        ),
-      });
+      toast(true, 'Error during sign up', error);
     },
   });
+
+  const registerUser = (data: SignupInterface) => {
+    queryClient.setQueryData(['user-email'], data.email);
+    sessionStorage.setItem('user-email', data.email);
+    signup.mutate(data);
+  };
 
   return (
     <>
@@ -236,11 +222,11 @@ export default function SignUp() {
               {errors.confirmPassword?.message?.toString()}
             </Text>
             <Button
-              isLoading={mutation.isPending}
+              isLoading={signup.isPending}
               loadingText="Submitting"
+              onClick={handleSubmit((data) => registerUser(data))}
               marginTop="1.4rem"
               type="submit"
-              onClick={handleSubmit((data) => mutation.mutate(data))}
               w="100%"
               padding="2rem"
               backgroundColor="violet-2"
@@ -282,9 +268,9 @@ export default function SignUp() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} isSubmitting={mutation.isPending} />
-            <SocialButton icon={facebook} isSubmitting={mutation.isPending} />
-            <SocialButton icon={github} isSubmitting={mutation.isPending} />
+            <SocialButton icon={google} isDisabled={signup.isPending} />
+            <SocialButton icon={facebook} isDisabled={signup.isPending} />
+            <SocialButton icon={github} isDisabled={signup.isPending} />
           </Flex>
 
           <Text

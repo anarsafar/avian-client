@@ -4,24 +4,32 @@ import { Flex, Input, InputGroup } from '@chakra-ui/react';
 
 interface OTPInputProps {
   length: number;
-  onChange: (otp: string) => void;
+  onChange: (data: string) => void;
+  isError: boolean;
 }
 
-function OTPInput({ length, onChange }: OTPInputProps) {
+function OTPInput({ length, onChange, isError }: OTPInputProps) {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
+    if (isError) {
+      setOtp(Array(length).fill(''));
+    }
+  }, [isError, length]);
+
+  useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, length);
+
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
   }, [length]);
 
   const handleChange = (index: number, value: string) => {
     const newOtp = [...otp];
     newOtp[index] = value;
-
     setOtp(newOtp);
-
-    onChange(newOtp.join(''));
   };
 
   const handleKeyPress = (
@@ -78,15 +86,16 @@ function OTPInput({ length, onChange }: OTPInputProps) {
           <Input
             type="text"
             key={index}
+            borderColor={isError ? 'red-3' : '#fff'}
             ref={(el) => (inputRefs.current[index] = el)}
             value={otp[index]}
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyPress(e, index)}
+            onKeyUp={() => onChange(otp.join(''))}
             onPaste={handlePaste}
             maxLength={1}
             textAlign="center"
             backgroundColor="#F8F8F9"
-            border="none"
             borderRadius="0.5rem"
             fontSize="2rem"
             fontFamily="openSans"

@@ -2,12 +2,13 @@ import { Button, Image } from '@chakra-ui/react';
 
 interface SocialButtonProps {
   icon: string;
-  isSubmitting: boolean;
+  isDisabled: boolean;
 }
 
-function SocialButton({ icon, isSubmitting }: SocialButtonProps): JSX.Element {
+function SocialButton({ icon, isDisabled }: SocialButtonProps): JSX.Element {
   return (
     <Button
+      isDisabled={isDisabled}
       height="4.6rem"
       width="4.9rem"
       borderRadius="full"
