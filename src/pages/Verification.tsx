@@ -7,56 +7,62 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import emailLogo from '@assets/layout/icons8-email-94.png';
 import arrowIcon from '@assets/layout/arrow.svg';
 
-import OTPInput from '@/components/OTPInput';
-import confirmation from '@/api/confirmation';
-import { ErrorResponse } from '@/interfaces/response.interface';
+import OTPInput from '@/components/auth/OTPInput';
 import useCustomToast from '@/components/CustomToast';
 import CountDown from '@/components/auth/CountDown';
-import { EmailValidateInterface } from '@/schemas/confirmaton.schema';
+
+import confirmation from '@/api/confirmation';
+import { ErrorResponse } from '@/interfaces/response.interface';
+
+import {
+  ConfirmationBaseInterface,
+  ConfirmationInterface,
+} from '@/schemas/confirmaton.schema';
 
 function Verificaton(): JSX.Element {
   const [OTP, setOTP] = useState<string>('');
   const [isError, setError] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string>('');
+  const [verifyData, setVerifyData] = useState<ConfirmationBaseInterface>();
 
   const toast = useCustomToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const getUserEmail = queryClient.getQueryData(['user-email']) as
-      | string
+    const getVerifyData = queryClient.getQueryData(['verification-data']) as
+      | ConfirmationBaseInterface
       | undefined;
-    const userEmailSession = sessionStorage.getItem('user-email');
+    const verifyDataFromSession = sessionStorage.getItem('verification-data');
 
-    if (getUserEmail) {
-      setUserEmail(getUserEmail);
-    } else if (userEmailSession) {
-      queryClient.setQueryData(['user-email'], userEmailSession);
+    if (getVerifyData) {
+      setVerifyData(getVerifyData);
+    } else if (verifyDataFromSession) {
+      queryClient.setQueryData(['verification-data'], verifyDataFromSession);
 
-      setUserEmail(userEmailSession);
+      setVerifyData(JSON.parse(verifyDataFromSession));
     }
   }, [queryClient]);
 
   const { data: confirmationTimestamp, refetch: refetchExpirationTime } =
     useQuery({
-      queryKey: ['confirmation-time-stamp', userEmail],
-      queryFn: () => confirmation.getExpiration({ email: userEmail }),
-      enabled: userEmail.length > 0,
+      queryKey: ['confirmation-time-stamp', verifyData],
+      queryFn: () =>
+        confirmation.getExpiration(verifyData as ConfirmationBaseInterface),
+      enabled: typeof verifyData !== undefined,
       refetchOnWindowFocus: false,
       retry: false,
     });
 
   const mutationVerify = useMutation({
-    mutationFn: (data: string) =>
-      confirmation.confirmUser({
-        confirmationCode: data,
-        confirmationType: 'email',
-      }),
+    mutationFn: (data: ConfirmationInterface) => confirmation.confirmUser(data),
     mutationKey: ['confirmation-email'],
     onSuccess: (successData) => {
       toast(false, 'Confirmation success', successData);
-      navigate('/auth/signin');
+      if (verifyData?.confirmationType === 'email') {
+        navigate('/auth/signin');
+      } else {
+        navigate('/reset-password');
+      }
     },
     onError: (error: ErrorResponse) => {
       setError(true);
@@ -66,8 +72,8 @@ function Verificaton(): JSX.Element {
   });
 
   const mutationResend = useMutation({
-    mutationFn: (email: EmailValidateInterface) =>
-      confirmation.resendEmail(email),
+    mutationFn: (data: ConfirmationBaseInterface) =>
+      confirmation.sendVerification(data),
     mutationKey: ['resend-email'],
     onSuccess: (successData) => {
       refetchExpirationTime();
@@ -77,7 +83,6 @@ function Verificaton(): JSX.Element {
   });
 
   const handleOTPChange = (data: string) => setOTP(data);
-
   return (
     <>
       <Helmet>
@@ -105,7 +110,7 @@ function Verificaton(): JSX.Element {
           zIndex={2}
         >
           <Button
-            onClick={() => navigate('/auth/signup')}
+            onClick={() => navigate(-1)}
             variant="unstyled"
             position="absolute"
             top="-4rem"
@@ -135,7 +140,7 @@ function Verificaton(): JSX.Element {
             fontWeight="300"
             mb="2rem"
           >
-            We have sent a code to {userEmail || 'your email'}
+            We have sent a code to {verifyData?.email || 'your email'}
           </Heading>
           <OTPInput length={6} onChange={handleOTPChange} isError={isError} />
 
@@ -149,9 +154,14 @@ function Verificaton(): JSX.Element {
 
           <Button
             mt={!confirmationTimestamp ? '3.8rem' : 'auto'}
-            isDisabled={confirmationTimestamp && OTP.length < 6}
+            isDisabled={confirmationTimestamp === undefined || OTP.length < 6}
             padding={{ base: '1.8rem 5rem', sm: '2rem 5rem' }}
-            onClick={() => mutationVerify.mutate(OTP)}
+            onClick={() =>
+              mutationVerify.mutate({
+                confirmationCode: OTP,
+                ...(verifyData as ConfirmationBaseInterface),
+              })
+            }
             isLoading={mutationVerify.isPending}
             loadingText="Submitting..."
             backgroundColor="violet-2"
@@ -189,7 +199,7 @@ function Verificaton(): JSX.Element {
                 color: 'violet-1',
               }}
               onClick={() =>
-                userEmail && mutationResend.mutate({ email: userEmail })
+                verifyData?.email && mutationResend.mutate(verifyData)
               }
             >
               Resend Code

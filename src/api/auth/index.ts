@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import { AxiosError, AxiosResponse } from 'axios';
 
-import { SignupInterface } from '@/schemas/auth.schemas';
+import { LoginInterface, SignupInterface } from '@/schemas/auth.schemas';
 import { instance } from '../instance';
 import {
   ErrorResponse,
@@ -17,6 +17,19 @@ const authUser = {
     try {
       const result: AxiosResponse = await instance.post('auth/signup', data);
       return result.data as SuccessResponse;
+    } catch (error) {
+      console.log(error);
+      const handledError = handleError<ErrorResponse>(error);
+
+      throw handledError;
+    }
+  },
+  logIn: async (
+    data: LoginInterface
+  ): Promise<{ accessToken: string } | AxiosError> => {
+    try {
+      const result: AxiosResponse = await instance.post('auth/login', data);
+      return result.data;
     } catch (error) {
       console.log(error);
       const handledError = handleError<ErrorResponse>(error);

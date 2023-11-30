@@ -2,20 +2,70 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
   Heading,
   Image,
-  Input,
-  Link,
   Text,
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
 
 import arrowIcon from '@assets/layout/arrow.svg';
 import UserIcon from '@assets/layout/icons8-account-94.png';
+import { zodResolver } from '@hookform/resolvers/zod';
+import useCustomToast from '@/components/CustomToast';
+import { ErrorResponse } from '@/interfaces/response.interface';
+
+import CustomInput from '@/components/auth/CustomInput';
+import confirmation from '@/api/confirmation';
+import { EmailValidate, EmailValidateInterface } from '@/schemas/reset.schemas';
 
 function RecoverAccount() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EmailValidateInterface>({
+    resolver: zodResolver(EmailValidate),
+  });
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
+  const toast = useCustomToast();
+
+  const sendVerificationEmail = useMutation({
+    mutationFn: (email: EmailValidateInterface) =>
+      confirmation.sendVerification({
+        email: email.email,
+        confirmationType: 'password',
+      }),
+    mutationKey: ['recover-account'],
+    onSuccess: () => navigate('/verify'),
+    onError: (error: ErrorResponse) => {
+      toast(true, 'Recover Error', error);
+    },
+  });
+
+  const sendVerification = (data: EmailValidateInterface) => {
+    queryClient.setQueryData(['verification-data'], {
+      email: data.email,
+      confirmationType: 'password',
+    });
+
+    sessionStorage.setItem(
+      'verification-data',
+      JSON.stringify({
+        email: data.email,
+        confirmationType: 'password',
+      })
+    );
+
+    sendVerificationEmail.mutate(data);
+    reset();
+  };
 
   return (
     <>
@@ -78,46 +128,48 @@ function RecoverAccount() {
           >
             Enter your email to get verification code
           </Heading>
-          <Input
-            width={{ base: '25rem', sm: '32rem' }}
-            type="email"
-            placeholder="Email"
-            padding="2rem"
-            backgroundColor="#fff"
-            border="none"
-            borderRadius="0.5rem"
-            fontSize="1.2rem"
-            fontFamily="openSans"
-            fontWeight="400"
-            lineHeight="1.6rem"
-            letterSpacing="0.16px"
-            color="gray-4"
-            mb="2rem"
-            _placeholder={{
-              fontFamily: 'openSans',
-              fontWeight: '400',
-              lineHeight: '1.6rem',
-              letterSpacing: '0.16px',
-              fontSize: '1.2rem',
-              color: 'gray-4',
-            }}
-          />
-          <Button
-            padding="2rem 5rem"
-            backgroundColor="violet-2"
-            color="white"
-            fontSize="1.2rem"
-            fontFamily="openSans"
-            fontWeight={400}
-            lineHeight="1.6rem"
-            letterSpacing="0.16px"
-            borderRadius="8px"
-            _hover={{
-              background: 'violet-1',
-            }}
-          >
-            Send
-          </Button>
+          <FormControl width={{ base: '25rem', sm: '32rem' }}>
+            <Flex direction="column" alignItems="center">
+              <CustomInput<EmailValidateInterface>
+                type="email"
+                id="email"
+                placeholder="enter your email"
+                errors={errors}
+                register={register}
+              />
+              <Text
+                alignSelf="flex-start"
+                my="0.5rem"
+                fontFamily="openSans"
+                fontSize="1rem"
+                fontWeight="300"
+                color="red.500"
+                lineHeight="1rem"
+                height="1.4rem"
+              >
+                {errors.email?.message?.toString()}
+              </Text>
+              <Button
+                onClick={handleSubmit((data) => sendVerification(data))}
+                isLoading={sendVerificationEmail.isPending}
+                loadingText="sending..."
+                padding="2rem 5rem"
+                backgroundColor="violet-2"
+                color="white"
+                fontSize="1.2rem"
+                fontFamily="openSans"
+                fontWeight={400}
+                lineHeight="1.6rem"
+                letterSpacing="0.16px"
+                borderRadius="8px"
+                _hover={{
+                  background: 'violet-1',
+                }}
+              >
+                Send
+              </Button>
+            </Flex>
+          </FormControl>
           <Text
             fontFamily="openSans"
             fontWeight={400}
@@ -125,12 +177,7 @@ function RecoverAccount() {
             letterSpacing="0.16px"
             color="#fff"
             mt="1.5rem"
-          >
-            Didn't recieve code?{' '}
-            <Link href="value" as="button" color="violet-3">
-              Resend Code
-            </Link>
-          </Text>
+          />
         </Flex>
       </Flex>
     </>

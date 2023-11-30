@@ -7,12 +7,14 @@ import {
   FormLabel,
   Heading,
   Image,
-  Input,
   Link,
   Text,
 } from '@chakra-ui/react';
-import { Link as BrowserLink } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
 
 import logo from '@assets/logos/bird gradient.svg';
 import google from '@assets/social/icons8-google.svg';
@@ -20,8 +22,38 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
+import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
+import authUser from '@/api/auth';
+import useCustomToast from '@/components/CustomToast';
+import { ErrorResponse } from '@/interfaces/response.interface';
+import CustomInput from '@/components/auth/CustomInput';
 
 export default function SignIn() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInterface>({
+    resolver: zodResolver(LoginValidate),
+  });
+  const navigate = useNavigate();
+  const toast = useCustomToast();
+
+  const logIn = useMutation({
+    mutationFn: (data: LoginInterface) => authUser.logIn(data),
+    mutationKey: ['login'],
+    onSuccess: () => {
+      navigate('/');
+    },
+    onError: (error: ErrorResponse) => {
+      toast(true, 'Error during sign up', error);
+    },
+  });
+
+  const authorizeUser = (data: LoginInterface) => {
+    logIn.mutate(data);
+  };
+
   return (
     <>
       <Helmet>
@@ -76,30 +108,25 @@ export default function SignIn() {
             >
               Email
             </FormLabel>
-            <Input
+            <CustomInput<LoginInterface>
               type="email"
+              id="email"
               placeholder="enter your email"
-              padding="2rem"
-              backgroundColor="#F8F8F9"
-              border="none"
-              borderRadius="0.5rem"
-              fontSize="1.2rem"
-              fontFamily="openSans"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              color="gray-4"
-              mb="1.4rem"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-              }}
+              errors={errors}
+              register={register}
             />
-
+            <Text
+              fontFamily="openSans"
+              fontSize="1rem"
+              fontWeight="300"
+              color="red.300"
+              height="1.4rem"
+              position="relative"
+              top="3px"
+              textAlign="right"
+            >
+              {errors.email?.message?.toString()}
+            </Text>
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
@@ -111,51 +138,68 @@ export default function SignIn() {
             >
               Password
             </FormLabel>
-            <Input
+            <CustomInput<LoginInterface>
               type="password"
+              id="password"
               placeholder="enter your password"
+              errors={errors}
+              register={register}
+            />
+            <Flex mt="4px">
+              <Link
+                display="block"
+                height="1.4rem"
+                fontFamily="openSans"
+                fontSize="1rem"
+                fontWeight="300"
+                as={BrowserLink}
+                to="/auth/recover-account"
+                color="violet-2"
+              >
+                Forgot Password?
+              </Link>
+              <Text
+                pt="1px"
+                flexGrow="1"
+                flexBasis="50%"
+                fontFamily="openSans"
+                fontSize="1rem"
+                fontWeight="300"
+                color="red.300"
+                lineHeight="1rem"
+                height="1.4rem"
+                textAlign="right"
+              >
+                {errors.password?.message?.toString()}
+              </Text>
+            </Flex>
+            <Button
+              onClick={handleSubmit((data) => authorizeUser(data))}
+              marginTop="1.4rem"
+              mb="2.4rem"
+              w="100%"
               padding="2rem"
-              backgroundColor="#F8F8F9"
-              color="gray-4"
-              border="none"
-              borderRadius="0.5rem"
-              mb="1.8rem"
-              fontFamily="openSans"
+              backgroundColor="violet-2"
+              color="white"
               fontSize="1.2rem"
-              fontWeight="400"
+              fontFamily="openSans"
+              fontWeight={400}
               lineHeight="1.6rem"
               letterSpacing="0.16px"
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontSize: '1.2rem',
-                color: 'gray-4',
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
+              borderRadius="8px"
+              _hover={{
+                background: 'violet-1',
               }}
-            />
+            >
+              Sign in
+            </Button>
           </FormControl>
-          <Button
-            w="100%"
-            padding="2rem"
-            backgroundColor="violet-2"
-            color="white"
-            fontSize="1.2rem"
-            fontFamily="openSans"
-            fontWeight={400}
-            lineHeight="1.6rem"
-            letterSpacing="0.16px"
-            borderRadius="8px"
-            mb="2.4rem"
-            _hover={{
-              background: 'violet-1',
-            }}
-          >
-            Sign in
-          </Button>
-
           <Flex alignItems="center" color="gray-3" gap="1rem">
-            <Divider orientation="horizontal" borderColor="gray-3" />
+            <Divider
+              orientation="horizontal"
+              borderColor="gray-3"
+              variant="dashed"
+            />
             <Text
               fontFamily="openSans"
               fontWeight="400"
@@ -165,12 +209,16 @@ export default function SignIn() {
             >
               or
             </Text>
-            <Divider orientation="horizontal" borderColor="gray-3" />
+            <Divider
+              orientation="horizontal"
+              borderColor="gray-3"
+              variant="dashed"
+            />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} />
-            <SocialButton icon={facebook} />
-            <SocialButton icon={github} />
+            <SocialButton icon={google} isDisabled={logIn.isPending} />
+            <SocialButton icon={facebook} isDisabled={logIn.isPending} />
+            <SocialButton icon={github} isDisabled={logIn.isPending} />
           </Flex>
           <Text
             fontFamily="openSans"

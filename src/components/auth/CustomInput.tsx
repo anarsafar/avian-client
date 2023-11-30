@@ -1,24 +1,29 @@
 import { Input, InputProps } from '@chakra-ui/react';
-import { FieldValues, FieldErrors, UseFormRegister } from 'react-hook-form';
-import { SignupInterface } from '@/schemas/auth.schemas';
+import {
+  FieldValues,
+  FieldErrors,
+  UseFormRegister,
+  Path,
+} from 'react-hook-form';
 
-interface CustomInputProps extends InputProps {
-  id: 'email' | 'password' | 'name' | 'confirmPassword';
-  errors: FieldErrors<FieldValues>;
-  register: UseFormRegister<SignupInterface>;
+interface CustomInputProps<T extends FieldValues>
+  extends Omit<InputProps, 'id'> {
+  id: keyof T;
+  errors: FieldErrors<T>;
+  register: UseFormRegister<T>;
 }
 
-function CustomInput({
+function CustomInput<T extends FieldValues>({
   id,
   type,
   placeholder,
   errors,
   register,
   ...rest
-}: CustomInputProps) {
+}: CustomInputProps<T>) {
   return (
     <Input
-      id={id}
+      id={id as string}
       type={type}
       placeholder={placeholder}
       padding="2rem"
@@ -40,7 +45,7 @@ function CustomInput({
         lineHeight: '1.6rem',
         letterSpacing: '0.16px',
       }}
-      {...register(id)}
+      {...register(id as Path<T>)}
       {...rest}
     />
   );

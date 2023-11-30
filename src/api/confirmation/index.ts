@@ -9,8 +9,8 @@ import {
 } from '@/interfaces/response.interface';
 import handleError from '@/utils/errorHandler';
 import {
+  ConfirmationBaseInterface,
   ConfirmationInterface,
-  EmailValidateInterface,
 } from '@/schemas/confirmaton.schema';
 
 const confirmation = {
@@ -27,15 +27,15 @@ const confirmation = {
       throw handledError;
     }
   },
-  resendEmail: async (
-    email: EmailValidateInterface
+  sendVerification: async (
+    data: ConfirmationBaseInterface
   ): Promise<SuccessResponse | AxiosError> => {
     try {
       const result: AxiosResponse = await instance.post(
-        'confirmation/resend',
-        email
+        'confirmation/send-verification',
+        data
       );
-      return result.data as SuccessResponse;
+      return result.data;
     } catch (error) {
       console.log(error);
       const handledError = handleError<ErrorResponse>(error);
@@ -43,13 +43,14 @@ const confirmation = {
       throw handledError;
     }
   },
-  getExpiration: async (email: {
+  getExpiration: async (data: {
     email: string;
+    confirmationType: 'email' | 'password';
   }): Promise<{ confirmationTimestamp: string }> => {
     try {
       const result: AxiosResponse = await instance.post(
-        'confirmation/expiration',
-        email
+        'confirmation/get-expiration',
+        data
       );
       return result.data;
     } catch (error) {

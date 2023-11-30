@@ -1,31 +1,26 @@
 import * as z from 'zod';
 
-export const LoginValidate = z.object({
+export const EmailValidate = z.object({
   email: z
     .string()
     .trim()
-    .min(1, { message: 'Email is required' })
-    .email('Email is not a valid')
+    .min(1, { message: 'Email is required.' })
+    .email('Email is not a valid.')
     .transform((email) => email.toLowerCase()),
+});
+
+export type EmailValidateInterface = z.infer<typeof EmailValidate>;
+
+export const PasswordValidate = EmailValidate.extend({
   password: z
     .string()
     .trim()
-    .min(1, { message: 'Password is required' })
+    .min(1, { message: 'Password is required.' })
     .min(8, 'Password must be at least 8 characters in length')
     .regex(/.*[A-Z].*/, 'Password must include one uppercase character')
     .regex(/.*[a-z].*/, 'Password must include one lowercase character')
     .regex(/.*\d.*/, 'Password must include one number')
     .regex(/[!@#$%^&*()]/, 'Password must include one special character'),
-});
-
-export type LoginInterface = z.infer<typeof LoginValidate>;
-
-export const SignupValidate = LoginValidate.extend({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: 'Name is required' })
-    .min(3, 'Name must be at least 3 characters long'),
   confirmPassword: z
     .string()
     .trim()
@@ -35,4 +30,4 @@ export const SignupValidate = LoginValidate.extend({
   path: ['confirmPassword'],
 });
 
-export type SignupInterface = z.infer<typeof SignupValidate>;
+export type PasswordValidateInterface = z.infer<typeof PasswordValidate>;

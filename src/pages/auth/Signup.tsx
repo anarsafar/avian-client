@@ -53,8 +53,19 @@ export default function SignUp() {
   });
 
   const registerUser = (data: SignupInterface) => {
-    queryClient.setQueryData(['user-email'], data.email);
-    sessionStorage.setItem('user-email', data.email);
+    queryClient.setQueryData(['verification-data'], {
+      email: data.email,
+      confirmationType: 'email',
+    });
+
+    sessionStorage.setItem(
+      'verification-data',
+      JSON.stringify({
+        email: data.email,
+        confirmationType: 'email',
+      })
+    );
+
     signup.mutate(data);
   };
 
@@ -112,7 +123,7 @@ export default function SignUp() {
             >
               Email
             </FormLabel>
-            <CustomInput
+            <CustomInput<SignupInterface>
               type="email"
               id="email"
               placeholder="enter your email"
@@ -142,7 +153,7 @@ export default function SignUp() {
             >
               Name
             </FormLabel>
-            <CustomInput
+            <CustomInput<SignupInterface>
               type="text"
               id="name"
               placeholder="enter your name"
@@ -172,7 +183,7 @@ export default function SignUp() {
             >
               Password
             </FormLabel>
-            <CustomInput
+            <CustomInput<SignupInterface>
               type="password"
               id="password"
               placeholder="enter your password"
@@ -202,7 +213,7 @@ export default function SignUp() {
             >
               Confirm Password
             </FormLabel>
-            <CustomInput
+            <CustomInput<SignupInterface>
               type="password"
               id="confirmPassword"
               placeholder="confirm your password"
