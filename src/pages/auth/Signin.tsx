@@ -25,34 +25,38 @@ import SocialButton from '@/components/auth/SocialButton';
 import useCustomToast from '@/components/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
 
+import api, { ErrorResponse, RequestType } from '@/api';
 import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
-import { ErrorResponse } from '@/interfaces/response.interface';
 
 export default function SignIn() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<LoginInterface>({
     resolver: zodResolver(LoginValidate),
   });
+
   const navigate = useNavigate();
   const toast = useCustomToast();
 
-  const logIn = useMutation({
-    // mutationFn: (data: LoginInterface) => authUser.logIn(data),
+  const { mutateAsync: logIn, isPending } = useMutation({
+    mutationFn: (data: LoginInterface) =>
+      api<{ accessToken: string }, LoginInterface>(
+        data,
+        'auth/login',
+        RequestType.Post
+      ),
     mutationKey: ['login'],
     onSuccess: () => {
       navigate('/');
     },
     onError: (error: ErrorResponse) => {
       toast(true, 'Error during sign up', error);
+      reset();
     },
   });
-
-  const authorizeUser = (data: LoginInterface) => {
-    // logIn.mutate(data);
-  };
 
   return (
     <>
@@ -174,7 +178,7 @@ export default function SignIn() {
               </Text>
             </Flex>
             <Button
-              onClick={handleSubmit((data) => authorizeUser(data))}
+              onClick={handleSubmit((data) => logIn(data))}
               marginTop="1.4rem"
               mb="2.4rem"
               w="100%"
@@ -216,9 +220,9 @@ export default function SignIn() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} isDisabled={logIn.isPending} />
-            <SocialButton icon={facebook} isDisabled={logIn.isPending} />
-            <SocialButton icon={github} isDisabled={logIn.isPending} />
+            <SocialButton icon={google} isDisabled={isPending} />
+            <SocialButton icon={facebook} isDisabled={isPending} />
+            <SocialButton icon={github} isDisabled={isPending} />
           </Flex>
           <Text
             fontFamily="openSans"

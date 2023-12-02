@@ -13,12 +13,13 @@ function usePersist() {
     data: T,
     queryKey: string,
     storageType: StorageType
-  ): void => {
+  ) => {
     try {
       queryClient.setQueryData([queryKey], data);
       window[storageType].setItem(queryKey, JSON.stringify(data));
     } catch (error) {
       console.error('Error during data presisting: ', error);
+      throw error;
     }
   };
 
