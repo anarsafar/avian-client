@@ -1,9 +1,10 @@
 import { Flex, useMediaQuery } from '@chakra-ui/react';
 
 import HeroSection from '@/components/auth/HeroSection';
-import SignUp from './Signup';
-import SignIn from './Signin';
+
 import useHeight from '@/hooks/useHeight';
+import SignUp from './SignUp';
+import SignIn from './SignIn';
 
 interface AuthViewProps {
   isSignUp: boolean;

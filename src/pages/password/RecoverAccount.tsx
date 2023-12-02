@@ -9,18 +9,21 @@ import {
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import arrowIcon from '@assets/layout/arrow.svg';
 import UserIcon from '@assets/layout/icons8-account-94.png';
-import { zodResolver } from '@hookform/resolvers/zod';
-import useCustomToast from '@/components/CustomToast';
-import { ErrorResponse } from '@/interfaces/response.interface';
 
+import useCustomToast from '@/components/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
-import confirmation from '@/api/confirmation';
+
+import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { EmailValidate, EmailValidateInterface } from '@/schemas/reset.schemas';
+import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
+
+import usePersist, { StorageType } from '@/hooks/usePresist';
 
 function RecoverAccount() {
   const {
@@ -31,41 +34,36 @@ function RecoverAccount() {
   } = useForm<EmailValidateInterface>({
     resolver: zodResolver(EmailValidate),
   });
-  const queryClient = useQueryClient();
 
+  const { persistData } = usePersist();
   const navigate = useNavigate();
   const toast = useCustomToast();
 
-  const sendVerificationEmail = useMutation({
-    mutationFn: (email: EmailValidateInterface) =>
-      confirmation.sendVerification({
-        email: email.email,
-        confirmationType: 'password',
-      }),
+  const { mutateAsync: sendVerificationEmail, isPending } = useMutation({
+    mutationFn: (formData: EmailValidateInterface) =>
+      api<SuccessResponse, ConfirmationBaseInterface>(
+        { email: formData.email, confirmationType: 'password' },
+        'confirmation/send-verification',
+        RequestType.Post
+      ),
     mutationKey: ['recover-account'],
-    onSuccess: () => navigate('/verify'),
+    onSuccess: (data, variables) => {
+      persistData<ConfirmationBaseInterface>(
+        {
+          email: variables.email,
+          confirmationType: 'password',
+        },
+        'verification-data',
+        StorageType.Session
+      );
+
+      navigate('/verify');
+    },
     onError: (error: ErrorResponse) => {
       toast(true, 'Recover Error', error);
+      reset();
     },
   });
-
-  const sendVerification = (data: EmailValidateInterface) => {
-    queryClient.setQueryData(['verification-data'], {
-      email: data.email,
-      confirmationType: 'password',
-    });
-
-    sessionStorage.setItem(
-      'verification-data',
-      JSON.stringify({
-        email: data.email,
-        confirmationType: 'password',
-      })
-    );
-
-    sendVerificationEmail.mutate(data);
-    reset();
-  };
 
   return (
     <>
@@ -150,8 +148,8 @@ function RecoverAccount() {
                 {errors.email?.message?.toString()}
               </Text>
               <Button
-                onClick={handleSubmit((data) => sendVerification(data))}
-                isLoading={sendVerificationEmail.isPending}
+                onClick={handleSubmit((data) => sendVerificationEmail(data))}
+                isLoading={isPending}
                 loadingText="sending..."
                 padding="2rem 5rem"
                 backgroundColor="violet-2"

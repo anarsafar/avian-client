@@ -1,8 +1,8 @@
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 
 import AuthView from '@/pages/auth/AuthView';
-import ErrorPage from '@/pages/Error';
-import Verificaton from '@/pages/Verification';
+import ErrorPage from '@/pages/error/Error';
+import Verificaton from '@/pages/verify/Verification';
 import RecoverAccount from '@/pages/password/RecoverAccount';
 import ResetPassword from '@/pages/password/ResetPassword';
 

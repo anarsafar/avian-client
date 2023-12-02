@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import arrowIcon from '@assets/layout/arrow.svg';
@@ -25,17 +25,32 @@ import {
   PasswordValidateInterface,
 } from '@/schemas/reset.schemas';
 
-import { ErrorResponse } from '@/interfaces/response.interface';
-import reset from '@/api/resetPassword';
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
+import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+
+import usePersist, { StorageType } from '@/hooks/usePresist';
 
 function ResetPassword() {
-  const [email, setEmail] = useState<string>();
+  const { getPersistedData } = usePersist();
+  const navigate = useNavigate();
+  const toast = useCustomToast();
+
+  const [email, setEmail] = useState<string | undefined>(() => {
+    const data = getPersistedData<ConfirmationBaseInterface>(
+      'verification-data',
+      StorageType.Session
+    );
+    if (data) {
+      return data.email;
+    }
+    return undefined;
+  });
 
   const {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<PasswordValidateInterface>({
     resolver: zodResolver(PasswordValidate),
@@ -44,35 +59,30 @@ function ResetPassword() {
     },
   });
 
-  const navigate = useNavigate();
-  const toast = useCustomToast();
-  const queryClient = useQueryClient();
-
   useEffect(() => {
-    const getVerifyData = queryClient.getQueryData(['verification-data']) as
-      | ConfirmationBaseInterface
-      | undefined;
-    const verifyDataFromSession = sessionStorage.getItem('verification-data');
+    const data = getPersistedData<ConfirmationBaseInterface>(
+      'verification-data',
+      StorageType.Session
+    );
 
-    if (getVerifyData) {
-      setEmail(getVerifyData.email);
-      setValue('email', getVerifyData.email);
-    } else if (verifyDataFromSession) {
-      queryClient.setQueryData(['verification-data'], verifyDataFromSession);
+    setEmail(data?.email);
+    setValue('email', data ? data.email : '');
+  }, [email, getPersistedData, setValue]);
 
-      setEmail(JSON.parse(verifyDataFromSession).email);
-      setValue('email', JSON.parse(verifyDataFromSession).email);
-    }
-  }, [queryClient, setValue]);
-
-  const changePassword = useMutation({
-    mutationFn: (data: PasswordValidateInterface) => reset.changePassword(data),
+  const { mutateAsync: changePassword, isPending } = useMutation({
+    mutationFn: (data: PasswordValidateInterface) =>
+      api<SuccessResponse, PasswordValidateInterface>(
+        data,
+        'reset-password',
+        RequestType.Patch
+      ),
     mutationKey: ['change-password'],
     onSuccess: (successData) => {
       navigate('/auth/signin');
-      toast(false, 'Resend success', successData);
+      toast(false, 'Reset success', successData);
     },
     onError: (error: ErrorResponse) => {
+      reset();
       toast(true, 'Recover Error', error);
     },
   });
@@ -183,9 +193,9 @@ function ResetPassword() {
               <Button
                 mt="1.5rem"
                 isDisabled={email === undefined}
-                isLoading={changePassword.isPending}
+                isLoading={isPending}
                 loadingText="Submitting"
-                onClick={handleSubmit((data) => changePassword.mutate(data))}
+                onClick={handleSubmit((data) => changePassword(data))}
                 padding="2rem 5rem"
                 backgroundColor="violet-2"
                 color="white"

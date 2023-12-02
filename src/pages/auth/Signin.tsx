@@ -22,11 +22,11 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
-import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
-import authUser from '@/api/auth';
 import useCustomToast from '@/components/CustomToast';
-import { ErrorResponse } from '@/interfaces/response.interface';
 import CustomInput from '@/components/auth/CustomInput';
+
+import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
+import { ErrorResponse } from '@/interfaces/response.interface';
 
 export default function SignIn() {
   const {
@@ -40,7 +40,7 @@ export default function SignIn() {
   const toast = useCustomToast();
 
   const logIn = useMutation({
-    mutationFn: (data: LoginInterface) => authUser.logIn(data),
+    // mutationFn: (data: LoginInterface) => authUser.logIn(data),
     mutationKey: ['login'],
     onSuccess: () => {
       navigate('/');
@@ -51,7 +51,7 @@ export default function SignIn() {
   });
 
   const authorizeUser = (data: LoginInterface) => {
-    logIn.mutate(data);
+    // logIn.mutate(data);
   };
 
   return (

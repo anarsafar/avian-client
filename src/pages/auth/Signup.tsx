@@ -14,7 +14,7 @@ import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import logo from '@assets/logos/bird gradient.svg';
 import google from '@assets/social/icons8-google.svg';
@@ -22,52 +22,53 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
-import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
-import authUser from '@/api/auth';
-import { ErrorResponse } from '@/interfaces/response.interface';
 import CustomInput from '@/components/auth/CustomInput';
 import useCustomToast from '@/components/CustomToast';
 
-export default function SignUp() {
-  const navigate = useNavigate();
-  const toast = useCustomToast();
-  const queryClient = useQueryClient();
+import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
+import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 
+import usePersist, { StorageType } from '@/hooks/usePresist';
+
+export default function SignUp() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SignupInterface>({
     resolver: zodResolver(SignupValidate),
   });
 
-  const signup = useMutation({
-    mutationFn: (data: SignupInterface) => authUser.signUp(data),
+  const navigate = useNavigate();
+  const toast = useCustomToast();
+  const { persistData } = usePersist();
+
+  const { mutateAsync: signUp, isPending } = useMutation({
+    mutationFn: (data: SignupInterface) =>
+      api<SuccessResponse, SignupInterface>(
+        data,
+        'auth/signup',
+        RequestType.Post
+      ),
     mutationKey: ['signup'],
-    onSuccess: () => {
+    onSuccess: (response, variables) => {
+      persistData<ConfirmationBaseInterface>(
+        {
+          email: variables.email,
+          confirmationType: 'email',
+        },
+        'verification-data',
+        StorageType.Session
+      );
       navigate('/verify');
     },
     onError: (error: ErrorResponse) => {
       toast(true, 'Error during sign up', error);
+      reset();
     },
   });
-
-  const registerUser = (data: SignupInterface) => {
-    queryClient.setQueryData(['verification-data'], {
-      email: data.email,
-      confirmationType: 'email',
-    });
-
-    sessionStorage.setItem(
-      'verification-data',
-      JSON.stringify({
-        email: data.email,
-        confirmationType: 'email',
-      })
-    );
-
-    signup.mutate(data);
-  };
 
   return (
     <>
@@ -233,9 +234,9 @@ export default function SignUp() {
               {errors.confirmPassword?.message?.toString()}
             </Text>
             <Button
-              isLoading={signup.isPending}
+              isLoading={isPending}
               loadingText="Submitting"
-              onClick={handleSubmit((data) => registerUser(data))}
+              onClick={handleSubmit((data) => signUp(data))}
               marginTop="1.4rem"
               type="submit"
               w="100%"
@@ -279,9 +280,9 @@ export default function SignUp() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} isDisabled={signup.isPending} />
-            <SocialButton icon={facebook} isDisabled={signup.isPending} />
-            <SocialButton icon={github} isDisabled={signup.isPending} />
+            <SocialButton icon={google} isDisabled={isPending} />
+            <SocialButton icon={facebook} isDisabled={isPending} />
+            <SocialButton icon={github} isDisabled={isPending} />
           </Flex>
 
           <Text
