@@ -63,6 +63,8 @@ function RecoverAccount() {
       toast(true, 'Recover Error', error);
       reset();
     },
+    retry: false,
+    networkMode: 'always',
   });
 
   return (

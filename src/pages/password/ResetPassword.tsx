@@ -85,6 +85,8 @@ function ResetPassword() {
       reset();
       toast(true, 'Recover Error', error);
     },
+    networkMode: 'always',
+    retry: false,
   });
 
   return (

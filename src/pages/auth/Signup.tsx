@@ -68,6 +68,8 @@ export default function SignUp() {
       toast(true, 'Error during sign up', error);
       reset();
     },
+    retry: false,
+    networkMode: 'always',
   });
 
   return (

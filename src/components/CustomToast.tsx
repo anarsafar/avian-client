@@ -1,5 +1,9 @@
 import { Box, Text, useToast } from '@chakra-ui/react';
-import { NetworkResponse } from '@/interfaces/response.interface';
+
+interface NetworkResponse {
+  message?: string;
+  error?: string;
+}
 
 function useCustomToast() {
   const toast = useToast();

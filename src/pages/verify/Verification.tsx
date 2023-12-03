@@ -55,6 +55,7 @@ function Verificaton(): JSX.Element {
       enabled: typeof verifyData !== undefined,
       refetchOnWindowFocus: false,
       retry: false,
+      networkMode: 'always',
     });
 
   const { mutateAsync: verifyEmail, isPending } = useMutation({
@@ -78,6 +79,8 @@ function Verificaton(): JSX.Element {
       setTimeout(() => setError(false), 3000);
       toast(true, 'Confirmation Error', error);
     },
+    networkMode: 'always',
+    retry: false,
   });
 
   const { mutateAsync: resendVerification } = useMutation({
@@ -93,6 +96,8 @@ function Verificaton(): JSX.Element {
       toast(false, 'Resend success', successData);
     },
     onError: (error: ErrorResponse) => toast(true, 'Resend Error', error),
+    networkMode: 'always',
+    retry: false,
   });
 
   const handleOTPChange = (data: string) => setOTP(data);
