@@ -23,7 +23,7 @@ import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { EmailValidate, EmailValidateInterface } from '@/schemas/reset.schemas';
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 
-import usePersist, { StorageType } from '@/hooks/usePresist';
+import usePersist, { StorageType } from '@/hooks/usePersist';
 
 function RecoverAccount() {
   const {

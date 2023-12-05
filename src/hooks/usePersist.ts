@@ -12,11 +12,13 @@ function usePersist() {
   const persistData = <T>(
     data: T,
     queryKey: string,
-    storageType: StorageType
+    storageType?: StorageType
   ) => {
     try {
       queryClient.setQueryData([queryKey], data);
-      window[storageType].setItem(queryKey, JSON.stringify(data));
+      if (storageType) {
+        window[storageType].setItem(queryKey, JSON.stringify(data));
+      }
     } catch (error) {
       console.error('Error during data presisting: ', error);
       throw error;
@@ -25,14 +27,15 @@ function usePersist() {
 
   const getPersistedData = <T>(
     queryKey: string,
-    storageType: StorageType
+    storageType?: StorageType
   ): T | undefined => {
     const queryData = queryClient.getQueryData([queryKey]) as T | undefined;
-    const storedData = window[storageType].getItem(queryKey);
+    const storedData = storageType && window[storageType].getItem(queryKey);
 
     if (queryData) {
       return queryData;
     }
+
     if (storedData) {
       queryClient.setQueryData([queryKey], JSON.parse(storedData));
       return JSON.parse(storedData);

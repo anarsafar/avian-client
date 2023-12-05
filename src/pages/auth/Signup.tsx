@@ -29,7 +29,7 @@ import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 
-import usePersist, { StorageType } from '@/hooks/usePresist';
+import usePersist, { StorageType } from '@/hooks/usePersist';
 
 export default function SignUp() {
   const {

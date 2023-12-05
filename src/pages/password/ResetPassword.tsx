@@ -28,7 +28,7 @@ import {
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
-import usePersist, { StorageType } from '@/hooks/usePresist';
+import usePersist, { StorageType } from '@/hooks/usePersist';
 
 function ResetPassword() {
   const { getPersistedData } = usePersist();

@@ -27,6 +27,11 @@ import CustomInput from '@/components/auth/CustomInput';
 
 import api, { ErrorResponse, RequestType } from '@/api';
 import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
+import usePersist, { StorageType } from '@/hooks/usePersist';
+
+interface AccessToken {
+  accessToken: string;
+}
 
 export default function SignIn() {
   const {
@@ -40,16 +45,14 @@ export default function SignIn() {
 
   const navigate = useNavigate();
   const toast = useCustomToast();
+  const { persistData } = usePersist();
 
   const { mutateAsync: logIn, isPending } = useMutation({
     mutationFn: (data: LoginInterface) =>
-      api<{ accessToken: string }, LoginInterface>(
-        data,
-        'auth/login',
-        RequestType.Post
-      ),
+      api<AccessToken, LoginInterface>(data, 'auth/login', RequestType.Post),
     mutationKey: ['login'],
-    onSuccess: () => {
+    onSuccess: (accessToken) => {
+      persistData<AccessToken>(accessToken, 'access-token', StorageType.Local);
       navigate('/');
     },
     onError: (error: ErrorResponse) => {
@@ -181,6 +184,8 @@ export default function SignIn() {
             </Flex>
             <Button
               onClick={handleSubmit((data) => logIn(data))}
+              isLoading={isPending}
+              loadingText="Signing in..."
               marginTop="1.4rem"
               mb="2.4rem"
               w="100%"

@@ -17,7 +17,7 @@ import {
   ConfirmationInterface,
 } from '@/schemas/confirmaton.schema';
 
-import usePersist, { StorageType } from '@/hooks/usePresist';
+import usePersist, { StorageType } from '@/hooks/usePersist';
 
 function Verificaton(): JSX.Element {
   const { getPersistedData } = usePersist();
@@ -117,6 +117,7 @@ function Verificaton(): JSX.Element {
         justifyContent="center"
         background="linear-gradient(180deg, #C1CAFF 0%, #5C6BC0 100%)"
         height="100vh"
+        padding="0 2rem"
       >
         <Flex
           direction="column"
@@ -158,6 +159,7 @@ function Verificaton(): JSX.Element {
             color="#fff"
             fontWeight="300"
             mb="2rem"
+            textAlign="center"
           >
             We have sent a code to {verifyData?.email || 'your email'}
           </Heading>
