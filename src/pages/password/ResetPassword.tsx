@@ -163,11 +163,12 @@ function ResetPassword() {
                 fontFamily="openSans"
                 fontSize="1rem"
                 fontWeight="300"
-                color="red.300"
+                color="red.400"
                 height="1.4rem"
                 position="relative"
                 top="3px"
                 textAlign="right"
+                mb="0.8rem"
               >
                 {errors.password?.message?.toString()}
               </Text>
@@ -175,7 +176,6 @@ function ResetPassword() {
                 type="password"
                 id="confirmPassword"
                 placeholder="Confirm your new password"
-                mt="0.8rem"
                 errors={errors}
                 register={register}
               />
@@ -184,7 +184,7 @@ function ResetPassword() {
                 fontSize="1rem"
                 fontWeight="300"
                 alignSelf="start"
-                color="red.300"
+                color="red.400"
                 height="1.4rem"
                 position="relative"
                 top="3px"
