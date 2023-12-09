@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 interface ChilderProps {
@@ -5,14 +6,17 @@ interface ChilderProps {
 }
 
 function Animate({ children }: ChilderProps): JSX.Element {
+  const MotionBox = motion(Box);
+
   return (
-    <motion.div
+    <MotionBox
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       {children}
-    </motion.div>
+    </MotionBox>
   );
 }
 

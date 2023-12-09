@@ -8,6 +8,7 @@ import RecoverAccount from '@/pages/password/RecoverAccount';
 import ResetPassword from '@/pages/password/ResetPassword';
 import Protected from './Protected';
 import Animate from '@/components/Animate';
+import AppLayout from '@/pages/app';
 
 function AppRoutes() {
   return (
@@ -17,24 +18,10 @@ function AppRoutes() {
           <Route
             path="/"
             index
-            element={<Protected element={<h1>HOME PAGE</h1>} />}
+            element={<Protected element={<AppLayout />} />}
           />
-          <Route
-            path="auth/signin"
-            element={
-              <Animate>
-                <AuthView isSignUp={false} />
-              </Animate>
-            }
-          />
-          <Route
-            path="auth/signup"
-            element={
-              <Animate>
-                <AuthView isSignUp />
-              </Animate>
-            }
-          />
+          <Route path="auth/signin" element={<AuthView isSignUp={false} />} />
+          <Route path="auth/signup" element={<AuthView isSignUp />} />
           <Route
             path="auth/recover-account"
             element={

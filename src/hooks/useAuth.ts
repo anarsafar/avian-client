@@ -46,7 +46,7 @@ const useAuth = () => {
     networkMode: 'always',
   });
 
-  const { mutate: getNewAccessToken } = useMutation({
+  const { mutate: getNewAccessToken, isError } = useMutation({
     mutationFn: (token?: string | undefined) =>
       api<AccessToken, null>(null, 'refresh', RequestType.Post, token),
     mutationKey: ['refresh'],
@@ -74,7 +74,7 @@ const useAuth = () => {
     }
   }, [getUser, getNewAccessToken, accessToken]);
 
-  return { user: userData, isLoading };
+  return { user: userData, isLoading, isError, accessToken };
 };
 
 export default useAuth;

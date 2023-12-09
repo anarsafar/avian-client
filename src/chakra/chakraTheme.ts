@@ -32,6 +32,7 @@ const theme = extendTheme({
     'blue-3': '#2196F3',
     'blue-4': '#0069C0',
     'blue-5': '#004680',
+    'hover-light': 'rgb(238 242 255 / 0.7)',
   },
   shadows: {
     'outer-1': '0px 1px 3px 0px rgba(5, 5, 5, 0.10)',
