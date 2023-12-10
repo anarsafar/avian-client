@@ -14,25 +14,35 @@ function Conversation(): JSX.Element {
         bg: 'hover-light',
       }}
     >
-      <Avatar
-        name="Oshigaki Kisame"
-        src="https://bit.ly/broken-link"
-        w="3.3rem"
-        h="3.3rem"
-      />
+      <Avatar name="Oshigaki Kisame" w="3.3rem" h="3.3rem" />
       <Stack
         direction="column"
         textAlign="left"
-        maxW="18rem"
+        maxW="17rem"
         whiteSpace="nowrap"
         overflow="hidden"
         textOverflow="ellipsis"
       >
-        <Text fontSize="1.3rem" fontWeight="600" color="gray-5">
+        <Text
+          fontSize="1.3rem"
+          fontWeight="600"
+          color="gray-5"
+          overflow="hidden"
+          textOverflow="ellipsis"
+        >
           Dawn Sabrina
         </Text>
-        <Text fontSize="1.1rem" fontWeight="400" color="gray-4">
-          Hello there
+        <Text
+          fontSize="1.1rem"
+          fontWeight="400"
+          color="gray-4"
+          overflow="hidden"
+          textOverflow="ellipsis"
+        >
+          Hello there Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+          Tenetur atque molestias quos nihil eos ipsam facilis ab animi
+          molestiae neque corrupti fugit quae odit, aspernatur quod, architecto
+          mollitia eveniet officia.
         </Text>
       </Stack>
       <Stack direction="column" textAlign="right" ms="auto">
