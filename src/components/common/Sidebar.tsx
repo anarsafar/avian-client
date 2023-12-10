@@ -9,6 +9,7 @@ import {
   InputGroup,
   InputLeftElement,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
@@ -20,6 +21,11 @@ interface SidebarProps {
 }
 
 function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
+  const text = useColorModeValue('gray-4', 'text-dark');
+  const input = useColorModeValue('input-light', 'input-dark');
+  const logo = useColorModeValue('#C5C5C6', '#6b7280');
+  const placeholder = useColorModeValue('gray-5', 'text-darker');
+
   return (
     <Box as="section" id="inbox" p="2.2rem 0">
       <Flex justifyContent="space-between" alignItems="center" mx="1.7rem">
@@ -30,7 +36,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
           fontWeight={400}
           lineHeight="1.8rem"
           letterSpacing="0.16px"
-          color="gray-4"
+          color={text}
         >
           {header}
         </Text>
@@ -40,13 +46,13 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
       </Flex>
       <Box mx="1.7rem">
         <FormControl mt="2.2rem">
-          <InputGroup backgroundColor="#F8F8F9" borderRadius="0.9rem">
-            <InputLeftElement pointerEvents="none" mt="0.4rem">
-              <SearchIcon color="gray-4" fontSize="1.4rem" />
+          <InputGroup backgroundColor={input} borderRadius="0.9rem">
+            <InputLeftElement pointerEvents="none" mt="0.4rem" ms="0.4rem">
+              <SearchIcon color={logo} fontSize="1.4rem" />
             </InputLeftElement>
             <Input
               type="text"
-              p="1.7rem 1.7rem 1.7rem 2.5rem"
+              p="1.7rem 1.7rem 1.7rem 3.2rem"
               border="none"
               placeholder="Search..."
               fontFamily="openSans"
@@ -54,11 +60,11 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
               fontWeight="400"
               lineHeight="1.6rem"
               letterSpacing="0.16px"
-              color="gray-4"
+              color={text}
               _placeholder={{
                 fontFamily: 'openSans',
                 fontSize: '1.2rem',
-                color: 'gray-5',
+                color: placeholder,
                 fontWeight: '400',
                 lineHeight: '1.6rem',
                 letterSpacing: '0.16px',

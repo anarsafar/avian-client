@@ -1,6 +1,10 @@
-import { Avatar, Flex, Stack, Text } from '@chakra-ui/react';
+import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
 function Conversation(): JSX.Element {
+  const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
+  const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', 'text-darker');
+  const hover = useColorModeValue('hover-light', 'accent-dark');
+
   return (
     <Flex
       as="button"
@@ -11,7 +15,7 @@ function Conversation(): JSX.Element {
       letterSpacing="0.16px"
       borderRadius="0.9rem"
       _hover={{
-        bg: 'hover-light',
+        bg: hover,
       }}
     >
       <Avatar name="Oshigaki Kisame" w="3.3rem" h="3.3rem" />
@@ -26,7 +30,7 @@ function Conversation(): JSX.Element {
         <Text
           fontSize="1.3rem"
           fontWeight="600"
-          color="gray-5"
+          color={darkerText}
           overflow="hidden"
           textOverflow="ellipsis"
         >
@@ -35,7 +39,7 @@ function Conversation(): JSX.Element {
         <Text
           fontSize="1.1rem"
           fontWeight="400"
-          color="gray-4"
+          color={text}
           overflow="hidden"
           textOverflow="ellipsis"
         >
@@ -46,7 +50,7 @@ function Conversation(): JSX.Element {
         </Text>
       </Stack>
       <Stack direction="column" textAlign="right" ms="auto">
-        <Text fontSize="1.1rem" fontWeight="400" color="gray-4">
+        <Text fontSize="1.1rem" fontWeight="400" color={text}>
           4:00 pm
         </Text>
         <Flex

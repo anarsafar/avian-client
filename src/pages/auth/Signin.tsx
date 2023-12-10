@@ -9,6 +9,7 @@ import {
   Image,
   Link,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link as BrowserLink, useNavigate } from 'react-router-dom';
@@ -46,6 +47,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const toast = useCustomToast();
   const { persistData } = usePersist();
+  const text = useColorModeValue('gray-4', 'text-dark');
 
   const { mutateAsync: logIn, isPending } = useMutation({
     mutationFn: (data: LoginInterface) =>
@@ -85,7 +87,7 @@ export default function SignIn() {
           />
           <Heading
             as="h1"
-            color="gray-4"
+            color={text}
             fontSize="1.6rem"
             fontFamily="openSans"
             fontWeight="600"
@@ -95,7 +97,7 @@ export default function SignIn() {
           </Heading>
           <Heading
             as="h2"
-            color="gray-4"
+            color={text}
             fontFamily="openSans"
             fontSize="1.4rem"
             fontWeight="300"
@@ -109,7 +111,7 @@ export default function SignIn() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -139,7 +141,7 @@ export default function SignIn() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -233,7 +235,7 @@ export default function SignIn() {
           </Flex>
           <Text
             fontFamily="openSans"
-            color="gray-4"
+            color={text}
             fontSize="1.2rem"
             fontWeight="400"
             textAlign="center"

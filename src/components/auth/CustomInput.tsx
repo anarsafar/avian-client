@@ -4,6 +4,7 @@ import {
   InputGroup,
   InputProps,
   InputRightElement,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import {
@@ -30,6 +31,9 @@ function CustomInput<T extends FieldValues>({
   ...rest
 }: CustomInputProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
+  const input = useColorModeValue('input-light', 'input-dark');
+  const placeholderColor = useColorModeValue('gray-5', 'text-darker');
+  const text = useColorModeValue('gray-4', 'text-dark');
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -44,10 +48,10 @@ function CustomInput<T extends FieldValues>({
         placeholder={placeholder}
         padding="2rem"
         paddingRight="3.5rem"
-        backgroundColor="#F8F8F9"
-        color="gray-4"
+        backgroundColor={input}
+        color={text}
         border={errors[id] ? '1px solid' : 'none'}
-        borderColor={errors[id] ? 'red.300' : '#fff'}
+        borderColor={errors[id] ? 'red.300' : input}
         borderRadius="0.5rem"
         fontFamily="openSans"
         fontSize="1.2rem"
@@ -57,7 +61,7 @@ function CustomInput<T extends FieldValues>({
         _placeholder={{
           fontFamily: 'openSans',
           fontSize: '1.2rem',
-          color: 'gray-4',
+          color: placeholderColor,
           fontWeight: '400',
           lineHeight: '1.6rem',
           letterSpacing: '0.16px',
@@ -70,7 +74,7 @@ function CustomInput<T extends FieldValues>({
           <Button
             variant="unstyled"
             onClick={handleTogglePassword}
-            color="gray-4"
+            color={text}
             fontSize="1.5rem"
             pb="2rem"
           >

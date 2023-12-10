@@ -18,10 +18,17 @@ import {
   TabPanels,
   Tabs,
   Text,
+  useColorMode,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import appLogo from '@assets/logos/bird.svg';
 import { useRef, useState } from 'react';
-import { InfoOutlineIcon, RepeatIcon } from '@chakra-ui/icons';
+import {
+  InfoOutlineIcon,
+  MoonIcon,
+  RepeatIcon,
+  SunIcon,
+} from '@chakra-ui/icons';
 import { Helmet } from 'react-helmet-async';
 
 import logout from '@assets/layout/logout.svg';
@@ -47,11 +54,15 @@ function AppLayout() {
   const [activeTab, setActiveTab] = useState(0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail } = useSendVerification();
+  const { colorMode, toggleColorMode } = useColorMode();
+  const bg = useColorModeValue('bg-light', 'bg-dark');
+  const text = useColorModeValue('gray-4', 'text-dark');
+  const logo = useColorModeValue('#C5C5C6', '#6b7280');
 
   const handleTabChange = (index: number) => setActiveTab(index);
 
   const getFillColor = (tabIndex: number) =>
-    tabIndex === activeTab ? '#8E99F3' : '#C5C5C6';
+    tabIndex === activeTab ? '#8E99F3' : logo;
 
   return (
     <>
@@ -72,13 +83,14 @@ function AppLayout() {
           isManual
           isLazy
           lazyBehavior="unmount"
+          bg={bg}
         >
           <Grid
             height="100%"
             templateAreas={`"nav sidebar chatbox"`}
             gridTemplateColumns="6rem 30rem 1fr"
           >
-            <GridItem area="nav" bg="white">
+            <GridItem area="nav">
               <Flex
                 direction="column"
                 alignItems="center"
@@ -160,21 +172,16 @@ function AppLayout() {
                         />
                       </svg>
                     </Tab>
-                    <Button mt="auto" variant="unstyled">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M9.528 1.718C9.63312 1.8231 9.70465 1.95706 9.73349 2.10288C9.76234 2.2487 9.7472 2.3998 9.69 2.537C9.23282 3.63422 8.99828 4.81136 9 6C9 8.38695 9.94821 10.6761 11.636 12.364C13.3239 14.0518 15.6131 15 18 15C19.1886 15.0017 20.3658 14.7672 21.463 14.31C21.6001 14.2529 21.7511 14.2378 21.8968 14.2666C22.0425 14.2954 22.1763 14.3668 22.2814 14.4718C22.3865 14.5767 22.458 14.7105 22.487 14.8562C22.5159 15.0019 22.501 15.1528 22.444 15.29C21.646 17.2033 20.2997 18.8376 18.5747 19.9871C16.8496 21.1367 14.823 21.7501 12.75 21.75C6.951 21.75 2.25 17.049 2.25 11.25C2.25 6.882 4.917 3.138 8.71 1.556C8.84707 1.49902 8.99797 1.484 9.14359 1.51284C9.28921 1.54168 9.42299 1.61308 9.528 1.718Z"
-                          fill="#C5C5C6"
-                        />
-                      </svg>
+                    <Button
+                      mt="auto"
+                      variant="unstyled"
+                      onClick={toggleColorMode}
+                    >
+                      {colorMode === 'light' ? (
+                        <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
+                      ) : (
+                        <SunIcon color={logo} w="2.3rem" h="2.3rem" />
+                      )}
                     </Button>
                     <Tab>
                       <svg
@@ -224,7 +231,7 @@ function AppLayout() {
                         <MenuItem
                           fontSize="1.3rem"
                           fontFamily="openSans"
-                          color="gray-4"
+                          color={text}
                           fontWeight={400}
                         >
                           <InfoOutlineIcon />
@@ -233,7 +240,7 @@ function AppLayout() {
                         <MenuItem
                           fontSize="1.3rem"
                           fontFamily="openSans"
-                          color="gray-4"
+                          color={text}
                           fontWeight={400}
                           onClick={() =>
                             sendVerificationEmail({
@@ -247,7 +254,6 @@ function AppLayout() {
                         <MenuItem
                           fontSize="1.3rem"
                           fontFamily="openSans"
-                          color="gray-4"
                           fontWeight={400}
                           _hover={{
                             bg: 'red-1',
@@ -267,7 +273,7 @@ function AppLayout() {
                 </Menu>
               </Flex>
             </GridItem>
-            <GridItem area="sidebar" bg="#fff">
+            <GridItem area="sidebar">
               <TabPanels>
                 <Animate>
                   <TabPanel h="100vh" p="0">
@@ -296,9 +302,7 @@ function AppLayout() {
                 </Animate>
               </TabPanels>
             </GridItem>
-            <GridItem bg="#fff" area="chatbox">
-              Chatbox
-            </GridItem>
+            <GridItem area="chatbox">Chatbox</GridItem>
           </Grid>
         </Tabs>
       </Box>

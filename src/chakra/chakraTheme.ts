@@ -1,6 +1,10 @@
 import { extendTheme } from '@chakra-ui/react';
 
 const theme = extendTheme({
+  config: {
+    initialColorMode: 'system',
+    useSystemColorMode: true,
+  },
   colors: {
     'violet-1': '#C1CAFF',
     'violet-2': '#8E99F3',
@@ -33,6 +37,13 @@ const theme = extendTheme({
     'blue-4': '#0069C0',
     'blue-5': '#004680',
     'hover-light': 'rgb(238 242 255 / 0.7)',
+    'bg-dark': '#1f2937',
+    'bg-light': '#FFF',
+    'accent-dark': '#4b5563',
+    'text-dark': '#bcbfc3',
+    'input-dark': '#2f3949',
+    'input-light': '#F8F8F9',
+    'text-darker': '#bcbfc3',
   },
   shadows: {
     'outer-1': '0px 1px 3px 0px rgba(5, 5, 5, 0.10)',

@@ -9,6 +9,7 @@ import {
   Image,
   Link,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { Link as BrowserLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -44,6 +45,7 @@ export default function SignUp() {
   const navigate = useNavigate();
   const toast = useCustomToast();
   const { persistData } = usePersist();
+  const text = useColorModeValue('gray-4', 'text-dark');
 
   const { mutateAsync: signUp, isPending } = useMutation({
     mutationFn: (data: SignupInterface) =>
@@ -94,7 +96,7 @@ export default function SignUp() {
           />
           <Heading
             as="h1"
-            color="gray-4"
+            color={text}
             fontSize="1.6rem"
             fontFamily="openSans"
             fontWeight="600"
@@ -104,7 +106,7 @@ export default function SignUp() {
           </Heading>
           <Heading
             as="h2"
-            color="gray-4"
+            color={text}
             fontFamily="openSans"
             fontSize="1.4rem"
             fontWeight="300"
@@ -118,7 +120,7 @@ export default function SignUp() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -148,7 +150,7 @@ export default function SignUp() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -178,7 +180,7 @@ export default function SignUp() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -208,7 +210,7 @@ export default function SignUp() {
             <FormLabel
               fontSize="1.2rem"
               fontFamily="openSans"
-              color="gray-4"
+              color={text}
               lineHeight="1.6rem"
               fontWeight={600}
               letterSpacing="0.16px"
@@ -289,7 +291,7 @@ export default function SignUp() {
 
           <Text
             fontFamily="openSans"
-            color="gray-4"
+            color={text}
             fontSize="1.2rem"
             fontWeight="400"
             textAlign="center"
