@@ -25,16 +25,18 @@ import { InfoOutlineIcon, RepeatIcon } from '@chakra-ui/icons';
 
 import logout from '@assets/layout/logout.svg';
 
-import Animate from '@/components/Animate';
+import Animate from '@/components/common/Animate';
 import Inbox from '@/components/messages/Inbox';
 
-import useAuth from '@/hooks/useAuth';
-import useLogout from '@/hooks/useLogout';
+import useAuth from '@/hooks/auth/useAuth';
+import useLogout from '@/hooks/auth/useLogout';
+import useSendVerification from '@/hooks/auth/useSendVerification';
 
 function AppLayout() {
   const [activeTab, setActiveTab] = useState(0);
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const { logoutHandler } = useLogout();
+  const { sendVerificationEmail } = useSendVerification();
 
   const handleTabChange = (index: number) => {
     setActiveTab(index);
@@ -219,6 +221,9 @@ function AppLayout() {
                         fontFamily="openSans"
                         color="gray-4"
                         fontWeight={400}
+                        onClick={() =>
+                          sendVerificationEmail({ email: user?.authInfo.email })
+                        }
                       >
                         <RepeatIcon />
                         <Text ms="1rem">Password Change</Text>

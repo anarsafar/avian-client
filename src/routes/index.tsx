@@ -7,7 +7,7 @@ import Verificaton from '@/pages/verify/Verification';
 import RecoverAccount from '@/pages/password/RecoverAccount';
 import ResetPassword from '@/pages/password/ResetPassword';
 import Protected from './Protected';
-import Animate from '@/components/Animate';
+import Animate from '@/components/common/Animate';
 import AppLayout from '@/pages/app';
 
 function AppRoutes() {

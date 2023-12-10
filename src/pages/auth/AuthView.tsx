@@ -2,7 +2,7 @@ import { Flex, useMediaQuery } from '@chakra-ui/react';
 
 import HeroSection from '@/components/auth/HeroSection';
 
-import useHeight from '@/hooks/useHeight';
+import useHeight from '@/hooks/common/useHeight';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 

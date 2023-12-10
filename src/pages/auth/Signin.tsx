@@ -22,12 +22,12 @@ import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
-import useCustomToast from '@/components/CustomToast';
+import useCustomToast from '@/components/common/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
 
 import api, { ErrorResponse, RequestType } from '@/api';
 import { LoginInterface, LoginValidate } from '@/schemas/auth.schemas';
-import usePersist, { StorageType } from '@/hooks/usePersist';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 interface AccessToken {
   accessToken: string;

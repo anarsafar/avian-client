@@ -8,64 +8,29 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate } from 'react-router-dom';
 
 import arrowIcon from '@assets/layout/arrow.svg';
 import UserIcon from '@assets/layout/icons8-account-94.png';
 
-import useCustomToast from '@/components/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
 
-import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { EmailValidate, EmailValidateInterface } from '@/schemas/reset.schemas';
-import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
-
-import usePersist, { StorageType } from '@/hooks/usePersist';
+import useSendVerification from '@/hooks/auth/useSendVerification';
 
 function RecoverAccount() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<EmailValidateInterface>({
     resolver: zodResolver(EmailValidate),
   });
-
-  const { persistData } = usePersist();
   const navigate = useNavigate();
-  const toast = useCustomToast();
 
-  const { mutateAsync: sendVerificationEmail, isPending } = useMutation({
-    mutationFn: (formData: EmailValidateInterface) =>
-      api<SuccessResponse, ConfirmationBaseInterface>(
-        { email: formData.email, confirmationType: 'password' },
-        'confirmation/send-verification',
-        RequestType.Post
-      ),
-    mutationKey: ['recover-account'],
-    onSuccess: (data, variables) => {
-      persistData<ConfirmationBaseInterface>(
-        {
-          email: variables.email,
-          confirmationType: 'password',
-        },
-        'verification-data',
-        StorageType.Session
-      );
-
-      navigate('/verify');
-    },
-    onError: (error: ErrorResponse) => {
-      toast(true, 'Recover Error', error);
-      reset();
-    },
-    retry: false,
-    networkMode: 'always',
-  });
+  const { sendVerificationEmail, isPending } = useSendVerification();
 
   return (
     <>

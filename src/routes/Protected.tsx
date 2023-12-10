@@ -2,8 +2,8 @@ import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Flex, Spinner } from '@chakra-ui/react';
-import useAuth from '@/hooks/useAuth';
-import useLogout from '@/hooks/useLogout';
+import useAuth from '@/hooks/auth/useAuth';
+import useLogout from '@/hooks/auth/useLogout';
 
 interface ComponentProps {
   element: ReactNode;

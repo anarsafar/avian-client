@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import arrowIcon from '@assets/layout/arrow.svg';
 import passwordIcon from '@assets/layout/icons8-password-94.png';
 
-import useCustomToast from '@/components/CustomToast';
+import useCustomToast from '@/components/common/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
 
 import {
@@ -28,7 +28,7 @@ import {
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
-import usePersist, { StorageType } from '@/hooks/usePersist';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 function ResetPassword() {
   const { getPersistedData } = usePersist();

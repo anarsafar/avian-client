@@ -23,13 +23,13 @@ import github from '@assets/social/icons8-github.svg';
 
 import SocialButton from '@/components/auth/SocialButton';
 import CustomInput from '@/components/auth/CustomInput';
-import useCustomToast from '@/components/CustomToast';
+import useCustomToast from '@/components/common/CustomToast';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { SignupInterface, SignupValidate } from '@/schemas/auth.schemas';
 import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
 
-import usePersist, { StorageType } from '@/hooks/usePersist';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 export default function SignUp() {
   const {

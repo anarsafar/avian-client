@@ -8,7 +8,7 @@ import emailLogo from '@assets/layout/icons8-email-94.png';
 import arrowIcon from '@assets/layout/arrow.svg';
 
 import OTPInput from '@/components/auth/OTPInput';
-import useCustomToast from '@/components/CustomToast';
+import useCustomToast from '@/components/common/CustomToast';
 import CountDown from '@/components/auth/CountDown';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
@@ -17,7 +17,7 @@ import {
   ConfirmationInterface,
 } from '@/schemas/confirmaton.schema';
 
-import usePersist, { StorageType } from '@/hooks/usePersist';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 function Verificaton(): JSX.Element {
   const { getPersistedData } = usePersist();

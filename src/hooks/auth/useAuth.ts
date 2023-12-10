@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
-import usePersist, { StorageType } from './usePersist';
+import usePersist, { StorageType } from '../common/usePersist';
 import api, { ErrorResponse, RequestType } from '@/api';
 import { UserInterface } from '@/schemas/user.schema';
 
