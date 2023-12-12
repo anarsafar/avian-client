@@ -19,7 +19,6 @@ function Protected({ element }: ComponentProps): ReactNode {
       navigate('/auth/signin');
     }
     if (isError) {
-      navigate('/auth/signin');
       logoutHandler(accessToken);
     }
   }, [isLoading, user, navigate, isError, accessToken, logoutHandler]);

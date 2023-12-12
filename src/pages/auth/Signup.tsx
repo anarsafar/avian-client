@@ -289,9 +289,13 @@ export default function SignUp() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} isDisabled={isPending} />
-            <SocialButton icon={facebook} isDisabled={isPending} />
-            <SocialButton icon={github} isDisabled={isPending} />
+            <SocialButton icon={google} isDisabled={isPending} type="google" />
+            <SocialButton
+              icon={facebook}
+              isDisabled={isPending}
+              type="facebook"
+            />
+            <SocialButton icon={github} isDisabled={isPending} type="github" />
           </Flex>
 
           <Text

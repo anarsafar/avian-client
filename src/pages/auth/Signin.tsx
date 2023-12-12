@@ -12,7 +12,11 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link as BrowserLink, useNavigate } from 'react-router-dom';
+import {
+  Link as BrowserLink,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -22,6 +26,7 @@ import google from '@assets/social/icons8-google.svg';
 import facebook from '@assets/social/icons8-facebook.svg';
 import github from '@assets/social/icons8-github.svg';
 
+import { useLayoutEffect } from 'react';
 import SocialButton from '@/components/auth/SocialButton';
 import useCustomToast from '@/components/common/CustomToast';
 import CustomInput from '@/components/auth/CustomInput';
@@ -43,12 +48,16 @@ export default function SignIn() {
   } = useForm<LoginInterface>({
     resolver: zodResolver(LoginValidate),
   });
-
+  const location = useLocation();
   const navigate = useNavigate();
   const toast = useCustomToast();
   const { persistData } = usePersist();
   const text = useColorModeValue('gray-4', 'text-dark');
   const errorColor = useColorModeValue('red.300', 'red.400');
+
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('accessToken');
+  const socialError = queryParams.get('error');
 
   const { mutateAsync: logIn, isPending } = useMutation({
     mutationFn: (data: LoginInterface) =>
@@ -65,6 +74,24 @@ export default function SignIn() {
     retry: false,
     networkMode: 'always',
   });
+
+  useLayoutEffect(() => {
+    if (token) {
+      persistData<AccessToken>(
+        { accessToken: token },
+        'access-token',
+        StorageType.Local
+      );
+      navigate('/');
+    }
+  }, [token, socialError, persistData, navigate, toast]);
+
+  useLayoutEffect(() => {
+    if (socialError) {
+      toast(true, 'Error during sign up', { error: socialError });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socialError]);
 
   return (
     <>
@@ -232,9 +259,13 @@ export default function SignIn() {
             />
           </Flex>
           <Flex gap="1rem" mt="2.4rem" mb="1.3rem" justifyContent="center">
-            <SocialButton icon={google} isDisabled={isPending} />
-            <SocialButton icon={facebook} isDisabled={isPending} />
-            <SocialButton icon={github} isDisabled={isPending} />
+            <SocialButton icon={google} isDisabled={isPending} type="google" />
+            <SocialButton
+              icon={facebook}
+              isDisabled={isPending}
+              type="facebook"
+            />
+            <SocialButton icon={github} isDisabled={isPending} type="github" />
           </Flex>
           <Text
             fontFamily="openSans"

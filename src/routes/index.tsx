@@ -4,11 +4,13 @@ import { AnimatePresence } from 'framer-motion';
 import AuthView from '@/pages/auth/AuthView';
 import ErrorPage from '@/pages/error/Error';
 import Verificaton from '@/pages/verify/Verification';
+import AppLayout from '@/pages/app';
 import RecoverAccount from '@/pages/password/RecoverAccount';
 import ResetPassword from '@/pages/password/ResetPassword';
-import Protected from './Protected';
+
 import Animate from '@/components/common/Animate';
-import AppLayout from '@/pages/app';
+
+import Protected from './Protected';
 
 function AppRoutes() {
   return (
