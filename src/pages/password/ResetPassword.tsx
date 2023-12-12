@@ -157,6 +157,7 @@ function ResetPassword() {
                 placeholder="Enter your new password"
                 errors={errors}
                 register={register}
+                isAuth={false}
               />
               <Text
                 alignSelf="start"
@@ -178,6 +179,7 @@ function ResetPassword() {
                 placeholder="Confirm your new password"
                 errors={errors}
                 register={register}
+                isAuth={false}
               />
               <Text
                 fontFamily="openSans"

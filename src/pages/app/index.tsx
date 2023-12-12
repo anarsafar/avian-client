@@ -255,9 +255,6 @@ function AppLayout() {
                           fontSize="1.3rem"
                           fontFamily="openSans"
                           fontWeight={400}
-                          _hover={{
-                            bg: 'red-1',
-                          }}
                           onClick={() =>
                             logoutHandler(accessToken?.accessToken)
                           }

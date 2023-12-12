@@ -48,6 +48,7 @@ export default function SignIn() {
   const toast = useCustomToast();
   const { persistData } = usePersist();
   const text = useColorModeValue('gray-4', 'text-dark');
+  const errorColor = useColorModeValue('red.300', 'red.400');
 
   const { mutateAsync: logIn, isPending } = useMutation({
     mutationFn: (data: LoginInterface) =>
@@ -125,12 +126,13 @@ export default function SignIn() {
               placeholder="enter your email"
               errors={errors}
               register={register}
+              isAuth
             />
             <Text
               fontFamily="openSans"
               fontSize="1rem"
               fontWeight="300"
-              color="red.300"
+              color={errorColor}
               height="1.4rem"
               position="relative"
               top="3px"
@@ -155,6 +157,7 @@ export default function SignIn() {
               placeholder="enter your password"
               errors={errors}
               register={register}
+              isAuth
             />
             <Flex mt="4px">
               <Link
@@ -170,13 +173,13 @@ export default function SignIn() {
                 Forgot Password?
               </Link>
               <Text
-                pt="1px"
+                pt="2px"
                 flexGrow="1"
                 flexBasis="50%"
                 fontFamily="openSans"
                 fontSize="1rem"
                 fontWeight="300"
-                color="red.300"
+                color={errorColor}
                 lineHeight="1rem"
                 height="1.4rem"
                 textAlign="right"

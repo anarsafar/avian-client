@@ -101,6 +101,7 @@ function RecoverAccount() {
                 placeholder="enter your email"
                 errors={errors}
                 register={register}
+                isAuth={false}
               />
               <Text
                 alignSelf="flex-start"

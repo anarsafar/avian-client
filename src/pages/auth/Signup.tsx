@@ -46,6 +46,7 @@ export default function SignUp() {
   const toast = useCustomToast();
   const { persistData } = usePersist();
   const text = useColorModeValue('gray-4', 'text-dark');
+  const errorColor = useColorModeValue('red.300', 'red.400');
 
   const { mutateAsync: signUp, isPending } = useMutation({
     mutationFn: (data: SignupInterface) =>
@@ -134,12 +135,13 @@ export default function SignUp() {
               placeholder="enter your email"
               errors={errors}
               register={register}
+              isAuth
             />
             <Text
               fontFamily="openSans"
               fontSize="1rem"
               fontWeight="300"
-              color="red.300"
+              color={errorColor}
               height="1.4rem"
               position="relative"
               top="3px"
@@ -164,12 +166,13 @@ export default function SignUp() {
               placeholder="enter your name"
               errors={errors}
               register={register}
+              isAuth
             />
             <Text
               fontFamily="openSans"
               fontSize="1rem"
               fontWeight="300"
-              color="red.300"
+              color={errorColor}
               height="1.4rem"
               position="relative"
               top="3px"
@@ -194,12 +197,13 @@ export default function SignUp() {
               placeholder="enter your password"
               errors={errors}
               register={register}
+              isAuth
             />
             <Text
               fontFamily="openSans"
               fontSize="1rem"
               fontWeight="300"
-              color="red.300"
+              color={errorColor}
               height="1.4rem"
               position="relative"
               top="3px"
@@ -224,12 +228,13 @@ export default function SignUp() {
               placeholder="confirm your password"
               errors={errors}
               register={register}
+              isAuth
             />
             <Text
               fontFamily="openSans"
               fontSize="1rem"
               fontWeight="300"
-              color="red.300"
+              color={errorColor}
               height="1.4rem"
               position="relative"
               top="3px"

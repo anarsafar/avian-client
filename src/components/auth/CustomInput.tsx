@@ -20,6 +20,7 @@ interface CustomInputProps<T extends FieldValues>
   id: keyof T;
   errors: FieldErrors<T>;
   register: UseFormRegister<T>;
+  isAuth: boolean;
 }
 
 function CustomInput<T extends FieldValues>({
@@ -28,12 +29,23 @@ function CustomInput<T extends FieldValues>({
   placeholder,
   errors,
   register,
+  isAuth,
   ...rest
 }: CustomInputProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
-  const input = useColorModeValue('input-light', 'input-dark');
-  const placeholderColor = useColorModeValue('gray-5', 'text-darker');
-  const text = useColorModeValue('gray-4', 'text-dark');
+  const input = useColorModeValue(
+    'input-light',
+    isAuth ? 'input-dark' : 'input-light'
+  );
+  const placeholderColor = useColorModeValue(
+    'gray-5',
+    isAuth ? 'text-darker' : 'gray-5'
+  );
+  const text = useColorModeValue('gray-4', isAuth ? 'text-dark' : 'gray-4');
+  const errorColor = useColorModeValue(
+    'red.300',
+    isAuth ? 'red.400' : 'red.300'
+  );
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -50,8 +62,8 @@ function CustomInput<T extends FieldValues>({
         paddingRight="3.5rem"
         backgroundColor={input}
         color={text}
-        border={errors[id] ? '1px solid' : 'none'}
-        borderColor={errors[id] ? 'red.300' : input}
+        border={errors[id] ? '2px solid' : 'none'}
+        borderColor={errors[id] ? errorColor : input}
         borderRadius="0.5rem"
         fontFamily="openSans"
         fontSize="1.2rem"
