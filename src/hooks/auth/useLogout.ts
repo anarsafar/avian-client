@@ -1,10 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
 const useLogout = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { mutateAsync: logOut } = useMutation({
     mutationFn: (token: string | undefined) =>
@@ -26,6 +27,7 @@ const useLogout = () => {
   const logoutHandler = (accessToken: string | undefined) => {
     logOut(accessToken);
     localStorage.clear();
+    queryClient.clear();
     navigate('/auth/signin');
   };
 

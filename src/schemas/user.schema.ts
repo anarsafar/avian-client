@@ -76,6 +76,12 @@ export const UserZodSchema = z.object({
       confirmationTimestamp: z.date().optional(),
     })
     .optional(),
+
+  preferences: z
+    .object({
+      darkMode: z.boolean().default(false),
+    })
+    .optional(),
 });
 
 export type UserInterface = z.infer<typeof UserZodSchema>;

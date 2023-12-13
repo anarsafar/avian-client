@@ -22,7 +22,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import appLogo from '@assets/logos/bird.svg';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   InfoOutlineIcon,
   MoonIcon,
@@ -40,6 +40,7 @@ import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/common/usePersist';
 import { UserInterface } from '@/schemas/user.schema';
+import useUser from '@/hooks/common/useUser';
 
 function AppLayout() {
   const { getPersistedData } = usePersist();
@@ -54,10 +55,22 @@ function AppLayout() {
   const [activeTab, setActiveTab] = useState(0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail } = useSendVerification();
+  const { updateUser } = useUser();
+
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const text = useColorModeValue('gray-4', 'text-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
+
+  const updateDarkMode = () => {
+    updateUser({ darkMode: colorMode === 'light' });
+    toggleColorMode();
+  };
+
+  useEffect(() => {
+    updateUser({ darkMode: colorMode === 'light' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTabChange = (index: number) => setActiveTab(index);
 
@@ -175,7 +188,7 @@ function AppLayout() {
                     <Button
                       mt="auto"
                       variant="unstyled"
-                      onClick={toggleColorMode}
+                      onClick={updateDarkMode}
                     >
                       {colorMode === 'light' ? (
                         <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
@@ -219,8 +232,8 @@ function AppLayout() {
                         }}
                       >
                         <Avatar
-                          name="Ryan Florence"
-                          src="https://bit.ly/ryan-florence"
+                          name={user?.userInfo.name}
+                          src={user?.userInfo.avatar}
                           w="100%"
                           h="100%"
                         >
@@ -242,6 +255,7 @@ function AppLayout() {
                           fontFamily="openSans"
                           color={text}
                           fontWeight={400}
+                          isDisabled={user?.authType === 'social'}
                           onClick={() =>
                             sendVerificationEmail({
                               email: user?.authInfo.email,

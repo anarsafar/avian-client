@@ -20,7 +20,15 @@ function AppRoutes() {
           <Route
             path="/"
             index
-            element={<Protected element={<AppLayout />} />}
+            element={
+              <Protected
+                element={
+                  <Animate>
+                    <AppLayout />
+                  </Animate>
+                }
+              />
+            }
           />
           <Route path="auth/signin" element={<AuthView isSignUp={false} />} />
           <Route path="auth/signup" element={<AuthView isSignUp />} />
