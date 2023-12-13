@@ -7,11 +7,13 @@ import {
   Flex,
   Grid,
   GridItem,
+  Heading,
   Image,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Tab,
   TabList,
   TabPanel,
@@ -54,7 +56,7 @@ function AppLayout() {
 
   const [activeTab, setActiveTab] = useState(0);
   const { logoutHandler } = useLogout();
-  const { sendVerificationEmail } = useSendVerification();
+  const { sendVerificationEmail, isPending } = useSendVerification();
   const { updateUser } = useUser();
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -76,6 +78,44 @@ function AppLayout() {
 
   const getFillColor = (tabIndex: number) =>
     tabIndex === activeTab ? '#8E99F3' : logo;
+
+  if (isPending) {
+    return (
+      <Flex justify="center" align="center" w="100vw" h="100vh" p="1rem">
+        <Flex direction="column" alignItems="center">
+          <Heading
+            textAlign="center"
+            as="h1"
+            color={text}
+            fontSize="1.6rem"
+            fontFamily="openSans"
+            fontWeight="600"
+            marginBottom="1rem"
+          >
+            Sending verification code
+          </Heading>
+          <Heading
+            textAlign="center"
+            as="h1"
+            color={text}
+            fontSize="1.6rem"
+            fontFamily="openSans"
+            fontWeight="600"
+            marginBottom="1.4rem"
+          >
+            Please wait...
+          </Heading>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Flex>
+      </Flex>
+    );
+  }
 
   return (
     <>

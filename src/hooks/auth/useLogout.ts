@@ -27,6 +27,7 @@ const useLogout = () => {
   const logoutHandler = (accessToken: string | undefined) => {
     logOut(accessToken);
     localStorage.clear();
+    sessionStorage.clear();
     queryClient.clear();
     navigate('/auth/signin');
   };

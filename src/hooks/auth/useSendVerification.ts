@@ -14,7 +14,7 @@ const useSendVerification = () => {
   const navigate = useNavigate();
   const toast = useCustomToast();
 
-  const { mutateAsync: sendVerificationEmail, isPending } = useMutation({
+  const { mutate: sendVerificationEmail, isPending } = useMutation({
     mutationFn: (formData: EmailValidateInterface) =>
       api<SuccessResponse, ConfirmationBaseInterface>(
         { email: formData.email, confirmationType: 'password' },
