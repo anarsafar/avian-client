@@ -28,7 +28,12 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
 
   return (
     <Box as="section" id="inbox" p="2.2rem 0">
-      <Flex justifyContent="space-between" alignItems="center" mx="1.7rem">
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        ms="1.7rem"
+        me="2rem"
+      >
         <Text
           as="h1"
           fontFamily="openSans"
@@ -44,7 +49,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
           <Image src={sidebarIcon} w="100%" h="100%" />
         </Button>
       </Flex>
-      <Box mx="1.7rem">
+      <Box ms="1.7rem" me="2.7rem">
         <FormControl mt="2.2rem">
           <InputGroup backgroundColor={input} borderRadius="0.9rem">
             <InputLeftElement pointerEvents="none" mt="0.4rem" ms="0.4rem">
@@ -75,7 +80,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
         </FormControl>
       </Box>
       <Scrollbars style={{ height: 'calc(100vh - 12.5rem)' }} autoHide>
-        <Flex direction="column" mt="2rem">
+        <Flex direction="column" mt="2rem" me="1rem">
           {children}
         </Flex>
       </Scrollbars>

@@ -22,7 +22,7 @@ function Conversation(): JSX.Element {
       <Stack
         direction="column"
         textAlign="left"
-        maxW="17rem"
+        maxW="15rem"
         whiteSpace="nowrap"
         overflow="hidden"
         textOverflow="ellipsis"

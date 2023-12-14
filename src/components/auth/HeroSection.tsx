@@ -32,6 +32,8 @@ function HeroSection() {
         objectFit="cover"
         filter="blur(27px)"
         zIndex={-1}
+        width="100%"
+        height="100%"
       />
       <Image
         src={cover}
