@@ -37,6 +37,7 @@ import logout from '@assets/layout/logout.svg';
 
 import Animate from '@/components/common/Animate';
 import Inbox from '@/components/messages/Inbox';
+import ChatView from '@/components/messages/chat/ChatView';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
@@ -353,7 +354,9 @@ function AppLayout() {
                 </Animate>
               </TabPanels>
             </GridItem>
-            <GridItem area="chatbox">Chatbox</GridItem>
+            <GridItem area="chatbox">
+              <ChatView />
+            </GridItem>
           </Grid>
         </Tabs>
       </Box>

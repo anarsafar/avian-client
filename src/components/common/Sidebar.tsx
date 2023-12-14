@@ -61,6 +61,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
               lineHeight="1.6rem"
               letterSpacing="0.16px"
               color={text}
+              focusBorderColor={logo}
               _placeholder={{
                 fontFamily: 'openSans',
                 fontSize: '1.2rem',

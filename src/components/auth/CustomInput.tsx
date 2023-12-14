@@ -46,6 +46,7 @@ function CustomInput<T extends FieldValues>({
     'red.300',
     isAuth ? 'red.400' : 'red.300'
   );
+  const borderColor = useColorModeValue('#C5C5C6', '#6b7280');
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -70,6 +71,7 @@ function CustomInput<T extends FieldValues>({
         fontWeight="400"
         lineHeight="1.6rem"
         letterSpacing="0.16px"
+        focusBorderColor={borderColor}
         _placeholder={{
           fontFamily: 'openSans',
           fontSize: '1.2rem',
