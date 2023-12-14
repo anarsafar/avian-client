@@ -1,5 +1,6 @@
-import { Flex, useMediaQuery } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 
+import { useEffect, useState } from 'react';
 import HeroSection from '@/components/auth/HeroSection';
 
 import useHeight from '@/hooks/common/useHeight';
@@ -11,13 +12,23 @@ interface AuthViewProps {
 }
 
 function AuthView({ isSignUp }: AuthViewProps) {
-  const [isLargerThan768] = useMediaQuery('(min-width: 768px)');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [height] = useHeight();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <Flex as="section" height={height} padding="2.4rem">
       {isSignUp ? <SignUp /> : <SignIn />}
-      {isLargerThan768 && <HeroSection />}
+      {windowWidth >= 768 && <HeroSection />}
     </Flex>
   );
 }

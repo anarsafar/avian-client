@@ -139,7 +139,7 @@ function Verificaton(): JSX.Element {
             <Image src={arrowIcon} />
           </Button>
           <Box w="10rem">
-            <Image src={emailLogo} />
+            <Image src={emailLogo} alt="email icon" loading="eager" />
           </Box>
           <Heading
             as="h1"

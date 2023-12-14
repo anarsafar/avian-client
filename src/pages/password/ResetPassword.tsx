@@ -120,10 +120,10 @@ function ResetPassword() {
             top="-4rem"
             left="-1rem"
           >
-            <Image src={arrowIcon} />
+            <Image src={arrowIcon} loading="eager" />
           </Button>
           <Box w="10rem">
-            <Image src={passwordIcon} />
+            <Image src={passwordIcon} loading="eager" />
           </Box>
           <Heading
             as="h1"

@@ -1,5 +1,5 @@
-import { Box, Heading } from '@chakra-ui/react';
-import pattern from '@assets/layout/pattern.jpg';
+import { Box, Heading, Image } from '@chakra-ui/react';
+import pattern from '@assets/layout/pattern.png';
 import cover from '@assets/layout/could.png';
 
 function HeroSection() {
@@ -17,22 +17,33 @@ function HeroSection() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: `url(${pattern})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        filter: 'blur(27px)',
         zIndex: -1,
       }}
     >
-      <Box
+      <Image
+        src={pattern}
+        alt="Pattern Background"
+        loading="eager"
+        position="absolute"
+        top={0}
+        left={0}
+        right={0}
+        bottom={0}
+        objectFit="cover"
+        filter="blur(27px)"
+        zIndex={-1}
+      />
+      <Image
+        src={cover}
+        alt="Cover Image"
+        loading="eager"
         position="relative"
         zIndex={1}
-        backgroundImage={`url(${cover})`}
-        backgroundPosition="center"
-        backgroundSize="cover"
+        objectFit="cover"
         height="100%"
         width="100%"
       />
+
       <Box
         position="absolute"
         width={{ base: '80%', lg: '38.3rem' }}

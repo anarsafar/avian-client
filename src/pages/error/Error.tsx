@@ -45,7 +45,7 @@ function ErrorPage() {
         textAlign="center"
       >
         <Box>
-          <Image src={errorIcon} />
+          <Image src={errorIcon} loading="eager" />
         </Box>
 
         <Heading

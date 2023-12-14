@@ -66,10 +66,10 @@ function RecoverAccount() {
             top="-4rem"
             left="-1rem"
           >
-            <Image src={arrowIcon} />
+            <Image src={arrowIcon} loading="eager" />
           </Button>
           <Box w="10rem">
-            <Image src={UserIcon} />
+            <Image src={UserIcon} loading="eager" />
           </Box>
           <Heading
             as="h1"
