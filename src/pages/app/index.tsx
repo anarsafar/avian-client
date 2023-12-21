@@ -38,6 +38,7 @@ import logout from '@assets/layout/logout.svg';
 import Animate from '@/components/common/Animate';
 import Inbox from '@/components/messages/Inbox';
 import ChatView from '@/components/messages/chat/ChatView';
+import Contacts from '@/components/contacts/Contacts';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
@@ -333,8 +334,8 @@ function AppLayout() {
                   </TabPanel>
                 </Animate>
                 <Animate>
-                  <TabPanel>
-                    <p>Content for Tab 2</p>
+                  <TabPanel h="100vh" p="0">
+                    <Contacts />
                   </TabPanel>
                 </Animate>
                 <Animate>
