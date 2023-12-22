@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { DeleteIcon, EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Button,
@@ -17,6 +18,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import useContact from '@/hooks/common/useContact';
 
 interface ContactInterface {
   contact: {
@@ -41,9 +43,11 @@ interface ContactInterface {
 function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const bg = useColorModeValue('bg-light', 'bg-dark');
-
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
+
   return (
     <Button
       p="1.7rem 0.8rem 1.6rem 1.8rem"
@@ -158,16 +162,20 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
               Close
             </Button>
             <Button
-              variant="unstyled"
-              h="auto"
               bg="#FF7961"
-              p="0.7rem 1rem"
+              p="1.6rem"
               lineHeight="1.8rem"
               fontFamily="openSans"
               fontSize="1.2rem"
               color="white"
               _hover={{
                 bg: '#FF5F44',
+              }}
+              isLoading={isPending}
+              loadingText="deleting..."
+              onClick={async () => {
+                await deleteOrBlockContact({ action: 'delete' });
+                onClose();
               }}
             >
               Proceed

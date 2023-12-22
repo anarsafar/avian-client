@@ -4,7 +4,7 @@ import Sidebar from '../common/Sidebar';
 
 function Inbox(): JSX.Element {
   return (
-    <Sidebar header="Messages" sidebarIcon={messageButton}>
+    <Sidebar header="Messages" sidebarIcon={messageButton} type="conversation">
       <Conversation />
       <Conversation />
       <Conversation />

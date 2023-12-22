@@ -70,7 +70,6 @@ function Contacts(): JSX.Element {
         accessToken?.accessToken
       ),
     enabled: typeof accessToken !== undefined,
-    refetchOnWindowFocus: false,
     retry: false,
     networkMode: 'always',
   });
@@ -158,7 +157,7 @@ function Contacts(): JSX.Element {
   }
 
   return (
-    <Sidebar header="Contacts" sidebarIcon={contactIcon}>
+    <Sidebar header="Contacts" sidebarIcon={contactIcon} type="contacts">
       {content}
     </Sidebar>
   );
