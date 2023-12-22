@@ -25,7 +25,10 @@ export const SignupValidate = LoginValidate.extend({
     .string()
     .trim()
     .min(1, { message: 'Name is required' })
-    .min(3, 'Name must be at least 3 characters long'),
+    .min(3, 'Name must be at least 3 characters long')
+    .refine((value) => /^[A-Za-z]+$/.test(value), {
+      message: 'Must contain only letters',
+    }),
   confirmPassword: z
     .string()
     .trim()

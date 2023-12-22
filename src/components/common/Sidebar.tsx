@@ -4,7 +4,6 @@ import {
   Button,
   Flex,
   FormControl,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
@@ -29,7 +28,7 @@ import { ValidateContact, ValidateContactType } from '@/schemas/contact.schema';
 
 interface SidebarProps {
   children: ReactNode;
-  sidebarIcon: string;
+  sidebarIcon: JSX.Element;
   header: 'Messages' | 'Contacts';
   type: 'conversation' | 'contacts';
 }
@@ -187,7 +186,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
           {header}
         </Text>
         <Button variant="unstyled" w="1.7rem" h="1.7rem" onClick={onOpen}>
-          <Image src={sidebarIcon} w="100%" h="100%" />
+          {sidebarIcon}
         </Button>
       </Flex>
       <Box ms="1.7rem" me="2.7rem">

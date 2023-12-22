@@ -43,7 +43,10 @@ export const UserZodSchema = z.object({
       .string()
       .trim()
       .min(1, { message: 'Name is required.' })
-      .min(3, 'Name must be at least 3 characters long'),
+      .min(3, 'Name must be at least 3 characters long')
+      .refine((value) => /^[A-Za-z]+$/.test(value), {
+        message: 'Name must contain only letters',
+      }),
     bio: z
       .string()
       .trim()

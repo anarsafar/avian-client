@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import emailLogo from '@assets/layout/icons8-email-94.png';
 import arrowIcon from '@assets/layout/arrow.svg';
 
 import OTPInput from '@/components/auth/OTPInput';
@@ -139,7 +138,11 @@ function Verificaton(): JSX.Element {
             <Image src={arrowIcon} />
           </Button>
           <Box w="10rem">
-            <Image src={emailLogo} alt="email icon" loading="eager" />
+            <Image
+              src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
+              alt="email icon"
+              loading="eager"
+            />
           </Box>
           <Heading
             as="h1"

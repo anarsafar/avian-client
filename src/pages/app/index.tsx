@@ -24,7 +24,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import appLogo from '@assets/logos/bird.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   InfoOutlineIcon,
   MoonIcon,
@@ -44,10 +44,10 @@ import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/common/usePersist';
 import { UserInterface } from '@/schemas/user.schema';
-import useUser from '@/hooks/common/useUser';
+// import useUser from '@/hooks/common/useUser';
 
 function AppLayout() {
-  const { getPersistedData } = usePersist();
+  const { getPersistedData, persistData } = usePersist();
 
   const { current: user } = useRef(
     getPersistedData<UserInterface>('user', StorageType.Local)
@@ -56,10 +56,14 @@ function AppLayout() {
     getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
   );
 
-  const [activeTab, setActiveTab] = useState(0);
+  const { current: activeTabIndex } = useRef(
+    getPersistedData<number>('activeTabIndex', StorageType.Session)
+  );
+
+  const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
-  const { updateUser } = useUser();
+  //   const { updateUser } = useUser();
 
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue('bg-light', 'bg-dark');
@@ -67,16 +71,25 @@ function AppLayout() {
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
 
   const updateDarkMode = () => {
-    updateUser({ darkMode: colorMode === 'light' });
+    // updateUser({ darkMode: colorMode === 'light' });
     toggleColorMode();
   };
 
-  useEffect(() => {
-    updateUser({ darkMode: colorMode === 'light' });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   useEffect(() => {
+  //     if (user && user.preferences && 'darkMode' in user.preferences) {
+  //       localStorage.setItem(
+  //         'chakra-ui-color-mode',
+  //         user.preferences.darkMode ? 'dark' : 'light'
+  //       );
+  //     } else {
+  //       // add default value
+  //     }
+  //   }, [user]);
 
-  const handleTabChange = (index: number) => setActiveTab(index);
+  const handleTabChange = (index: number) => {
+    persistData(index, 'activeTabIndex', StorageType.Session);
+    setActiveTab(index);
+  };
 
   const getFillColor = (tabIndex: number) =>
     tabIndex === activeTab ? '#8E99F3' : logo;
@@ -134,6 +147,7 @@ function AppLayout() {
           maxW="140rem"
           margin="auto"
           variant="unstyled"
+          index={activeTab}
           onChange={handleTabChange}
           isManual
           isLazy
