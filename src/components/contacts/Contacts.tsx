@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import {
   Box,
   Button,
+  Flex,
   Skeleton,
   Stack,
   Text,
@@ -123,23 +124,39 @@ function Contacts(): JSX.Element {
     );
   } else if (isError) {
     content = (
-      <Button
-        variant="unstyled"
-        bg="#FF7961"
+      <Flex
         p="1.7rem 0.8rem 1.6rem 1.8rem"
-        mx="1.7rem"
-        h="auto"
-        lineHeight="1.8rem"
-        fontFamily="openSans"
-        fontSize="1.2rem"
-        color="white"
-        _hover={{
-          bg: '#FF5F44',
-        }}
-        onClick={() => refetch()}
+        direction="column"
+        alignItems="center"
       >
-        Try again
-      </Button>
+        <Text
+          lineHeight="1.8rem"
+          fontFamily="openSans"
+          fontSize="1.2rem"
+          p="1rem 1.8rem"
+          color={textTheme}
+          fontWeight={600}
+        >
+          Can't get contacts
+        </Text>
+        <Button
+          variant="unstyled"
+          bg="#FF7961"
+          padding="1rem 2.4rem"
+          mx="1.7rem"
+          h="auto"
+          lineHeight="1.8rem"
+          fontFamily="openSans"
+          fontSize="1.2rem"
+          color="white"
+          _hover={{
+            bg: '#FF5F44',
+          }}
+          onClick={() => refetch()}
+        >
+          Try again
+        </Button>
+      </Flex>
     );
   } else if (contacts?.contacts.length === 0) {
     content = (

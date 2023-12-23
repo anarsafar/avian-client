@@ -76,6 +76,13 @@ const theme = extendTheme({
     '8xl': '9.6rem',
     '9xl': '16rem',
   },
+  components: {
+    Switch: {
+      baseStyle: {
+        track: { bg: 'violet-2' },
+      },
+    },
+  },
   fonts: {
     openSans: `'Open Sans', sans-serif`,
     fredoka: `'Fredoka', sans-serif`,

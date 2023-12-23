@@ -19,31 +19,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import useContact from '@/hooks/common/useContact';
-
-interface ContactInterface {
-  contact: {
-    user: {
-      _id: string;
-      authInfo: {
-        providerId?: string;
-        email?: string;
-      };
-      userInfo: {
-        name: string;
-        avatar: string;
-      };
-      lastSeen: string;
-      online: boolean;
-    };
-    isBlocked: boolean;
-  };
-  textTheme: string;
-}
+import useContactInfo from '@/hooks/common/useContactInfo';
+import { ContactInterface } from '@/utils/contact.interface';
 
 function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
+
+  const { modal, infoOnOpen } = useContactInfo({
+    contact,
+    textTheme,
+  });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
@@ -95,6 +82,7 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
               fontFamily="openSans"
               color={textTheme}
               fontWeight={400}
+              onClick={infoOnOpen}
             >
               <InfoOutlineIcon />
               <Text ms="1rem">Contact Information</Text>
@@ -113,6 +101,7 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
           </MenuList>
         </Menu>
       </Flex>
+      {modal}
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
         <ModalOverlay />
         <ModalContent py="1rem" bg={bg}>
