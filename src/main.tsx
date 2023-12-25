@@ -3,6 +3,7 @@ import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import 'yet-another-react-lightbox/styles.css';
 
 import AppRoutes from '@/routes';
 import Fonts from '@/chakra/chakra-fonts';

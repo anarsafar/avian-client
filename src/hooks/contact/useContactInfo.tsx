@@ -4,6 +4,9 @@ import {
   DeleteIcon,
   NotAllowedIcon,
 } from '@chakra-ui/icons';
+import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+
 import {
   Avatar,
   Divider,
@@ -23,6 +26,8 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useState } from 'react';
+
 import useCustomModal from '@hooks/custom/useCustomModal';
 import { ContactInterface } from '@/utils/contact.interface';
 
@@ -34,9 +39,9 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   } = useDisclosure();
 
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
+  const bgColor = useColorModeValue('bg-light', 'bg-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
-
   const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal({
     contact,
   });
@@ -44,6 +49,8 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal({
     contact,
   });
+
+  const [open, setOpen] = useState<boolean>(false);
 
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
@@ -96,11 +103,30 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
         <ModalBody p="0">
           <Flex p="1.6rem" gap="1rem" alignItems="center">
             <Avatar
+              as="button"
+              onClick={() => setOpen(true)}
               w="4rem"
               h="4rem"
               name={contact.user.userInfo.name}
               src={contact.user.userInfo?.avatar}
+              border="3px solid"
+              borderColor={bgColor}
+              _hover={{
+                borderColor: 'violet-2',
+              }}
             />
+            <Lightbox
+              open={open}
+              close={() => setOpen(false)}
+              plugins={[Zoom]}
+              styles={{ container: { backgroundColor: 'rgba(0, 0, 0, .7)' } }}
+              slides={[{ src: contact.user.userInfo?.avatar }]}
+              zoom={{
+                scrollToZoom: true,
+                maxZoomPixelRatio: 5,
+              }}
+            />
+
             <Flex direction="column">
               <Text
                 color={textTheme}
