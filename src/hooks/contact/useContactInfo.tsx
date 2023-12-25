@@ -24,6 +24,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ContactInterface } from '@/utils/contact.interface';
+import useContactModal from './useContactModal';
 
 function useContactInfo({ contact }: ContactInterface) {
   const {
@@ -34,6 +35,17 @@ function useContactInfo({ contact }: ContactInterface) {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
+
+  const { modal: deleteContactModal, onOpen: deleteOpen } = useContactModal({
+    contact,
+    textTheme,
+  });
+
+  const { modal: blockContactModal, onOpen: blockOpen } = useContactModal({
+    contact,
+    textTheme,
+  });
+
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
       <ModalOverlay />
@@ -98,6 +110,10 @@ function useContactInfo({ contact }: ContactInterface) {
                 fontWeight={600}
                 lineHeight="1.8rem"
                 letterSpacing="0.16px"
+                maxW="18rem"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
               >
                 {contact.user.userInfo.name}
               </Text>
@@ -173,16 +189,28 @@ function useContactInfo({ contact }: ContactInterface) {
             lineHeight="1.8rem"
             letterSpacing="0.16px"
           >
-            <ListItem color="red-3" as="button" w="100%" textAlign="left">
+            <ListItem
+              color="red-3"
+              as="button"
+              w="100%"
+              textAlign="left"
+              onClick={blockOpen}
+            >
               <ListIcon
                 as={NotAllowedIcon}
                 color="red-3"
                 fontSize="2rem"
                 me="1.2rem"
               />
-              block user
+              {contact.isBlocked ? 'unblock' : 'block'} contact
             </ListItem>
-            <ListItem color="red-3" w="100%" textAlign="left" as="button">
+            <ListItem
+              color="red-3"
+              w="100%"
+              textAlign="left"
+              as="button"
+              onClick={deleteOpen}
+            >
               <ListIcon
                 as={DeleteIcon}
                 color="red-3"
@@ -194,6 +222,14 @@ function useContactInfo({ contact }: ContactInterface) {
           </List>
         </ModalBody>
       </ModalContent>
+      {deleteContactModal({
+        modalType: 'delete',
+        modalHeader: 'Delete Contact',
+      })}
+      {blockContactModal({
+        modalType: 'block',
+        modalHeader: contact.isBlocked ? 'Unblock Contact' : 'Block Contact',
+      })}
     </Modal>
   );
   return { infoIsOpen, infoOnOpen, infoOnClose, modal };

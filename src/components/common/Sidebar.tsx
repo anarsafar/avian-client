@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -16,9 +17,10 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ReactNode, useRef } from 'react';
-import Scrollbars from 'react-custom-scrollbars';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { ReactNode, useRef, useState } from 'react';
+import Scrollbars from 'react-custom-scrollbars';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useCustomToast from './CustomToast';
@@ -27,7 +29,7 @@ import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ValidateContact, ValidateContactType } from '@/schemas/contact.schema';
 
 interface SidebarProps {
-  children: ReactNode;
+  children: (contactName: string) => ReactNode | ReactNode;
   sidebarIcon: JSX.Element;
   header: 'Messages' | 'Contacts';
   type: 'conversation' | 'contacts';
@@ -53,11 +55,19 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
-  const queryClient = useQueryClient();
 
   const { current: accessToken } = useRef(
     getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
   );
+
+  const queryClient = useQueryClient();
+  //   const queryCache = queryClient.getQueryCache();
+  //   const contactCache = queryCache.find({
+  //     queryKey: ['contacts', accessToken?.accessToken],
+  //   });
+
+  //   console.log(contactCache?.state.data);
+  const [contactName, setContactName] = useState<string>('');
 
   const { mutateAsync: addContact, isPending } = useMutation({
     mutationFn: (contact: ValidateContactType) =>
@@ -207,6 +217,8 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
               letterSpacing="0.16px"
               color={text}
               focusBorderColor={logo}
+              value={contactName}
+              onChange={(e) => setContactName(e.target.value)}
               _placeholder={{
                 fontFamily: 'openSans',
                 fontSize: '1.2rem',
@@ -221,7 +233,7 @@ function Sidebar({ children, sidebarIcon, header }: SidebarProps): JSX.Element {
       </Box>
       <Scrollbars style={{ height: 'calc(100vh - 12.5rem)' }} autoHide>
         <Flex direction="column" mt="2rem" me="1rem">
-          {children}
+          {children(contactName)}
         </Flex>
       </Scrollbars>
     </Box>

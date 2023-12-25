@@ -7,24 +7,15 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react';
-import useContact from '@/hooks/common/useContact';
-import useContactInfo from '@/hooks/common/useContactInfo';
+import useContactInfo from '@/hooks/contact/useContactInfo';
 import { ContactInterface } from '@/utils/contact.interface';
+import useContactModal from '@/hooks/contact/useContactModal';
 
 function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
-  const bg = useColorModeValue('bg-light', 'bg-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
 
   const { modal, infoOnOpen } = useContactInfo({
@@ -32,8 +23,10 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
     textTheme,
   });
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
+  const { modal: customModal, onOpen: customOpen } = useContactModal({
+    contact,
+    textTheme,
+  });
 
   return (
     <Button
@@ -91,7 +84,7 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
               fontSize="1.3rem"
               fontFamily="openSans"
               fontWeight={400}
-              onClick={onOpen}
+              onClick={customOpen}
             >
               <DeleteIcon color="red-3" />
               <Text ms="1rem" color="red-3">
@@ -102,76 +95,7 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
         </Menu>
       </Flex>
       {modal}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
-        <ModalOverlay />
-        <ModalContent py="1rem" bg={bg}>
-          <ModalHeader
-            color={textTheme}
-            fontSize="1.6rem"
-            fontFamily="openSans"
-            borderRadius="1.9rem"
-            fontWeight={600}
-          >
-            Delete contact
-          </ModalHeader>
-          <ModalCloseButton
-            fontSize="1rem"
-            mt="1.5rem"
-            mr="1rem"
-            color={textTheme}
-            borderRadius="50%"
-            border="1px solid"
-            p="1.2rem"
-            borderColor={textTheme}
-          />
-          <ModalBody
-            fontSize="1.3rem"
-            fontFamily="openSans"
-            color={textTheme}
-            fontWeight={400}
-          >
-            Are you sure?
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="unstyled"
-              mr={3}
-              onClick={onClose}
-              h="auto"
-              bg="violet-2"
-              p="0.7rem 1rem"
-              lineHeight="1.8rem"
-              fontFamily="openSans"
-              fontSize="1.2rem"
-              color="white"
-              _hover={{
-                bg: 'violet-3',
-              }}
-            >
-              Close
-            </Button>
-            <Button
-              bg="#FF7961"
-              p="1.6rem"
-              lineHeight="1.8rem"
-              fontFamily="openSans"
-              fontSize="1.2rem"
-              color="white"
-              _hover={{
-                bg: '#FF5F44',
-              }}
-              isLoading={isPending}
-              loadingText="deleting..."
-              onClick={async () => {
-                await deleteOrBlockContact({ action: 'delete' });
-                onClose();
-              }}
-            >
-              Proceed
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {customModal({ modalType: 'delete', modalHeader: 'Delete Contact' })}
     </Button>
   );
 }

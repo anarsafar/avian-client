@@ -24,21 +24,25 @@ const messageIcon = (
 function Inbox(): JSX.Element {
   return (
     <Sidebar header="Messages" sidebarIcon={messageIcon} type="conversation">
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
-      <Conversation />
+      {() => (
+        <>
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+          <Conversation />
+        </>
+      )}
     </Sidebar>
   );
 }
