@@ -4,19 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import arrowIcon from '@assets/layout/arrow.svg';
-
 import OTPInput from '@/components/auth/OTPInput';
-import useCustomToast from '@/components/common/CustomToast';
 import CountDown from '@/components/auth/CountDown';
+
+import useCustomToast from '@/hooks/custom/useCustomToast';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import {
   ConfirmationBaseInterface,
   ConfirmationInterface,
-} from '@/schemas/confirmaton.schema';
-
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+} from '@/schemas/user/confirmaton.schema';
 
 function Verificaton(): JSX.Element {
   const { getPersistedData } = usePersist();
@@ -135,7 +133,20 @@ function Verificaton(): JSX.Element {
             top="-4rem"
             left="-1rem"
           >
-            <Image src={arrowIcon} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="#fff"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
           </Button>
           <Box w="10rem">
             <Image

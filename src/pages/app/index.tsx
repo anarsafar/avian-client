@@ -7,13 +7,11 @@ import {
   Flex,
   Grid,
   GridItem,
-  Heading,
   Image,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Spinner,
   Tab,
   TabList,
   TabPanel,
@@ -23,7 +21,6 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import appLogo from '@assets/logos/bird.svg';
 import { useRef, useState } from 'react';
 import {
   InfoOutlineIcon,
@@ -33,49 +30,26 @@ import {
 } from '@chakra-ui/icons';
 import { Helmet } from 'react-helmet-async';
 
-import logout from '@assets/layout/logout.svg';
+import logout from '@assets/common/logout.svg';
 
 import Animate from '@/components/common/Animate';
-import Inbox from '@/components/messages/Inbox';
-import ChatView from '@/components/messages/chat/ChatView';
+import Inbox from '@/components/messages/conversations/Inbox';
+import ChatView from '@/components/messages/chat';
 import Contacts from '@/components/contacts/Contacts';
+import Sidebar from '@/components/common/Sidebar';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/common/usePersist';
-import { UserInterface } from '@/schemas/user.schema';
-import Sidebar from '@/components/common/Sidebar';
-// import useUser from '@/hooks/common/useUser';
+
+import { UserInterface } from '@/schemas/user/user.schema';
+import { Loading } from '@/components/load-view';
 
 function AppLayout() {
-  const contactIcon = (
-    <Box>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="17"
-        height="17"
-        viewBox="0 0 14 14"
-        fill="none"
-      >
-        <path
-          d="M10.6667 4V6M10.6667 6V8M10.6667 6H12.6667M10.6667 6H8.66669M7.16669 3.25C7.16669 3.54547 7.10849 3.83806 6.99542 4.11104C6.88234 4.38402 6.71661 4.63206 6.50768 4.84099C6.29875 5.04992 6.05071 5.21566 5.77772 5.32873C5.50474 5.4418 5.21216 5.5 4.91669 5.5C4.62121 5.5 4.32863 5.4418 4.05565 5.32873C3.78267 5.21566 3.53463 5.04992 3.3257 4.84099C3.11676 4.63206 2.95103 4.38402 2.83796 4.11104C2.72489 3.83806 2.66669 3.54547 2.66669 3.25C2.66669 2.65326 2.90374 2.08097 3.3257 1.65901C3.74765 1.23705 4.31995 1 4.91669 1C5.51342 1 6.08572 1.23705 6.50768 1.65901C6.92963 2.08097 7.16669 2.65326 7.16669 3.25V3.25ZM0.666687 11.8233V11.75C0.666687 10.6228 1.11445 9.54183 1.91148 8.7448C2.70851 7.94777 3.78952 7.5 4.91669 7.5C6.04386 7.5 7.12486 7.94777 7.92189 8.7448C8.71892 9.54183 9.16669 10.6228 9.16669 11.75V11.8227C7.88367 12.5954 6.41376 13.0025 4.91602 13C3.36202 13 1.90802 12.57 0.666687 11.8227V11.8233Z"
-          stroke="#8E99F3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </Box>
-  );
-
   const { getPersistedData, persistData } = usePersist();
-
   const { current: user } = useRef(
     getPersistedData<UserInterface>('user', StorageType.Local)
   );
-  const { current: accessToken } = useRef(
-    getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
-  );
-
   const { current: activeTabIndex } = useRef(
     getPersistedData<number>('activeTabIndex', StorageType.Session)
   );
@@ -83,28 +57,11 @@ function AppLayout() {
   const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
-  //   const { updateUser } = useUser();
 
   const { colorMode, toggleColorMode } = useColorMode();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const text = useColorModeValue('gray-4', 'text-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
-
-  const updateDarkMode = () => {
-    // updateUser({ darkMode: colorMode === 'light' });
-    toggleColorMode();
-  };
-
-  //   useEffect(() => {
-  //     if (user && user.preferences && 'darkMode' in user.preferences) {
-  //       localStorage.setItem(
-  //         'chakra-ui-color-mode',
-  //         user.preferences.darkMode ? 'dark' : 'light'
-  //       );
-  //     } else {
-  //       // add default value
-  //     }
-  //   }, [user]);
 
   const handleTabChange = (index: number) => {
     persistData(index, 'activeTabIndex', StorageType.Session);
@@ -115,41 +72,7 @@ function AppLayout() {
     tabIndex === activeTab ? '#8E99F3' : logo;
 
   if (isPending) {
-    return (
-      <Flex justify="center" align="center" w="100vw" h="100vh" p="1rem">
-        <Flex direction="column" alignItems="center">
-          <Heading
-            textAlign="center"
-            as="h1"
-            color={text}
-            fontSize="1.6rem"
-            fontFamily="openSans"
-            fontWeight="600"
-            marginBottom="1rem"
-          >
-            Sending verification code
-          </Heading>
-          <Heading
-            textAlign="center"
-            as="h1"
-            color={text}
-            fontSize="1.6rem"
-            fontFamily="openSans"
-            fontWeight="600"
-            marginBottom="1.4rem"
-          >
-            Please wait...
-          </Heading>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Flex>
-      </Flex>
-    );
+    return <Loading />;
   }
 
   return (
@@ -187,7 +110,66 @@ function AppLayout() {
                 height="100%"
               >
                 <Button width="3.5rem" mb="3.2rem" variant="unstyled">
-                  <Image src={appLogo} alt="avian logo" width="100%" />
+                  <svg
+                    width="27"
+                    height="23"
+                    viewBox="0 0 69 57"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="bird">
+                      <g id="g32310">
+                        <path
+                          id="path32294"
+                          opacity="0.79"
+                          d="M14.8976 17.9823C14.639 16.2432 14.2743 14.2884 14.0871 13.6383C13.46 11.46 12.4779 9.89251 10.696 8.22559C9.56206 7.16485 9.59881 7.1552 12.2116 7.82767C17.0774 9.08004 19.9608 11.1111 22.2275 14.8828C22.5954 15.4949 22.7205 15.8195 22.6036 15.8584C22.5073 15.8905 21.5817 16.4834 20.5467 17.1759C18.8947 18.2813 18.1933 18.8143 15.8765 20.7247L15.3678 21.1442L14.8976 17.9823Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32296"
+                          opacity="0.79"
+                          d="M22.5435 14.5251C21.1023 12.0887 19.0679 10.1894 16.5662 8.94486C14.7941 8.06325 13.9405 7.7791 11.3762 7.21714C6.54471 6.15832 5.08235 5.90062 1.49603 5.47603L0 5.29892L0.712412 5.0791C1.27112 4.90668 2.19317 4.85792 4.9868 4.85302L8.54878 4.84678L9.33242 4.25109C11.1261 2.88757 13.5847 2.06842 15.8834 2.06842C18.0472 2.06842 19.5898 2.64412 20.8462 3.9205C21.7413 4.82979 22.3604 6.01808 23.2962 8.62248C24.227 11.2133 24.8434 12.5192 25.4916 13.2736L25.9988 13.8639L25.6765 14.0751C25.4992 14.1913 24.8422 14.5437 24.2165 14.8583L23.0789 15.4303L22.5435 14.5251Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32298"
+                          opacity="0.79"
+                          d="M29.3509 12.3638C29.5913 12.115 33.6179 9.80097 36.4749 8.26991C48.9622 1.57803 59.0504 -1.11899 65.8319 0.421475C67.1406 0.718744 69.0482 1.37897 68.9992 1.51768C68.9778 1.57821 67.3894 2.84814 65.4695 4.33978L61.9788 7.05185L60.1266 6.94669C56.6466 6.74908 50.0392 6.83542 48.087 7.10399C43.4534 7.74147 36.0451 9.76748 31.2032 11.7214C29.1394 12.5542 29.1811 12.5397 29.3509 12.3638Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32300"
+                          opacity="0.79"
+                          d="M35.2138 53.8833C32.8672 46.9758 30.8513 42.0814 29.6826 40.4539C29.3681 40.0161 28.9446 39.6595 28.4248 39.3951C27.2783 38.812 25.7987 37.7295 24.5401 36.5531C23.1585 35.2619 21.2397 32.9906 21.3972 32.8331C21.6204 32.6099 23.6445 32.3839 24.5759 32.4782C29.3146 32.958 33.2179 36.3991 34.976 41.6467C35.7166 43.8573 35.846 45.0207 35.8986 49.9416C35.925 52.4101 36.0172 54.9375 36.1034 55.5582C36.1897 56.1788 36.2444 56.7023 36.2251 56.7215C36.2057 56.7406 35.7506 55.4635 35.2138 53.8833Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32302"
+                          opacity="0.79"
+                          d="M35.9325 43.815C35.8694 43.384 35.5941 42.3605 35.3207 41.5406C33.8472 37.1202 30.9052 33.9349 27.071 32.6088C26.042 32.2528 25.7373 32.2139 23.9365 32.2087C22.6935 32.2051 21.7618 32.2692 21.4641 32.3787C21.0292 32.5387 20.9629 32.526 20.7244 32.2362C20.0562 31.4245 20.0589 31.4027 20.9947 30.0364C22.2256 28.2392 22.2959 28.1869 23.719 28.0086C26.4872 27.6617 29.2655 27.8373 32.7988 28.5823L34.2772 28.8941L34.8296 30.0498C36.1015 32.7112 36.4835 36.4873 36.1354 42.9601C36.0523 44.5045 36.0407 44.5536 35.9325 43.815Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32304"
+                          opacity="0.79"
+                          d="M32.2718 28.1259C29.4058 27.5148 27.4247 27.3604 24.9923 27.5585C23.8808 27.649 22.9454 27.6971 22.9138 27.6655C22.8821 27.6338 23.3118 27.2148 23.8687 26.7343C26.8674 24.147 30.0706 22.7713 34.7106 22.0778C36.4722 21.8145 43.1044 21.6226 42.8865 21.8412C42.6943 22.034 34.2475 28.5742 34.2183 28.5528C34.2056 28.5436 33.3297 28.3514 32.2718 28.1259Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32306"
+                          opacity="0.79"
+                          d="M19.0021 29.7445C18.5607 29.0591 17.9589 28.0604 17.6646 27.5249L17.1296 26.5515L17.9684 25.6968C23.35 20.2134 31.274 16.8094 41.2974 15.6749C43.5916 15.4153 49.9035 15.1617 50.6919 15.2974L51.2311 15.3903L47.3436 18.4131L43.4562 21.4359L40.4533 21.4408C38.8016 21.4434 36.7499 21.514 35.8939 21.5976C31.4641 22.0299 27.6824 23.3479 24.8748 25.4378C23.4897 26.4687 21.4108 28.6631 20.5882 29.9624C20.2356 30.5194 19.915 30.9785 19.8758 30.9828C19.8367 30.987 19.4435 30.4297 19.0021 29.7444V29.7445Z"
+                          fill="#C5C5C6"
+                        />
+                        <path
+                          id="path32308"
+                          opacity="0.79"
+                          d="M16.5944 25.4757C16.099 24.3766 15.883 23.7173 15.6709 22.6567L15.4714 21.6594L16.0708 21.1052C18.6 18.7667 22.1917 16.374 26.1506 14.3902C32.6639 11.1264 42.0974 8.19897 48.7143 7.38827C50.6957 7.14549 57.709 7.09586 60.2503 7.30662L61.5138 7.4114L56.7126 11.129L51.9114 14.8466L48.1826 14.937C41.0219 15.1104 36.0652 15.8309 31.2032 17.4052C26.0973 19.0585 21.7991 21.5462 18.2108 24.9249L16.9017 26.1575L16.5944 25.4757Z"
+                          fill="#C5C5C6"
+                        />
+                      </g>
+                    </g>
+                  </svg>
                 </Button>
 
                 <TabList flexGrow="1" mb="2.4rem">
@@ -245,26 +227,11 @@ function AppLayout() {
                         />
                       </svg>
                     </Tab>
-                    <Tab>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M1.5 4.5C1.5 3.70435 1.81607 2.94129 2.37868 2.37868C2.94129 1.81607 3.70435 1.5 4.5 1.5H5.872C6.732 1.5 7.482 2.086 7.691 2.92L8.796 7.343C8.88554 7.701 8.86746 8.07746 8.74401 8.42522C8.62055 8.77299 8.39723 9.07659 8.102 9.298L6.809 10.268C6.674 10.369 6.645 10.517 6.683 10.62C7.24738 12.1549 8.1386 13.5487 9.29495 14.7051C10.4513 15.8614 11.8451 16.7526 13.38 17.317C13.483 17.355 13.63 17.326 13.732 17.191L14.702 15.898C14.9234 15.6028 15.227 15.3794 15.5748 15.256C15.9225 15.1325 16.299 15.1145 16.657 15.204L21.08 16.309C21.914 16.518 22.5 17.268 22.5 18.129V19.5C22.5 20.2956 22.1839 21.0587 21.6213 21.6213C21.0587 22.1839 20.2956 22.5 19.5 22.5H17.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"
-                          fill={getFillColor(3)}
-                        />
-                      </svg>
-                    </Tab>
+
                     <Button
                       mt="auto"
                       variant="unstyled"
-                      onClick={updateDarkMode}
+                      onClick={toggleColorMode}
                     >
                       {colorMode === 'light' ? (
                         <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
@@ -272,6 +239,7 @@ function AppLayout() {
                         <SunIcon color={logo} w="2.3rem" h="2.3rem" />
                       )}
                     </Button>
+
                     <Tab>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -284,7 +252,7 @@ function AppLayout() {
                           fillRule="evenodd"
                           clipRule="evenodd"
                           d="M11.078 2.25C10.161 2.25 9.379 2.913 9.228 3.817L9.05 4.889C9.03 5.009 8.935 5.149 8.753 5.237C8.41034 5.40171 8.08073 5.59226 7.767 5.807C7.601 5.922 7.433 5.933 7.317 5.89L6.3 5.508C5.88424 5.35224 5.42669 5.34906 5.00881 5.49904C4.59093 5.64901 4.23982 5.94241 4.018 6.327L3.096 7.924C2.87408 8.30836 2.79571 8.75897 2.87481 9.19569C2.95392 9.6324 3.18537 10.0269 3.528 10.309L4.368 11.001C4.463 11.079 4.538 11.23 4.522 11.431C4.4935 11.8101 4.4935 12.1909 4.522 12.57C4.537 12.77 4.463 12.922 4.369 13L3.528 13.692C3.18537 13.9741 2.95392 14.3686 2.87481 14.8053C2.79571 15.242 2.87408 15.6926 3.096 16.077L4.018 17.674C4.23998 18.0584 4.59115 18.3516 5.00902 18.5014C5.42689 18.6512 5.88435 18.6478 6.3 18.492L7.319 18.11C7.434 18.067 7.602 18.079 7.769 18.192C8.081 18.406 8.41 18.597 8.754 18.762C8.936 18.85 9.031 18.99 9.051 19.112L9.229 20.183C9.38 21.087 10.162 21.75 11.079 21.75H12.923C13.839 21.75 14.622 21.087 14.773 20.183L14.951 19.111C14.971 18.991 15.065 18.851 15.248 18.762C15.592 18.597 15.921 18.406 16.233 18.192C16.4 18.078 16.568 18.067 16.683 18.11L17.703 18.492C18.1185 18.6472 18.5756 18.6501 18.993 18.5002C19.4105 18.3502 19.7612 18.0571 19.983 17.673L20.906 16.076C21.1279 15.6916 21.2063 15.241 21.1272 14.8043C21.0481 14.3676 20.8166 13.9731 20.474 13.691L19.634 12.999C19.539 12.921 19.464 12.77 19.48 12.569C19.5084 12.1899 19.5084 11.8091 19.48 11.43C19.464 11.23 19.539 11.078 19.633 11L20.473 10.308C21.181 9.726 21.364 8.718 20.906 7.923L19.984 6.326C19.762 5.94159 19.4108 5.6484 18.993 5.49861C18.5751 5.34883 18.1176 5.35215 17.702 5.508L16.682 5.89C16.568 5.933 16.4 5.921 16.233 5.807C15.9196 5.5923 15.5903 5.40175 15.248 5.237C15.065 5.15 14.971 5.01 14.951 4.889L14.772 3.817C14.6991 3.37906 14.4731 2.98122 14.1343 2.69427C13.7956 2.40732 13.366 2.24989 12.922 2.25H11.079H11.078ZM12 15.75C12.9946 15.75 13.9484 15.3549 14.6516 14.6517C15.3549 13.9484 15.75 12.9946 15.75 12C15.75 11.0054 15.3549 10.0516 14.6516 9.34835C13.9484 8.64509 12.9946 8.25 12 8.25C11.0054 8.25 10.0516 8.64509 9.34835 9.34835C8.64508 10.0516 8.25 11.0054 8.25 12C8.25 12.9946 8.64508 13.9484 9.34835 14.6517C10.0516 15.3549 11.0054 15.75 12 15.75Z"
-                          fill={getFillColor(4)}
+                          fill={getFillColor(3)}
                         />
                       </svg>
                     </Tab>
@@ -345,9 +313,7 @@ function AppLayout() {
                           fontSize="1.3rem"
                           fontFamily="openSans"
                           fontWeight={400}
-                          onClick={() =>
-                            logoutHandler(accessToken?.accessToken)
-                          }
+                          onClick={logoutHandler}
                         >
                           <Image src={logout} w="1.8rem" />
                           <Text ms="1rem" color="red-3">
@@ -369,11 +335,7 @@ function AppLayout() {
                 </Animate>
                 <Animate>
                   <TabPanel h="100vh" p="0">
-                    <Sidebar
-                      header="Contacts"
-                      sidebarIcon={contactIcon}
-                      type="contacts"
-                    >
+                    <Sidebar header="Contacts" type="contacts">
                       {(contactName: string) => (
                         <Contacts contactName={contactName} />
                       )}
@@ -383,11 +345,6 @@ function AppLayout() {
                 <Animate>
                   <TabPanel>
                     <p>Content for Tab 3</p>
-                  </TabPanel>
-                </Animate>
-                <Animate>
-                  <TabPanel>
-                    <p>Content for Tab 4</p>
                   </TabPanel>
                 </Animate>
                 <Animate>

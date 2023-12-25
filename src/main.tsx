@@ -4,9 +4,9 @@ import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import AppRoutes from './routes';
-import Fonts from './chakra/chakraFonts';
-import theme from './chakra/chakraTheme';
+import AppRoutes from '@/routes';
+import Fonts from '@/chakra/chakra-fonts';
+import theme from '@/chakra/chakra-theme';
 
 const queryClient = new QueryClient();
 

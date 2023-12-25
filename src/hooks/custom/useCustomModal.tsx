@@ -12,7 +12,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import useContact from '@/hooks/contact/useContact';
+import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import { ContactInterface } from '@/utils/contact.interface';
 
 interface ModalInterface {
@@ -20,7 +20,7 @@ interface ModalInterface {
   modalHeader: string;
 }
 
-function useContactModal({ contact }: ContactInterface) {
+function useCustomModal({ contact }: { contact: ContactInterface }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
@@ -100,7 +100,7 @@ function useContactModal({ contact }: ContactInterface) {
     </Modal>
   );
 
-  return { modal, isOpen, onClose, onOpen };
+  return { modal, onOpen };
 }
 
-export default useContactModal;
+export default useCustomModal;

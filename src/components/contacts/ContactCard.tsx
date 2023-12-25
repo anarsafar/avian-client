@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { DeleteIcon, EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Flex,
   Menu,
@@ -12,24 +13,31 @@ import {
 } from '@chakra-ui/react';
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import { ContactInterface } from '@/utils/contact.interface';
-import useContactModal from '@/hooks/contact/useContactModal';
+import useCustomModal from '@/hooks/custom/useCustomModal';
 
-function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
+interface ContactCardInterface {
+  textTheme: string;
+  contact: ContactInterface;
+}
+
+function ContactCard({
+  contact,
+  textTheme,
+}: ContactCardInterface): JSX.Element {
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
 
-  const { modal, infoOnOpen } = useContactInfo({
+  const { modal: infoModal, infoOnOpen } = useContactInfo({
     contact,
-    textTheme,
   });
 
-  const { modal: customModal, onOpen: customOpen } = useContactModal({
+  const { modal: customModal, onOpen: customOpen } = useCustomModal({
     contact,
-    textTheme,
   });
 
   return (
     <Button
+      as={Box}
       p="1.7rem 0.8rem 1.6rem 1.8rem"
       borderRadius="0.9rem"
       variant="unstyled"
@@ -94,7 +102,7 @@ function ContactCard({ contact, textTheme }: ContactInterface): JSX.Element {
           </MenuList>
         </Menu>
       </Flex>
-      {modal}
+      {infoModal}
       {customModal({ modalType: 'delete', modalHeader: 'Delete Contact' })}
     </Button>
   );

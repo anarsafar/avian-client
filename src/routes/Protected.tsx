@@ -1,9 +1,9 @@
 import { ReactNode, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Flex, Spinner } from '@chakra-ui/react';
 import useAuth from '@/hooks/auth/useAuth';
 import useLogout from '@/hooks/auth/useLogout';
+import { RouteLoading } from '@/components/load-view';
 
 interface ComponentProps {
   element: ReactNode;
@@ -19,7 +19,7 @@ function Protected({ element }: ComponentProps): ReactNode {
       navigate('/auth/signin');
     }
     if (isError) {
-      logoutHandler(accessToken);
+      logoutHandler();
     }
   }, [isLoading, user, navigate, isError, accessToken, logoutHandler]);
 
@@ -28,17 +28,7 @@ function Protected({ element }: ComponentProps): ReactNode {
   }
 
   if (isLoading) {
-    return (
-      <Flex justify="center" align="center" w="100vw" h="100vh">
-        <Spinner
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="blue.500"
-          size="xl"
-        />
-      </Flex>
-    );
+    return <RouteLoading />;
   }
 }
 

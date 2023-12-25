@@ -1,9 +1,8 @@
-/* eslint-disable react/no-unescaped-entities */
 import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
-import pattern from '@assets/layout/pattern.jpg';
-import errorIcon from '@assets/layout/icons8-broken-robot-94.png';
+import pattern from '@assets/common/pattern.png';
+import errorIcon from '@assets/common/icons8-broken-robot-94.png';
 
 function ErrorPage() {
   const navigate = useNavigate();
@@ -47,7 +46,6 @@ function ErrorPage() {
         <Box>
           <Image src={errorIcon} loading="eager" />
         </Box>
-
         <Heading
           as="h1"
           fontFamily="fredoka"

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import useCustomToast from '@/components/common/CustomToast';
+import useCustomToast from '@/hooks/custom/useCustomToast';
 import usePersist, { StorageType } from '../common/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
@@ -9,7 +9,7 @@ interface Action {
   action: 'block' | 'delete';
 }
 
-function useContact(contactId: string) {
+function useContactDeleteOrBlock(contactId: string) {
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
   const queryClient = useQueryClient();
@@ -42,4 +42,4 @@ function useContact(contactId: string) {
   return { deleteOrBlockContact, isPending };
 }
 
-export default useContact;
+export default useContactDeleteOrBlock;

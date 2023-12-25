@@ -1,6 +1,7 @@
 import { Box, Heading, Image } from '@chakra-ui/react';
-import pattern from '@assets/layout/pattern.png';
-import cover from '@assets/layout/could.png';
+
+import pattern from '@assets/common/pattern.png';
+import cover from '@assets/common/could.png';
 
 function HeroSection() {
   return (

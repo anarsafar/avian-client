@@ -2,10 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 
 import usePersist, { StorageType } from '../common/usePersist';
-import useCustomToast from '@/components/common/CustomToast';
+import useCustomToast from '@/hooks/custom/useCustomToast';
 
-import { EmailValidateInterface } from '@/schemas/reset.schemas';
-import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
+import { EmailValidateInterface } from '@/schemas/user/reset.schemas';
+import { ConfirmationBaseInterface } from '@/schemas/user/confirmaton.schema';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 

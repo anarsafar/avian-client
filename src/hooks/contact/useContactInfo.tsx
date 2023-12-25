@@ -23,27 +23,26 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import useCustomModal from '@hooks/custom/useCustomModal';
 import { ContactInterface } from '@/utils/contact.interface';
-import useContactModal from './useContactModal';
 
-function useContactInfo({ contact }: ContactInterface) {
+function useContactInfo({ contact }: { contact: ContactInterface }) {
   const {
     isOpen: infoIsOpen,
     onOpen: infoOnOpen,
     onClose: infoOnClose,
   } = useDisclosure();
+
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
 
-  const { modal: deleteContactModal, onOpen: deleteOpen } = useContactModal({
+  const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal({
     contact,
-    textTheme,
   });
 
-  const { modal: blockContactModal, onOpen: blockOpen } = useContactModal({
+  const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal({
     contact,
-    textTheme,
   });
 
   const modal = (

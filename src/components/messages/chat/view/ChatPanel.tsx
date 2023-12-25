@@ -1,7 +1,7 @@
 import { AttachmentIcon } from '@chakra-ui/icons';
 import { Button, Flex, FormControl, Image, Input } from '@chakra-ui/react';
 
-import sendIcon from '@assets/layout/sendIcon.svg';
+import sendIcon from '@assets/common/sendIcon.svg';
 
 interface PropTypes {
   textColor: string;

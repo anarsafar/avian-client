@@ -3,8 +3,8 @@ import * as z from 'zod';
 import { useRef } from 'react';
 
 import api, { RequestType } from '@/api';
-import { UserInterface } from '@/schemas/user.schema';
-import usePersist, { StorageType } from './usePersist';
+import { UserInterface } from '@/schemas/user/user.schema';
+import usePersist, { StorageType } from '../common/usePersist';
 
 const emptyObjectSchema = z.object({}).strict();
 const isEmpty = (obj: object): boolean => {

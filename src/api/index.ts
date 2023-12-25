@@ -57,10 +57,7 @@ const api = async <T, K>(
     });
     return result.data;
   } catch (error) {
-    const handledError = handleError(error);
-
-    // eslint-disable-next-line @typescript-eslint/no-throw-literal
-    throw handledError;
+    throw handleError(error);
   }
 };
 

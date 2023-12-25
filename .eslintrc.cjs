@@ -22,6 +22,7 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint', 'prettier', '@tanstack/query'],
   rules: {
+    '@typescript-eslint/no-throw-literal': 'off',
     'react/react-in-jsx-scope': 0,
     'react/no-unescaped-entities': 0,
     'react/jsx-props-no-spreading': 'off',

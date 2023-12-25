@@ -14,21 +14,19 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-import arrowIcon from '@assets/layout/arrow.svg';
-import passwordIcon from '@assets/layout/icons8-password-94.png';
+import passwordIcon from '@assets/common/icons8-password-94.png';
 
-import useCustomToast from '@/components/common/CustomToast';
+import useCustomToast from '@/hooks/custom/useCustomToast';
+import usePersist, { StorageType } from '@/hooks/common/usePersist';
+
 import CustomInput from '@/components/auth/CustomInput';
 
 import {
   PasswordValidate,
   PasswordValidateInterface,
-} from '@/schemas/reset.schemas';
-
-import { ConfirmationBaseInterface } from '@/schemas/confirmaton.schema';
+} from '@/schemas/user/reset.schemas';
+import { ConfirmationBaseInterface } from '@/schemas/user/confirmaton.schema';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
-
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 function ResetPassword() {
   const { getPersistedData } = usePersist();
@@ -83,7 +81,7 @@ function ResetPassword() {
     },
     onError: (error: ErrorResponse) => {
       reset();
-      toast(true, 'Recover Error', error);
+      toast(true, 'Password Changes Error', error);
     },
     networkMode: 'always',
     retry: false,
@@ -120,7 +118,20 @@ function ResetPassword() {
             top="-4rem"
             left="-1rem"
           >
-            <Image src={arrowIcon} loading="eager" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="#fff"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
           </Button>
           <Box w="10rem">
             <Image src={passwordIcon} loading="eager" />

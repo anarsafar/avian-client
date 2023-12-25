@@ -1,6 +1,6 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
-import ChatHeader from './ChatHeader';
-import ChatPanel from './ChatPanel';
+import ChatHeader from './view/ChatHeader';
+import ChatPanel from './view/ChatPanel';
 
 function ChatView() {
   const inputColor = useColorModeValue('input-light', 'input-dark');

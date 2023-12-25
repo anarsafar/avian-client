@@ -1,6 +1,6 @@
 import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 
-function Conversation(): JSX.Element {
+function ConversationCard(): JSX.Element {
   const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const hover = useColorModeValue('hover-light', 'accent-dark');
@@ -72,4 +72,4 @@ function Conversation(): JSX.Element {
   );
 }
 
-export default Conversation;
+export default ConversationCard;

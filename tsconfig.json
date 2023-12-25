@@ -21,8 +21,8 @@
       "@components/*": ["src/components/*"],
       "@assets/*": ["src/assets/*"],
       "@schema/*": ["src/schema/*"],
-      "@types/*": ["src/types/*"],
-      "@interfaces/*": ["src/interfaces/*"]
+      "@utils/*": ["src/utils/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
   "include": ["vite.config.ts", ".eslintrc.cjs", "src", "tailwind.config.js"],

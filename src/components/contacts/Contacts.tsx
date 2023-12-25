@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
-
 import {
   Button,
   Flex,
@@ -14,23 +13,7 @@ import {
 import api, { RequestType } from '@/api';
 import usePersist, { StorageType } from '@/hooks/common/usePersist';
 import ContactCard from './ContactCard';
-
-interface ContactInterface {
-  user: {
-    _id: string;
-    authInfo: {
-      providerId?: string;
-      email?: string;
-    };
-    userInfo: {
-      name: string;
-      avatar: string;
-    };
-    lastSeen: string;
-    online: boolean;
-  };
-  isBlocked: boolean;
-}
+import { ContactInterface } from '@/utils/contact.interface';
 
 function groupContactsByFirstLetter(contacts: ContactInterface[]) {
   return contacts.reduce(

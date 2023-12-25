@@ -1,20 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
+import usePersist, { StorageType } from '@hooks/common/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
 const useLogout = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
+  const { getPersistedData } = usePersist();
+  const token = getPersistedData<{ accessToken: string }>(
+    'access-token',
+    StorageType.Local
+  );
   const { mutateAsync: logOut } = useMutation({
-    mutationFn: (token: string | undefined) =>
-      api<SuccessResponse, undefined>(
+    mutationFn: () => {
+      return api<SuccessResponse, undefined>(
         undefined,
         'auth/logout',
         RequestType.Post,
-        token
-      ),
+        token?.accessToken
+      );
+    },
     mutationKey: ['logout'],
     onError: (error: ErrorResponse) => {
       // eslint-disable-next-line no-console
@@ -24,8 +30,8 @@ const useLogout = () => {
     networkMode: 'always',
   });
 
-  const logoutHandler = (accessToken: string | undefined) => {
-    logOut(accessToken);
+  const logoutHandler = () => {
+    logOut();
     localStorage.clear();
     sessionStorage.clear();
     queryClient.clear();
