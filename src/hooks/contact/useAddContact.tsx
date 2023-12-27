@@ -115,6 +115,11 @@ function useAddContact({
               color={textColor}
               focusBorderColor={logoColor}
               {...register('contact')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSubmit((data) => addContact(data))();
+                }
+              }}
               _placeholder={{
                 fontFamily: 'openSans',
                 fontSize: '1.2rem',

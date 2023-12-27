@@ -293,7 +293,7 @@ function AppLayout() {
                           fontWeight={400}
                         >
                           <InfoOutlineIcon />
-                          <Text ms="1rem">Profile Information</Text>
+                          <Text ms="1rem">Update Info</Text>
                         </MenuItem>
                         <MenuItem
                           fontSize="1.3rem"
