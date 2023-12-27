@@ -23,12 +23,13 @@ import {
   ModalOverlay,
   Switch,
   Text,
+  Tooltip,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import useCustomModal from '@hooks/custom/useCustomModal';
+import useCustomModal from '@/hooks/custom/useConfirmation';
 import { ContactInterface } from '@/utils/contact.interface';
 
 function useContactInfo({ contact }: { contact: ContactInterface }) {
@@ -39,7 +40,6 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   } = useDisclosure();
 
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
-  const bgColor = useColorModeValue('bg-light', 'bg-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
   const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal({
@@ -51,6 +51,13 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   });
 
   const [open, setOpen] = useState<boolean>(false);
+  const [isTooltipVisible, setTooltipVisible] = useState<boolean>(false);
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(contact.user.userInfo?.username).then(() => {
+      setTooltipVisible(true);
+      setTimeout(() => setTooltipVisible(false), 1000);
+    });
+  };
 
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
@@ -109,10 +116,9 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
               h="4rem"
               name={contact.user.userInfo.name}
               src={contact.user.userInfo?.avatar}
-              border="3px solid"
-              borderColor={bgColor}
               _hover={{
-                borderColor: 'violet-2',
+                transform: 'scale(1.1)',
+                transition: 'all 0.1s linear ',
               }}
             />
             <Lightbox
@@ -165,16 +171,30 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
             lineHeight="1.8rem"
             letterSpacing="0.16px"
           >
-            <ListItem>
-              <ListIcon
-                as={AtSignIcon}
-                color={iconTheme}
-                fontSize="2rem"
-                me="1.2rem"
-              />
-              {contact.user.authInfo?.email}
-              {contact.user.authInfo?.providerId}
-            </ListItem>
+            <Tooltip
+              fontSize="1.2rem"
+              hasArrow
+              placement="top"
+              closeOnPointerDown={false}
+              closeOnClick={false}
+              label={
+                isTooltipVisible ? 'Copied to clipboard!' : 'Copy to clipboard'
+              }
+            >
+              <ListItem
+                as="button"
+                onClick={copyToClipboard}
+                value={contact.user.userInfo?.username}
+              >
+                <ListIcon
+                  as={AtSignIcon}
+                  color={iconTheme}
+                  fontSize="2rem"
+                  me="1.2rem"
+                />
+                {contact.user.userInfo?.username}
+              </ListItem>
+            </Tooltip>
             <ListItem display="flex">
               <ListIcon
                 as={BellIcon}
@@ -199,7 +219,12 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
                 >
                   notifications
                 </FormLabel>
-                <Switch id="notifications" defaultChecked size="lg" />
+                <Switch
+                  id="notifications"
+                  defaultChecked
+                  size="lg"
+                  colorScheme="whatsapp"
+                />
               </FormControl>
             </ListItem>
           </List>

@@ -44,6 +44,7 @@ import usePersist, { StorageType } from '@/hooks/common/usePersist';
 
 import { UserInterface } from '@/schemas/user/user.schema';
 import { Loading } from '@/components/load-view';
+import Settings from '@/components/settings';
 
 function AppLayout() {
   const { getPersistedData, persistData } = usePersist();
@@ -284,7 +285,7 @@ function AppLayout() {
                           <AvatarBadge boxSize="1.25em" bg="green.500" />
                         </Avatar>
                       </MenuButton>
-                      <MenuList w="18rem">
+                      <MenuList w="18rem" zIndex={20}>
                         <MenuItem
                           fontSize="1.3rem"
                           fontFamily="openSans"
@@ -349,7 +350,7 @@ function AppLayout() {
                 </Animate>
                 <Animate>
                   <TabPanel>
-                    <p>Content for Tab 5</p>
+                    <Settings />
                   </TabPanel>
                 </Animate>
               </TabPanels>

@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import { ContactInterface } from '@/utils/contact.interface';
-import useCustomModal from '@/hooks/custom/useCustomModal';
+import useCustomModal from '@/hooks/custom/useConfirmation';
 
 interface ContactCardInterface {
   textTheme: string;

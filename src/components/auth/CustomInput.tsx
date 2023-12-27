@@ -46,7 +46,10 @@ function CustomInput<T extends FieldValues>({
     'red.300',
     isAuth ? 'red.400' : 'red.300'
   );
-  const borderColor = useColorModeValue('#C5C5C6', '#6b7280');
+  const borderColor = useColorModeValue(
+    '#C5C5C6',
+    isAuth ? '#6b7280' : '#C5C5C6'
+  );
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -63,7 +66,7 @@ function CustomInput<T extends FieldValues>({
         paddingRight="3.5rem"
         backgroundColor={input}
         color={text}
-        border={errors[id] ? '2px solid' : 'none'}
+        border="1px solid"
         borderColor={errors[id] ? errorColor : input}
         borderRadius="0.5rem"
         fontFamily="openSans"

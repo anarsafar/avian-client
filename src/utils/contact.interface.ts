@@ -8,6 +8,7 @@ export interface ContactInterface {
     userInfo: {
       name: string;
       avatar: string;
+      username: string;
     };
     lastSeen: string;
     online: boolean;

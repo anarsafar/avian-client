@@ -1,9 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import {
   Button,
+  Flex,
   Modal,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -20,10 +20,11 @@ interface ModalInterface {
   modalHeader: string;
 }
 
-function useCustomModal({ contact }: { contact: ContactInterface }) {
+function useConfiramtion({ contact }: { contact: ContactInterface }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
+  const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
 
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
 
@@ -40,16 +41,38 @@ function useCustomModal({ contact }: { contact: ContactInterface }) {
         >
           {modalHeader}
         </ModalHeader>
-        <ModalCloseButton
-          fontSize="1rem"
-          mt="1.5rem"
-          mr="1rem"
-          color={textTheme}
-          borderRadius="50%"
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          as="button"
           border="1px solid"
-          p="1.2rem"
-          borderColor={textTheme}
-        />
+          borderColor={iconTheme}
+          borderRadius="50%"
+          w="2rem"
+          h="2rem"
+          p="4px"
+          cursor="pointer"
+          onClick={onClose}
+          position="absolute"
+          right="1.6rem"
+          top="2rem"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="M3 9L9 3M3 3L9 9"
+              stroke={iconTheme}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </Flex>
         <ModalBody
           fontSize="1.3rem"
           fontFamily="openSans"
@@ -103,4 +126,4 @@ function useCustomModal({ contact }: { contact: ContactInterface }) {
   return { modal, onOpen };
 }
 
-export default useCustomModal;
+export default useConfiramtion;
