@@ -26,7 +26,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   InfoOutlineIcon,
   MoonIcon,
@@ -38,18 +38,18 @@ import { Helmet } from 'react-helmet-async';
 import logout from '@assets/common/logout.svg';
 
 import Animate from '@/components/common/Animate';
-import Inbox from '@/components/messages/conversations/Inbox';
-import ChatView from '@/components/messages/chat';
-import Contacts from '@/components/contacts/Contacts';
+import Inbox from '@/view/messages/conversations/Inbox';
+import ChatView from '@/view/messages/chat';
+import Contacts from '@/view/contacts/Contacts';
 import Sidebar from '@/components/common/Sidebar';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import { UserInterface } from '@/schemas/user/user.schema';
-import { Loading } from '@/components/load-view';
-import Settings from '@/components/settings';
+import { Loading } from '@/components/loading';
+import Settings from '@/view/settings';
 import UpdateAccount from '@/components/update-account';
 
 function AppLayout() {
@@ -57,8 +57,10 @@ function AppLayout() {
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
 
   const user = getPersistedData<UserInterface>('user', StorageType.Local);
-  const { current: activeTabIndex } = useRef(
-    getPersistedData<number>('activeTabIndex', StorageType.Session)
+  console.log(user);
+  const activeTabIndex = getPersistedData<number>(
+    'activeTabIndex',
+    StorageType.Session
   );
 
   const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
@@ -362,7 +364,15 @@ function AppLayout() {
                 </Animate>
                 <Animate>
                   <TabPanel>
-                    <p>Content for Tab 3</p>
+                    <Text
+                      fontSize="1.3rem"
+                      fontFamily="openSans"
+                      color={text}
+                      fontWeight={400}
+                      mt="2.2rem"
+                    >
+                      Coming soon
+                    </Text>
                   </TabPanel>
                 </Animate>
                 <Animate>

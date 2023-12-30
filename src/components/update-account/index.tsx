@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { EditIcon } from '@chakra-ui/icons';
 
@@ -22,9 +22,9 @@ import {
   UpdateUserValidate,
 } from '@/schemas/user/update.schema';
 import { UserInterface } from '@/schemas/user/user.schema';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import api, { ErrorResponse, RequestType } from '@/api';
 
 interface UpdateAccountProps {
   onClose: (type: 'account' | 'notifications' | 'darkMode') => void;
@@ -42,6 +42,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
   });
 
   const { getPersistedData, persistData } = usePersist();
+  const queryClient = useQueryClient();
   const [avatar, setAvatar] = useState<File | null>(null);
   const avatarRef = useRef<HTMLInputElement | null>(null);
 
@@ -85,7 +86,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
         formData.append('username', data.username);
       }
 
-      return api<SuccessResponse, FormData>(
+      return api<{ user: UserInterface }, FormData>(
         formData,
         'user',
         RequestType.Patch,
@@ -93,13 +94,13 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
       );
     },
     mutationKey: ['update-user'],
-    onSuccess: (res, newUserData) => {
-      const newUser = { ...user, userInfo: newUserData };
-      persistData(newUser, 'user', StorageType.Local);
-      toast(false, 'Profile info updated', res);
+    onSuccess: (res) => {
+      persistData(res.user, 'user', StorageType.Local);
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      toast('success', 'Profile info updated', { message: '' });
     },
     onError: (error: ErrorResponse) =>
-      toast(true, 'Profile update fail', error),
+      toast('error', 'Profile update fail', error),
     retry: false,
     networkMode: 'always',
   });

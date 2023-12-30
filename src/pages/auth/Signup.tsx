@@ -24,7 +24,7 @@ import SocialButton from '@/components/auth/SocialButton';
 import CustomInput from '@/components/auth/CustomInput';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { SignupInterface, SignupValidate } from '@/schemas/user/auth.schemas';
@@ -66,7 +66,7 @@ export default function SignUp() {
       navigate('/verify');
     },
     onError: (error: ErrorResponse) => {
-      toast(true, 'Error during sign up', error);
+      toast('error', 'Error during sign up', error);
       reset();
     },
     retry: false,

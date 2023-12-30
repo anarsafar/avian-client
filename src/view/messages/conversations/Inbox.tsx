@@ -1,5 +1,5 @@
+import Sidebar from '@components/common/Sidebar';
 import Conversation from './ConversationCard';
-import Sidebar from '../../common/Sidebar';
 
 function Inbox(): JSX.Element {
   return (

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import useAuth from '@/hooks/auth/useAuth';
 import useLogout from '@/hooks/auth/useLogout';
-import { RouteLoading } from '@/components/load-view';
+import { RouteLoading } from '@/components/loading';
 
 interface ComponentProps {
   element: ReactNode;

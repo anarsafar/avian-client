@@ -1,4 +1,11 @@
-import { Flex, Heading, Spinner, useColorModeValue } from '@chakra-ui/react';
+import {
+  Flex,
+  Heading,
+  Skeleton,
+  Spinner,
+  Stack,
+  useColorModeValue,
+} from '@chakra-ui/react';
 
 export function RouteLoading() {
   return (
@@ -51,5 +58,33 @@ export function Loading() {
         />
       </Flex>
     </Flex>
+  );
+}
+
+export function SkeletonLoading() {
+  return (
+    <>
+      <Stack>
+        <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+      </Stack>
+      <Stack>
+        <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+      </Stack>
+      <Stack>
+        <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+      </Stack>
+      <Stack>
+        <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
+        <Skeleton height="3rem" m="0.5rem 1.8rem" />
+      </Stack>
+    </>
   );
 }

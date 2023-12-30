@@ -24,7 +24,7 @@ function useHeight() {
     }
   }, [height]);
 
-  return [height];
+  return height;
 }
 
 export default useHeight;

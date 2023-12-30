@@ -15,8 +15,8 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
-import UpdateAccount from '../update-account';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
+import UpdateAccount from '../../components/update-account';
 
 interface SettingsProps {
   account: boolean;

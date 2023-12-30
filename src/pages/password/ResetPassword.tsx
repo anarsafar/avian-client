@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import passwordIcon from '@assets/common/icons8-password-94.png';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import CustomInput from '@/components/auth/CustomInput';
 
@@ -77,11 +77,11 @@ function ResetPassword() {
     mutationKey: ['change-password'],
     onSuccess: (successData) => {
       navigate('/auth/signin');
-      toast(false, 'Reset success', successData);
+      toast('success', 'Reset success', successData);
     },
     onError: (error: ErrorResponse) => {
       reset();
-      toast(true, 'Password Changes Error', error);
+      toast('error', 'Password reset Error', error);
     },
     networkMode: 'always',
     retry: false,

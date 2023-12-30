@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRef } from 'react';
 
-import usePersist, { StorageType } from '@hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import api, { RequestType } from '@/api';
 import { UserInterface } from '@/schemas/user/user.schema';
 import { UpdateUserInterface } from '@/schemas/user/update.schema';

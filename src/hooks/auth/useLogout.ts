@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import usePersist, { StorageType } from '@hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
 const useLogout = () => {

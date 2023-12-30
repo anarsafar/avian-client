@@ -1,40 +1,27 @@
 /* eslint-disable no-underscore-dangle */
 import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
 import {
   Button,
   Flex,
-  Skeleton,
-  Stack,
   Text,
   VStack,
   useColorModeValue,
 } from '@chakra-ui/react';
-import api, { RequestType } from '@/api';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
-import ContactCard from './ContactCard';
-import { ContactInterface } from '@/utils/contact.interface';
 
-function groupContactsByFirstLetter(contacts: ContactInterface[]) {
-  return contacts.reduce(
-    (acc, contact) => {
-      const firstLetter = contact.user.userInfo.name.charAt(0).toUpperCase();
-      if (!acc[firstLetter]) {
-        acc[firstLetter] = [];
-      }
-      acc[firstLetter].push(contact);
-      return acc;
-    },
-    {} as Record<string, ContactInterface[]>
-  );
-}
+import api, { RequestType } from '@/api';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
+import ContactCard from './ContactCard';
+import { SkeletonLoading } from '@/components/loading';
+import { ContactInterface } from '@/utils/contact.interface';
+import groupContactsByFirstLetter from '@/utils/groupContacts';
 
 function Contacts({ contactName }: { contactName: string }): JSX.Element {
   const { getPersistedData } = usePersist();
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
 
-  const { current: accessToken } = useRef(
-    getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
+  const accessToken = getPersistedData<{ accessToken: string }>(
+    'access-token',
+    StorageType.Local
   );
 
   const {
@@ -59,31 +46,7 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
   let content: React.ReactNode;
 
   if (isLoading) {
-    content = (
-      <>
-        <Stack>
-          <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-        </Stack>
-        <Stack>
-          <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-        </Stack>
-        <Stack>
-          <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-        </Stack>
-        <Stack>
-          <Skeleton height="3rem" w="3rem" m="1rem 1.8rem 2rem 1.8rem" />
-          <Skeleton height="3rem" m="0.5rem 1.8rem" />
-        </Stack>
-      </>
-    );
+    content = <SkeletonLoading />;
   } else if (isError) {
     content = (
       <Flex

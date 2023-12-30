@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
 
-import usePersist, { StorageType } from '@hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 import {
   ValidateContact,

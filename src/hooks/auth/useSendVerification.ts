@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 
-import usePersist, { StorageType } from '../common/usePersist';
+import usePersist, { StorageType } from '../store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 
 import { EmailValidateInterface } from '@/schemas/user/reset.schemas';
@@ -35,7 +35,7 @@ const useSendVerification = () => {
       navigate('/verify');
     },
     onError: (error: ErrorResponse) => {
-      toast(true, 'Verify Error', error);
+      toast('error', 'Verify Error', error);
     },
     retry: false,
     networkMode: 'always',

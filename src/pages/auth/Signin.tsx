@@ -29,7 +29,7 @@ import SocialButton from '@/components/auth/SocialButton';
 import CustomInput from '@/components/auth/CustomInput';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import api, { ErrorResponse, RequestType } from '@/api';
 import { LoginInterface, LoginValidate } from '@/schemas/user/auth.schemas';
@@ -67,7 +67,7 @@ export default function SignIn() {
       navigate('/');
     },
     onError: (error: ErrorResponse) => {
-      toast(true, 'Error during sign in', error);
+      toast('error', 'Error during sign in', error);
       reset();
     },
     retry: false,
@@ -87,7 +87,7 @@ export default function SignIn() {
 
   useLayoutEffect(() => {
     if (socialError) {
-      toast(true, 'Error during sign up', { error: socialError });
+      toast('error', 'Error during sign up', { error: socialError });
     }
   }, [socialError, toast]);
 

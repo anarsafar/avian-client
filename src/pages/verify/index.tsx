@@ -8,7 +8,7 @@ import OTPInput from '@/components/auth/OTPInput';
 import CountDown from '@/components/auth/CountDown';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import {
@@ -64,7 +64,7 @@ function Verificaton(): JSX.Element {
       ),
     mutationKey: ['confirmation-email'],
     onSuccess: (successData) => {
-      toast(false, 'Confirmation success', successData);
+      toast('success', 'Confirmation success', successData);
       if (verifyData?.confirmationType === 'email') {
         navigate('/auth/signin');
       } else {
@@ -74,7 +74,7 @@ function Verificaton(): JSX.Element {
     onError: (error: ErrorResponse) => {
       setError(true);
       setTimeout(() => setError(false), 3000);
-      toast(true, 'Confirmation Error', error);
+      toast('error', 'Confirmation Error', error);
     },
     networkMode: 'always',
     retry: false,
@@ -90,9 +90,9 @@ function Verificaton(): JSX.Element {
     mutationKey: ['resend-email'],
     onSuccess: (successData) => {
       refetchExpirationTime();
-      toast(false, 'Resend success', successData);
+      toast('success', 'Resend success', successData);
     },
-    onError: (error: ErrorResponse) => toast(true, 'Resend Error', error),
+    onError: (error: ErrorResponse) => toast('error', 'Resend Error', error),
     networkMode: 'always',
     retry: false,
   });

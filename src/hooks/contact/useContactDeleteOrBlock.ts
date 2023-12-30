@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '../common/usePersist';
+import usePersist, { StorageType } from '../store/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
 interface Action {
