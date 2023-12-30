@@ -8,14 +8,15 @@ import {
   Box,
   Button,
   Flex,
+  SlideFade,
   Switch,
   Text,
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import UpdateAccount from './UpdateAccount';
 import usePersist, { StorageType } from '@/hooks/common/usePersist';
+import UpdateAccount from '../update-account';
 
 interface SettingsProps {
   account: boolean;
@@ -28,6 +29,7 @@ function Settings() {
   const logoTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
+  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const { toggleColorMode, colorMode } = useColorMode();
   const { persistData, getPersistedData } = usePersist();
@@ -74,10 +76,17 @@ function Settings() {
       color={textTheme}
       pos="relative"
     >
-      <UpdateAccount
-        isOpen={settingsPreferences.account}
-        handleSetttingPreferences={handleSetttingPreferences}
-      />
+      <SlideFade
+        in={settingsPreferences.account}
+        unmountOnExit
+        style={{ zIndex: 10, position: 'absolute', top: '6.2rem' }}
+        offsetY="0"
+        offsetX="1rem"
+      >
+        <Box bg={bgTheme} w="28rem" h="calc(100vh - 11rem)" p="2.2rem">
+          <UpdateAccount onClose={handleSetttingPreferences} />
+        </Box>
+      </SlideFade>
       <Text
         as="h1"
         fontFamily="openSans"

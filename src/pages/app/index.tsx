@@ -12,6 +12,10 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
   Tab,
   TabList,
   TabPanel,
@@ -20,6 +24,7 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import {
@@ -45,12 +50,13 @@ import usePersist, { StorageType } from '@/hooks/common/usePersist';
 import { UserInterface } from '@/schemas/user/user.schema';
 import { Loading } from '@/components/load-view';
 import Settings from '@/components/settings';
+import UpdateAccount from '@/components/update-account';
 
 function AppLayout() {
   const { getPersistedData, persistData } = usePersist();
-  const { current: user } = useRef(
-    getPersistedData<UserInterface>('user', StorageType.Local)
-  );
+  const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
+
+  const user = getPersistedData<UserInterface>('user', StorageType.Local);
   const { current: activeTabIndex } = useRef(
     getPersistedData<number>('activeTabIndex', StorageType.Session)
   );
@@ -75,6 +81,17 @@ function AppLayout() {
   if (isPending) {
     return <Loading />;
   }
+
+  const updateInfo = (
+    <Modal isOpen={isSettingsOpen} onClose={onClose} size="xl" isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalBody p="2rem">
+          <UpdateAccount onClose={onClose} />
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  );
 
   return (
     <>
@@ -172,7 +189,7 @@ function AppLayout() {
                     </g>
                   </svg>
                 </Button>
-
+                {updateInfo}
                 <TabList flexGrow="1" mb="2.4rem">
                   <Flex
                     direction="column"
@@ -260,7 +277,6 @@ function AppLayout() {
                     <Divider colorScheme="red" orientation="horizontal" />
                   </Flex>
                 </TabList>
-
                 <Menu>
                   {({ isOpen }) => (
                     <>
@@ -291,6 +307,7 @@ function AppLayout() {
                           fontFamily="openSans"
                           color={text}
                           fontWeight={400}
+                          onClick={onOpen}
                         >
                           <InfoOutlineIcon />
                           <Text ms="1rem">Update Info</Text>

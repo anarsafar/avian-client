@@ -6,6 +6,8 @@ const isEmpty = (obj: object): boolean => {
   return result.success;
 };
 
+const fileSchema = z.lazy(() => z.instanceof(File));
+
 export const UpdateUserValidate = z
   .object({
     name: z
@@ -14,24 +16,7 @@ export const UpdateUserValidate = z
       .min(1, { message: 'Name is required.' })
       .min(3, 'Name must be at least 3 characters long')
       .optional(),
-    bio: z
-      .string()
-      .trim()
-      .min(1, { message: 'Bio is required.' })
-      .min(3, 'Bio must be at least 3 characters long')
-      .optional(),
-    phone: z
-      .string()
-      .trim()
-      .min(1, { message: 'Phone is required' })
-      .regex(
-        // eslint-disable-next-line no-useless-escape
-        /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/,
-        'Invalid phone number'
-      )
-      .default('')
-      .optional(),
-    avatar: z.unknown().optional(),
+    avatar: z.string().nullable().or(fileSchema.nullable()).optional(),
     darkMode: z.boolean().optional(),
     username: z
       .string()

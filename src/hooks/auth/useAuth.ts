@@ -29,7 +29,7 @@ const useAuth = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const { mutate: getUser } = useMutation({
-    mutationFn: (token: string) =>
+    mutationFn: (token: string | undefined) =>
       api<UserInterface, null>(null, 'user', RequestType.Get, token),
     mutationKey: ['get-user'],
     onSuccess: (response) => {
@@ -74,7 +74,7 @@ const useAuth = () => {
     }
   }, [getUser, getNewAccessToken, accessToken]);
 
-  return { user: userData, isLoading, isError, accessToken };
+  return { user: userData, isLoading, isError, accessToken, getUser };
 };
 
 export default useAuth;

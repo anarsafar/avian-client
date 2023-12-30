@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import handleError from '@/utils/networkErrorHandler';
 
 export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const instance = axios.create({
@@ -23,21 +24,11 @@ export interface SuccessResponse {
   message: string;
 }
 
-const handleError = (error: unknown): ErrorResponse | AxiosError => {
-  if (error instanceof AxiosError) {
-    if (error.response) {
-      return error.response.data as ErrorResponse;
-    }
-
-    if (error.isAxiosError && error.message === 'Network Error') {
-      return { error: 'Network Error' } as ErrorResponse;
-    }
-
-    return error;
-  }
-
-  throw new Error('Unexpected error occurred');
-};
+interface AXiosConfig<K> {
+  url: string;
+  data: K;
+  headers: object;
+}
 
 const api = async <T, K>(
   data: K,
@@ -46,11 +37,19 @@ const api = async <T, K>(
   accessToken?: string
 ): Promise<T> => {
   try {
-    const axiosConfig = {
+    const axiosConfig: AXiosConfig<K> = {
       url: endpoint,
       data,
       headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
     };
+
+    if (data instanceof FormData) {
+      axiosConfig.headers = {
+        ...axiosConfig.headers,
+        'Content-Type': 'multipart/form-data',
+      };
+    }
+
     const result: AxiosResponse = await instance.request({
       ...axiosConfig,
       method: requestType.toLowerCase(),
