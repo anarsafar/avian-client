@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { EditIcon } from '@chakra-ui/icons';
 
@@ -25,6 +25,7 @@ import { UserInterface } from '@/schemas/user/user.schema';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 import api, { ErrorResponse, RequestType } from '@/api';
+import useUser from '@/hooks/store/useUser';
 
 interface UpdateAccountProps {
   onClose: (type: 'account' | 'notifications' | 'darkMode') => void;
@@ -41,12 +42,12 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     resolver: zodResolver(UpdateUserValidate),
   });
 
-  const { getPersistedData, persistData } = usePersist();
-  const queryClient = useQueryClient();
+  const { getPersistedData } = usePersist();
   const [avatar, setAvatar] = useState<File | null>(null);
   const avatarRef = useRef<HTMLInputElement | null>(null);
 
-  const user = getPersistedData<UserInterface>('user', StorageType.Local);
+  const user = useUser((state) => state.user);
+  const setUser = useUser((state) => state.setUser);
   const token = getPersistedData<{ accessToken: string } | undefined>(
     'access-token',
     StorageType.Local
@@ -95,8 +96,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     },
     mutationKey: ['update-user'],
     onSuccess: (res) => {
-      persistData(res.user, 'user', StorageType.Local);
-      queryClient.invalidateQueries({ queryKey: ['user'] });
+      setUser(res.user);
       toast('success', 'Profile info updated', { message: '' });
     },
     onError: (error: ErrorResponse) =>

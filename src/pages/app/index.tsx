@@ -47,17 +47,17 @@ import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
-import { UserInterface } from '@/schemas/user/user.schema';
 import { Loading } from '@/components/loading';
 import Settings from '@/view/settings';
 import UpdateAccount from '@/components/update-account';
+import useUser from '@/hooks/store/useUser';
 
 function AppLayout() {
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
 
-  const user = getPersistedData<UserInterface>('user', StorageType.Local);
-  console.log(user);
+  const user = useUser((state) => state.user);
+
   const activeTabIndex = getPersistedData<number>(
     'activeTabIndex',
     StorageType.Session

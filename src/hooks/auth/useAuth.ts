@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
+import useUser from '@hooks/store/useUser';
 import usePersist, { StorageType } from '../store/usePersist';
 import api, { ErrorResponse, RequestType } from '@/api';
 import { UserInterface } from '@/schemas/user/user.schema';
@@ -11,7 +12,7 @@ interface AccessToken {
 }
 const useAuth = () => {
   const { persistData, getPersistedData } = usePersist();
-
+  const setUser = useUser((state) => state.setUser);
   const [userData, setUserData] = useState<UserInterface | undefined>(() => {
     const cachedUser = getPersistedData<UserInterface>(
       'user',
@@ -33,7 +34,7 @@ const useAuth = () => {
       api<UserInterface, null>(null, 'user', RequestType.Get, token),
     mutationKey: ['get-user'],
     onSuccess: (response) => {
-      persistData<UserInterface>(response, 'user', StorageType.Local);
+      setUser(response);
       setLoading(false);
       setUserData(response);
     },

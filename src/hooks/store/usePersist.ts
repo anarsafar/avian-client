@@ -20,7 +20,7 @@ function usePersist() {
         window[storageType].setItem(queryKey, JSON.stringify(data));
       }
     } catch (error) {
-      console.error('Error during data presisting: ', error);
+      console.error('Error during data persisting: ', error);
       throw error;
     }
   };
