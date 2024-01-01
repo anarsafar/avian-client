@@ -38,26 +38,25 @@ import { Helmet } from 'react-helmet-async';
 import logout from '@assets/common/logout.svg';
 
 import Animate from '@/components/common/Animate';
-import Inbox from '@/view/messages/conversations/Inbox';
-import ChatView from '@/view/messages/chat';
-import Contacts from '@/view/contacts/Contacts';
 import Sidebar from '@/components/common/Sidebar';
+import { Loading } from '@/components/loading';
+import UpdateAccount from '@/components/update-account';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
-
-import { Loading } from '@/components/loading';
-import Settings from '@/view/settings';
-import UpdateAccount from '@/components/update-account';
 import useUser from '@/hooks/store/useUser';
+
+import Inbox from '@/view/messages/conversations/Inbox';
+import ChatView from '@/view/messages/chat';
+import Contacts from '@/view/contacts/Contacts';
+import Settings from '@/view/settings';
 
 function AppLayout() {
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
-
   const user = useUser((state) => state.user);
-
+  console.log(user);
   const activeTabIndex = getPersistedData<number>(
     'activeTabIndex',
     StorageType.Session
@@ -88,7 +87,7 @@ function AppLayout() {
     <Modal isOpen={isSettingsOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalBody p="2rem">
+        <ModalBody p="2rem" bg={bg}>
           <UpdateAccount onClose={onClose} />
         </ModalBody>
       </ModalContent>

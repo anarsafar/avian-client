@@ -12,23 +12,19 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import useContact from '@/hooks/contact/useContactDeleteOrBlock';
-import { ContactInterface } from '@/utils/contact.interface';
-
 interface ModalInterface {
-  modalType: 'delete' | 'block';
   modalHeader: string;
+  action: () => void;
+  isLoading: boolean;
 }
 
-function useConfiramtion({ contact }: { contact: ContactInterface }) {
+function useConfiramtion() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
 
-  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
-
-  const modal = ({ modalType, modalHeader }: ModalInterface) => (
+  const modal = ({ action, modalHeader, isLoading }: ModalInterface) => (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
       <ModalOverlay />
       <ModalContent py="1rem" bg={bg}>
@@ -87,32 +83,31 @@ function useConfiramtion({ contact }: { contact: ContactInterface }) {
             mr={3}
             onClick={onClose}
             h="auto"
-            bg="violet-2"
+            bg="violet-3"
             p="0.7rem 1rem"
             lineHeight="1.8rem"
             fontFamily="openSans"
             fontSize="1.2rem"
             color="white"
             _hover={{
-              bg: 'violet-3',
+              bg: 'violet-1',
             }}
           >
             Close
           </Button>
           <Button
-            bg="#FF7961"
+            bg="red-3"
             p="1.6rem"
             lineHeight="1.8rem"
             fontFamily="openSans"
             fontSize="1.2rem"
             color="white"
             _hover={{
-              bg: '#FF5F44',
+              bg: 'red-1',
             }}
-            isLoading={isPending}
-            loadingText="deleting..."
+            isLoading={isLoading}
             onClick={async () => {
-              await deleteOrBlockContact({ action: modalType });
+              await action();
               onClose();
             }}
           >

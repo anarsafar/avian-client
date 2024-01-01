@@ -29,7 +29,7 @@ function useContactDeleteOrBlock(contactId: string) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['contacts'] }),
     onError: (error: ErrorResponse, variables: Action) =>
       toast(
-        true,
+        'error',
         `Error ${
           variables.action === 'block' ? 'blocking' : 'deleting'
         } contact`,

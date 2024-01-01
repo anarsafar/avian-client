@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { EditIcon } from '@chakra-ui/icons';
 
@@ -21,11 +20,10 @@ import {
   UpdateUserInterface,
   UpdateUserValidate,
 } from '@/schemas/user/update.schema';
-import { UserInterface } from '@/schemas/user/user.schema';
-import usePersist, { StorageType } from '@/hooks/store/usePersist';
-import useCustomToast from '@/hooks/custom/useCustomToast';
-import api, { ErrorResponse, RequestType } from '@/api';
+
 import useUser from '@/hooks/store/useUser';
+import useUserOperations from '@/hooks/user';
+import useConfiramtion from '@/hooks/custom/useConfirmation';
 
 interface UpdateAccountProps {
   onClose: (type: 'account' | 'notifications' | 'darkMode') => void;
@@ -42,22 +40,16 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     resolver: zodResolver(UpdateUserValidate),
   });
 
-  const { getPersistedData } = usePersist();
+  const { updateUser, isPending, deleteUser, isDeleting } = useUserOperations();
+  const { modal, onOpen } = useConfiramtion();
   const [avatar, setAvatar] = useState<File | null>(null);
   const avatarRef = useRef<HTMLInputElement | null>(null);
 
   const user = useUser((state) => state.user);
-  const setUser = useUser((state) => state.setUser);
-  const token = getPersistedData<{ accessToken: string } | undefined>(
-    'access-token',
-    StorageType.Local
-  );
 
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const errorTheme = useColorModeValue('red.300', 'red.400');
-
-  const toast = useCustomToast();
 
   const handleAvatar = () => {
     avatarRef?.current?.click();
@@ -72,38 +64,6 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
       trigger('avatar');
     }
   };
-
-  const { mutateAsync: updateUser, isPending } = useMutation({
-    mutationFn: (data: UpdateUserInterface) => {
-      const formData = new FormData();
-
-      if (data.avatar) {
-        formData.append('avatar', data.avatar);
-      }
-      if (data.name) {
-        formData.append('name', data.name);
-      }
-      if (data.username) {
-        formData.append('username', data.username);
-      }
-
-      return api<{ user: UserInterface }, FormData>(
-        formData,
-        'user',
-        RequestType.Patch,
-        token?.accessToken
-      );
-    },
-    mutationKey: ['update-user'],
-    onSuccess: (res) => {
-      setUser(res.user);
-      toast('success', 'Profile info updated', { message: '' });
-    },
-    onError: (error: ErrorResponse) =>
-      toast('error', 'Profile update fail', error),
-    retry: false,
-    networkMode: 'always',
-  });
 
   const setDefaults = useCallback(() => {
     setValue('username', user?.userInfo.username);
@@ -122,6 +82,11 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
 
   return (
     <Box>
+      {modal({
+        action: () => deleteUser(),
+        isLoading: isDeleting,
+        modalHeader: 'Delete Account',
+      })}
       <Flex id="header" justifyContent="space-between" alignItems="center">
         <Text
           as="h1"
@@ -298,7 +263,26 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
             background: 'violet-1',
           }}
         >
-          update
+          Update Info
+        </Button>
+        <Button
+          onClick={onOpen}
+          marginTop="1.4rem"
+          w="100%"
+          padding="2rem"
+          backgroundColor="red-3"
+          color="white"
+          fontSize="1.2rem"
+          fontFamily="openSans"
+          fontWeight={400}
+          lineHeight="1.6rem"
+          letterSpacing="0.16px"
+          borderRadius="8px"
+          _hover={{
+            background: 'red-1',
+          }}
+        >
+          Delete Account
         </Button>
       </FormControl>
     </Box>

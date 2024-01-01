@@ -12,8 +12,9 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import useContactInfo from '@/hooks/contact/useContactInfo';
-import { ContactInterface } from '@/utils/contact.interface';
 import useCustomModal from '@/hooks/custom/useConfirmation';
+import useContact from '@/hooks/contact/useContactDeleteOrBlock';
+import { ContactInterface } from '@/utils/contact.interface';
 
 interface ContactCardInterface {
   textTheme: string;
@@ -31,9 +32,8 @@ function ContactCard({
     contact,
   });
 
-  const { modal: customModal, onOpen: customOpen } = useCustomModal({
-    contact,
-  });
+  const { modal: customModal, onOpen: customOpen } = useCustomModal();
+  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
 
   return (
     <Button
@@ -103,7 +103,11 @@ function ContactCard({
         </Menu>
       </Flex>
       {infoModal}
-      {customModal({ modalType: 'delete', modalHeader: 'Delete Contact' })}
+      {customModal({
+        isLoading: isPending,
+        modalHeader: 'Delete Contact',
+        action: () => deleteOrBlockContact({ action: 'delete' }),
+      })}
     </Button>
   );
 }

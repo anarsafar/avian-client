@@ -14,7 +14,6 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef } from 'react';
 
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
@@ -54,9 +53,11 @@ function useAddContact({
   const { getPersistedData } = usePersist();
   const queryClient = useQueryClient();
 
-  const { current: accessToken } = useRef(
-    getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
+  const accessToken = getPersistedData<{ accessToken: string }>(
+    'access-token',
+    StorageType.Local
   );
+
   const { mutateAsync: addContact, isPending } = useMutation({
     mutationFn: (contact: ValidateContactType) =>
       api<SuccessResponse, ValidateContactType>(
@@ -69,10 +70,13 @@ function useAddContact({
     onSuccess: () => {
       onClose();
       reset();
+      queryClient.invalidateQueries({
+        queryKey: ['user', accessToken?.accessToken],
+      });
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
     },
     onError: (error: ErrorResponse) =>
-      toast(true, `Error adding contact`, error),
+      toast('error', `Error adding contact`, error),
     retry: false,
     networkMode: 'always',
   });

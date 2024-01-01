@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
   AtSignIcon,
   BellIcon,
@@ -29,6 +30,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
+import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import { ContactInterface } from '@/utils/contact.interface';
 
@@ -42,13 +44,9 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
-  const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal({
-    contact,
-  });
+  const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal();
 
-  const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal({
-    contact,
-  });
+  const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
 
   const [open, setOpen] = useState<boolean>(false);
   const [isTooltipVisible, setTooltipVisible] = useState<boolean>(false);
@@ -58,6 +56,8 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
       setTimeout(() => setTooltipVisible(false), 1000);
     });
   };
+
+  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
 
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
@@ -273,12 +273,14 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
         </ModalBody>
       </ModalContent>
       {deleteContactModal({
-        modalType: 'delete',
         modalHeader: 'Delete Contact',
+        action: () => deleteOrBlockContact({ action: 'delete' }),
+        isLoading: isPending,
       })}
       {blockContactModal({
-        modalType: 'block',
         modalHeader: contact.isBlocked ? 'Unblock Contact' : 'Block Contact',
+        isLoading: isPending,
+        action: () => deleteOrBlockContact({ action: 'block' }),
       })}
     </Modal>
   );
