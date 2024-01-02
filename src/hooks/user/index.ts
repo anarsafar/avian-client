@@ -34,11 +34,9 @@ const useUserOperations = () => {
       if (data.username) {
         formData.append('username', data.username);
       }
-
-      if (data.darkMode) {
-        formData.append('darkMode', String(data.darkMode));
+      if (data.theme) {
+        formData.append('theme', data.theme);
       }
-
       return api<{ user: UserInterface }, FormData>(
         formData,
         'user',

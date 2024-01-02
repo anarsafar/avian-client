@@ -1,10 +1,12 @@
-import { extendTheme } from '@chakra-ui/react';
+import { ThemeConfig, extendTheme } from '@chakra-ui/react';
+
+const config: ThemeConfig = {
+  initialColorMode: 'system',
+  useSystemColorMode: true,
+};
 
 const theme = extendTheme({
-  config: {
-    initialColorMode: 'system',
-    useSystemColorMode: true,
-  },
+  config,
   colors: {
     'violet-1': '#C1CAFF',
     'violet-2': '#8E99F3',

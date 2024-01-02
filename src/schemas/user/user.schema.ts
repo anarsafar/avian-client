@@ -90,7 +90,7 @@ export const UserZodSchema = z.object({
 
   preferences: z
     .object({
-      darkMode: z.boolean().default(false),
+      theme: z.union([z.literal('os'), z.literal('light'), z.literal('dark')]),
     })
     .optional(),
 });

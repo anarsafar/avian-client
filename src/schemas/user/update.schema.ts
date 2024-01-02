@@ -17,7 +17,9 @@ export const UpdateUserValidate = z
       .min(3, 'Name must be at least 3 characters long')
       .optional(),
     avatar: z.string().nullable().or(fileSchema.nullable()).optional(),
-    darkMode: z.boolean().optional(),
+    theme: z
+      .union([z.literal('os'), z.literal('light'), z.literal('dark')])
+      .optional(),
     username: z
       .string()
       .trim()

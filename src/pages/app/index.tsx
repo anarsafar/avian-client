@@ -56,7 +56,7 @@ function AppLayout() {
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
   const user = useUser((state) => state.user);
-  console.log(user);
+
   const activeTabIndex = getPersistedData<number>(
     'activeTabIndex',
     StorageType.Session
