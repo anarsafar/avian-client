@@ -51,8 +51,12 @@ import Inbox from '@/view/messages/conversations/Inbox';
 import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
+import useSocket from '@/hooks/store/useSocket';
+import NoChatSelected from '@/view/messages/chat/NoChatSelected';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 function AppLayout() {
+  useSocket();
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
   const user = useUser((state) => state.user);
@@ -63,6 +67,7 @@ function AppLayout() {
   );
 
   const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
+  const { activeConversation } = useActiveConversation();
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
 
@@ -382,7 +387,7 @@ function AppLayout() {
               </TabPanels>
             </GridItem>
             <GridItem area="chatbox">
-              <ChatView />
+              {activeConversation ? <ChatView /> : <NoChatSelected />}
             </GridItem>
           </Grid>
         </Tabs>

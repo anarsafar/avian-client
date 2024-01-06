@@ -3,8 +3,8 @@ import { Flex } from '@chakra-ui/react';
 import HeroSection from '@/components/auth/HeroSection';
 import useHeight from '@/hooks/sizing/useHeight';
 import useWidth from '@/hooks/sizing/useWidth';
-import SignUp from './SignUp';
-import SignIn from './SignIn';
+import Signup from './Signup';
+import Signin from './Signin';
 
 interface AuthViewProps {
   isSignUp: boolean;
@@ -16,7 +16,7 @@ function AuthView({ isSignUp }: AuthViewProps) {
 
   return (
     <Flex as="section" height={height} padding="2.4rem">
-      {isSignUp ? <SignUp /> : <SignIn />}
+      {isSignUp ? <Signup /> : <Signin />}
       {width >= 768 && <HeroSection />}
     </Flex>
   );

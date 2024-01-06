@@ -15,6 +15,7 @@ import useContactInfo from '@/hooks/contact/useContactInfo';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import { ContactInterface } from '@/utils/contact.interface';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 interface ContactCardInterface {
   textTheme: string;
@@ -31,33 +32,42 @@ function ContactCard({
   const { modal: infoModal, infoOnOpen } = useContactInfo({
     contact,
   });
-
+  const { setActiveConversation } = useActiveConversation();
   const { modal: customModal, onOpen: customOpen } = useCustomModal();
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
+
+  const startConversation = () => {
+    setActiveConversation(contact);
+  };
 
   return (
     <Button
       as={Box}
-      p="1.7rem 0.8rem 1.6rem 1.8rem"
       borderRadius="0.9rem"
       variant="unstyled"
       height="auto"
+      cursor="pointer"
       _hover={{
         bg: hoverTheme,
       }}
     >
       <Flex alignItems="center" justifyContent="space-between">
         <Text
+          p="1.7rem 0 1.6rem 1.8rem"
+          as="button"
+          textAlign="left"
           fontWeight={600}
           lineHeight="1.8rem"
           fontFamily="openSans"
           fontSize="1.2rem"
           color={textTheme}
+          onClick={startConversation}
+          flexGrow="1"
         >
           {contact.user.userInfo.name}
         </Text>
         <Menu>
-          <MenuButton as={Button} variant="unstyled">
+          <MenuButton as={Button} variant="unstyled" me="0.8rem">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24"
@@ -74,6 +84,7 @@ function ContactCard({
               fontFamily="openSans"
               color={textTheme}
               fontWeight={400}
+              onClick={startConversation}
             >
               <EditIcon />
               <Text ms="1rem">Start Converation</Text>

@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import useActiveConversation from '../store/useActiveConversation';
 
 const useLogout = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { getPersistedData } = usePersist();
+  const { clearActiveConversation } = useActiveConversation();
   const token = getPersistedData<{ accessToken: string }>(
     'access-token',
     StorageType.Local
@@ -35,6 +37,7 @@ const useLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
     queryClient.clear();
+    clearActiveConversation();
     navigate('/auth/signin');
   };
 
