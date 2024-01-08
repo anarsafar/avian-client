@@ -33,6 +33,7 @@ import { useState } from 'react';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import { ContactInterface } from '@/utils/contact.interface';
+import formatLastSeen from '@/utils/formatLastSeen';
 
 function useContactInfo({ contact }: { contact: ContactInterface }) {
   const {
@@ -116,6 +117,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
               h="4rem"
               name={contact.user.userInfo.name}
               src={contact.user.userInfo?.avatar}
+              loading="eager"
               _hover={{
                 transform: 'scale(1.1)',
                 transition: 'all 0.1s linear ',
@@ -156,7 +158,9 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
                 lineHeight="1.8rem"
                 letterSpacing="0.16px"
               >
-                last seen yesterday
+                {contact?.user.online
+                  ? 'Online'
+                  : formatLastSeen(contact?.user.lastSeen as string)}
               </Text>
             </Flex>
           </Flex>

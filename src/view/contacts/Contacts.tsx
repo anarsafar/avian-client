@@ -8,16 +8,19 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
+// import { useEffect } from 'react';
 import api, { RequestType } from '@/api';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import ContactCard from './ContactCard';
 import { SkeletonLoading } from '@/components/loading';
 import { ContactInterface } from '@/utils/contact.interface';
 import groupContactsByFirstLetter from '@/utils/groupContacts';
+// import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 function Contacts({ contactName }: { contactName: string }): JSX.Element {
   const { getPersistedData } = usePersist();
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
+  //   const { activeConversation, setActiveConversation } = useActiveConversation();
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
@@ -28,6 +31,7 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
     data: contacts,
     isLoading,
     isError,
+    // isSuccess,
     refetch,
   } = useQuery({
     queryKey: ['contacts', accessToken?.accessToken],
@@ -42,6 +46,26 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
     retry: false,
     networkMode: 'always',
   });
+
+  //   useEffect(() => {
+  //     if (activeConversation && isSuccess) {
+  //       const newActiveConversation = contacts.contacts.find(
+  //         (contact) => contact.user._id === activeConversation.user._id
+  //       );
+
+  //       if (
+  //         newActiveConversation &&
+  //         newActiveConversation.isBlocked !== activeConversation.isBlocked
+  //       ) {
+  //         setActiveConversation(newActiveConversation);
+  //       }
+  //     }
+  //   }, [
+  //     activeConversation,
+  //     contacts?.contacts,
+  //     isSuccess,
+  //     setActiveConversation,
+  //   ]);
 
   let content: React.ReactNode;
 

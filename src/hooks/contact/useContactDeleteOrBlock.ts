@@ -1,8 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import useActiveConversation from '@hooks/store/useActiveConversation';
+import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
-import usePersist, { StorageType } from '../store/usePersist';
+
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 
 interface Action {
@@ -10,6 +13,9 @@ interface Action {
 }
 
 function useContactDeleteOrBlock(contactId: string) {
+  const { activeConversation, setActiveConversation, clearActiveConversation } =
+    useActiveConversation();
+
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
   const queryClient = useQueryClient();
@@ -26,7 +32,20 @@ function useContactDeleteOrBlock(contactId: string) {
         accessToken?.accessToken
       ),
     mutationKey: ['block-or-delete-contact'],
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['contacts'] }),
+    onSuccess: (res, variables) => {
+      if (contactId === activeConversation?.user._id) {
+        if (variables.action === 'block') {
+          const newActiveConvesation = {
+            ...activeConversation,
+            isBlocked: !activeConversation.isBlocked,
+          };
+          setActiveConversation(newActiveConvesation);
+        } else {
+          clearActiveConversation();
+        }
+      }
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+    },
     onError: (error: ErrorResponse, variables: Action) =>
       toast(
         'error',

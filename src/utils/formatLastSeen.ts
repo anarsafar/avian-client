@@ -10,37 +10,32 @@ function formatLastSeen(lastSeenDate: string): string {
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: 'numeric',
-    hour12: false, // Use 24-hour format
+    hour12: false,
   };
 
-  if (hoursDifference < 24) {
-    if (hoursDifference < 1) {
-      const minutesDifference = Math.floor(timeDifference / (1000 * 60));
-      return `last active ${minutesDifference} minute${
-        minutesDifference === 1 ? '' : 's'
-      } ago`;
-    }
+  const daysDifference = Math.floor(hoursDifference / 24);
+
+  if (daysDifference === 0) {
     const formattedTime = lastSeen.toLocaleTimeString('en-US', timeOptions);
-    return `last active ${formattedTime}`;
+    return `last active today at ${formattedTime}`;
   }
-  if (hoursDifference < 48) {
+  if (daysDifference === 1) {
     const formattedTime = lastSeen.toLocaleTimeString('en-US', timeOptions);
     return `last active yesterday at ${formattedTime}`;
   }
-  if (hoursDifference < 168) {
-    const daysDifference = Math.floor(hoursDifference / 24);
-    return rtf.format(-daysDifference, 'day');
+  if (daysDifference > 1 && daysDifference < 7) {
+    return `last active ${rtf.format(-daysDifference, 'day')}`;
   }
-  if (hoursDifference < 672) {
-    const weeksDifference = Math.floor(hoursDifference / (24 * 7));
-    return rtf.format(-weeksDifference, 'week');
+  if (daysDifference >= 7 && daysDifference < 30) {
+    const weeksDifference = Math.floor(daysDifference / 7);
+    return `last active ${rtf.format(-weeksDifference, 'week')}`;
   }
-  if (hoursDifference < 8760) {
-    const monthsDifference = Math.floor(hoursDifference / (24 * 30));
-    return rtf.format(-monthsDifference, 'month');
+  if (daysDifference >= 30 && daysDifference < 365) {
+    const monthsDifference = Math.floor(daysDifference / 30);
+    return `last seen ${rtf.format(-monthsDifference, 'month')}`;
   }
-  const yearsDifference = Math.floor(hoursDifference / (24 * 365));
-  return rtf.format(-yearsDifference, 'year');
+  const yearsDifference = Math.floor(daysDifference / 365);
+  return `last seen ${rtf.format(-yearsDifference, 'year')}`;
 }
 
 export default formatLastSeen;

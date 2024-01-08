@@ -8,10 +8,13 @@ import {
   MenuItem,
   MenuList,
   Text,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
+import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import formatLastSeen from '@/utils/formatLastSeen';
+import useContactInfo from '@/hooks/contact/useContactInfo';
+import { ContactInterface } from '@/utils/contact.interface';
 
 interface PropTypes {
   darkerTextColor: string;
@@ -20,6 +23,11 @@ interface PropTypes {
 
 function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const { activeConversation } = useActiveConversation();
+  const textTheme = useColorModeValue('gray-4', 'text-dark');
+  const { infoOnOpen, modal } = useContactInfo({
+    contact: activeConversation as ContactInterface,
+  });
+  console.log(activeConversation);
   return (
     <Flex
       fontFamily="openSans"
@@ -30,11 +38,12 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
       alignItems="center"
       gap="1.2rem"
     >
-      <Button variant="unstyled" h="auto">
+      <Button variant="unstyled" h="auto" onClick={infoOnOpen}>
         <Flex alignItems="center" gap="1.2rem">
           <Avatar
             name={activeConversation?.user.userInfo.name}
             src={activeConversation?.user.userInfo.avatar}
+            loading="eager"
             w="3.3rem"
             h="3.3rem"
           />
@@ -85,15 +94,27 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
               <path d="M480-160q-33 0-56.5-23.5T400-240q0-33 23.5-56.5T480-320q33 0 56.5 23.5T560-240q0 33-23.5 56.5T480-160Zm0-240q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm0-240q-33 0-56.5-23.5T400-720q0-33 23.5-56.5T480-800q33 0 56.5 23.5T560-720q0 33-23.5 56.5T480-640Z" />
             </svg>
           </MenuButton>
-          <MenuList>
-            <MenuItem>Download</MenuItem>
-            <MenuItem>Create a Copy</MenuItem>
-            <MenuItem>Mark as Draft</MenuItem>
-            <MenuItem>Delete</MenuItem>
-            <MenuItem>Attend a Workshop</MenuItem>
+          <MenuList w="18rem">
+            <MenuItem
+              fontSize="1.3rem"
+              fontFamily="openSans"
+              color={textTheme}
+              fontWeight={400}
+              onClick={infoOnOpen}
+            >
+              <InfoOutlineIcon />
+              <Text ms="1rem">Contact Information</Text>
+            </MenuItem>
+            <MenuItem fontSize="1.3rem" fontFamily="openSans" fontWeight={400}>
+              <DeleteIcon color="red-3" />
+              <Text ms="1rem" color="red-3">
+                Delete Conversation
+              </Text>
+            </MenuItem>
           </MenuList>
         </Menu>
       </Flex>
+      {modal}
     </Flex>
   );
 }
