@@ -37,7 +37,6 @@ import { Helmet } from 'react-helmet-async';
 
 import logout from '@assets/common/logout.svg';
 
-import Animate from '@/components/common/Animate';
 import Sidebar from '@/components/common/Sidebar';
 import { Loading } from '@/components/loading';
 import UpdateAccount from '@/components/update-account';
@@ -46,12 +45,12 @@ import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useUser from '@/hooks/store/useUser';
+import useSocket from '@/hooks/store/useSocket';
 
 import Inbox from '@/view/messages/conversations/Inbox';
 import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
-import useSocket from '@/hooks/store/useSocket';
 
 function AppLayout() {
   useSocket();
@@ -349,38 +348,30 @@ function AppLayout() {
             </GridItem>
             <GridItem area="sidebar">
               <TabPanels>
-                <Animate>
-                  <TabPanel h="100vh" p="0">
-                    <Inbox />
-                  </TabPanel>
-                </Animate>
-                <Animate>
-                  <TabPanel h="100vh" p="0">
-                    <Sidebar header="Contacts" type="contacts">
-                      {(contactName: string) => (
-                        <Contacts contactName={contactName} />
-                      )}
-                    </Sidebar>
-                  </TabPanel>
-                </Animate>
-                <Animate>
-                  <TabPanel>
-                    <Text
-                      fontSize="1.3rem"
-                      fontFamily="openSans"
-                      color={text}
-                      fontWeight={400}
-                      mt="2.2rem"
-                    >
-                      Coming soon
-                    </Text>
-                  </TabPanel>
-                </Animate>
-                <Animate>
-                  <TabPanel>
-                    <Settings />
-                  </TabPanel>
-                </Animate>
+                <TabPanel h="100vh" p="0">
+                  <Inbox />
+                </TabPanel>
+                <TabPanel h="100vh" p="0">
+                  <Sidebar header="Contacts" type="contacts">
+                    {(contactName: string) => (
+                      <Contacts contactName={contactName} />
+                    )}
+                  </Sidebar>
+                </TabPanel>
+                <TabPanel>
+                  <Text
+                    fontSize="1.3rem"
+                    fontFamily="openSans"
+                    color={text}
+                    fontWeight={400}
+                    mt="2.2rem"
+                  >
+                    Coming soon
+                  </Text>
+                </TabPanel>
+                <TabPanel>
+                  <Settings />
+                </TabPanel>
               </TabPanels>
             </GridItem>
             <GridItem area="chatbox">

@@ -1,4 +1,5 @@
 import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+
 import ChatHeader from './view/ChatHeader';
 import ChatPanel from './view/ChatPanel';
 import NoChatSelected from './NoChatSelected';
