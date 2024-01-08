@@ -1,14 +1,15 @@
-import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
+import { Flex, useColorModeValue } from '@chakra-ui/react';
 
 import ChatHeader from './view/ChatHeader';
 import ChatPanel from './view/ChatPanel';
 import NoChatSelected from './NoChatSelected';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
+import ChatBody from './view/ChatBody';
 
 function ChatView() {
   const inputColor = useColorModeValue('input-light', 'input-dark');
   const logoColor = useColorModeValue('#C5C5C6', '#6b7280');
-  const placeholderColor = useColorModeValue('gray-5', 'text-darker');
+  const placeholderColor = useColorModeValue('gray-4', 'text-darker');
   const darkerTextColor = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const textColor = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const { activeConversation } = useActiveConversation();
@@ -16,7 +17,7 @@ function ChatView() {
   const contactChatView = (
     <Flex direction="column" h="100%">
       <ChatHeader darkerTextColor={darkerTextColor} logoColor={logoColor} />
-      <Box flexGrow="1">Messages</Box>
+      <ChatBody />
       <ChatPanel
         textColor={textColor}
         placeholderColor={placeholderColor}

@@ -116,6 +116,7 @@ function AppLayout() {
           isLazy
           lazyBehavior="unmount"
           bg={bg}
+          pe="0.5rem"
         >
           <Grid
             height="100%"

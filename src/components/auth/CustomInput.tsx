@@ -38,7 +38,7 @@ function CustomInput<T extends FieldValues>({
     isAuth ? 'input-dark' : 'input-light'
   );
   const placeholderColor = useColorModeValue(
-    'gray-5',
+    'gray-4',
     isAuth ? 'text-darker' : 'gray-5'
   );
   const text = useColorModeValue('gray-4', isAuth ? 'text-dark' : 'gray-4');

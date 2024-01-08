@@ -1,19 +1,15 @@
-import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const useSocket = () => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+import { create } from 'zustand';
 
-  useEffect(() => {
-    const newSocket = io('ws://localhost:8080');
-    setSocket(newSocket);
+interface SocketI {
+  socket: Socket;
+}
 
-    return () => {
-      newSocket.close();
-    };
-  }, []);
-
-  return socket;
-};
+const useSocket = create<SocketI>(() => {
+  return {
+    socket: io('ws://localhost:8080'),
+  };
+});
 
 export default useSocket;

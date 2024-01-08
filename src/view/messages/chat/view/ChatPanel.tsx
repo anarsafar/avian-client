@@ -1,7 +1,8 @@
 import { AttachmentIcon } from '@chakra-ui/icons';
-import { Button, Flex, FormControl, Image, Input } from '@chakra-ui/react';
-
+import { useState, useRef } from 'react';
+import { Button, Flex, FormControl, Image, Textarea } from '@chakra-ui/react';
 import sendIcon from '@assets/common/sendIcon.svg';
+import useSocket from '@/hooks/store/useSocket';
 
 interface PropTypes {
   textColor: string;
@@ -16,6 +17,43 @@ function ChatPanel({
   inputColor,
   logoColor,
 }: PropTypes) {
+  const [textMessage, setTextMessage] = useState<string>('');
+  const { socket } = useSocket();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const sendMessage = () => {
+    const trimmedMsg = textMessage.trim();
+    socket.emit('private message', trimmedMsg);
+    setTextMessage('');
+    if (textareaRef.current) {
+      textareaRef.current.rows = 1;
+    }
+  };
+
+  const updateRows = () => {
+    if (textareaRef.current) {
+      const textareaRows = Math.min(
+        3,
+        Math.ceil((textareaRef.current.scrollHeight - 40) / 16 + 1)
+      );
+      textareaRef.current.rows = textareaRows;
+    }
+  };
+
+  const handleTextareaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    setTextMessage(event.target.value);
+    updateRows();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
     <Flex
       justifyContent="space-between"
@@ -27,9 +65,14 @@ function ChatPanel({
         <AttachmentIcon fontSize="1.5rem" color={logoColor} />
       </Button>
       <FormControl>
-        <Input
-          type="text"
-          p="1.8rem"
+        <Textarea
+          ref={textareaRef}
+          value={textMessage}
+          onChange={handleTextareaChange}
+          onKeyDown={handleKeyDown}
+          p="1.2rem"
+          rows={1}
+          resize="none"
           border="none"
           placeholder="Write your message here"
           fontFamily="openSans"
@@ -57,6 +100,8 @@ function ChatPanel({
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         p="1rem"
         h="3.2rem"
+        isDisabled={textMessage.trim().length === 0}
+        onClick={sendMessage}
         _hover={{
           bg: 'violet-3',
         }}

@@ -27,7 +27,7 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const { infoOnOpen, modal } = useContactInfo({
     contact: activeConversation as ContactInterface,
   });
-  console.log(activeConversation);
+
   return (
     <Flex
       fontFamily="openSans"

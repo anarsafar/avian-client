@@ -26,7 +26,7 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
   const text = useColorModeValue('gray-4', 'text-dark');
   const input = useColorModeValue('input-light', 'input-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
-  const placeholder = useColorModeValue('gray-5', 'text-darker');
+  const placeholder = useColorModeValue('gray-4', 'text-darker');
 
   const [contactName, setContactName] = useState<string>('');
 
