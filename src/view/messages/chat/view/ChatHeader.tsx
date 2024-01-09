@@ -31,7 +31,6 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   return (
     <Flex
       fontFamily="openSans"
-      w="100%"
       lineHeight="1.8rem"
       letterSpacing="0.16px"
       p="1.6rem 2.4rem"

@@ -15,7 +15,7 @@ function ChatView() {
   const { activeConversation } = useActiveConversation();
 
   const contactChatView = (
-    <Flex direction="column" h="100%">
+    <Flex direction="column">
       <ChatHeader darkerTextColor={darkerTextColor} logoColor={logoColor} />
       <ChatBody />
       <ChatPanel
