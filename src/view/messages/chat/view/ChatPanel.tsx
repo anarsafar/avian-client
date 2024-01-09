@@ -18,6 +18,7 @@ function ChatPanel({
   logoColor,
 }: PropTypes) {
   const [textMessage, setTextMessage] = useState<string>('');
+
   const { socket } = useSocket();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -31,61 +32,57 @@ function ChatPanel({
     }
   };
 
-  const handleTextareaChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>
-  ) => {
-    setTextMessage(event.target.value);
+  const countLineBreaks = (inputString: string): number => {
+    const matches = inputString.match(/\r|\n/g);
+    return matches ? matches.length : 0;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (textareaRef.current) {
-      //  create more lines on empty textarea using enter key
-      if (e.key === 'Enter' && textMessage.trim().length === 0) {
+      //  create more lines on textarea using enter key or shift + enter key
+
+      if (
+        e.key === 'Enter' &&
+        textareaRef.current.offsetHeight < 140 &&
+        (textMessage.trim().length === 0 || e.shiftKey)
+      ) {
         textareaRef.current.style.height = `${
           textareaRef.current.offsetHeight + 20
         }px`;
       }
 
-      if (e.key === 'Enter') {
-        if (e.shiftKey) {
+      //   delete added lines when deleting message
+      const { selectionStart, selectionEnd } = textareaRef.current;
+      const linesToDelete =
+        textMessage.slice(selectionStart, selectionEnd) ||
+        textMessage.slice(-1);
+
+      const lineBreaks = countLineBreaks(linesToDelete);
+
+      if (e.key === 'Backspace') {
+        if (lineBreaks && lineBreaks <= 5) {
           textareaRef.current.style.height = `${
-            textareaRef.current.offsetHeight + 20
+            textareaRef.current.offsetHeight - 20 * lineBreaks
           }px`;
-        } else if (textMessage.trim().length !== 0) {
-          e.preventDefault();
-          sendMessage();
+        } else if (lineBreaks && lineBreaks > 5) {
+          textareaRef.current.style.height = `auto`;
         }
       }
 
-      const lastChar = textMessage.slice(-1);
-      if (e.key === 'Backspace' && lastChar === '\n') {
-        textareaRef.current.style.height = `${
-          textareaRef.current.offsetHeight - 20
-        }px`;
+      // send message on enter click
+      if (textMessage.trim().length !== 0 && e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
       }
     }
   };
 
-  const updateHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(
-        textareaRef.current.scrollHeight,
-        6 *
-          parseInt(window.getComputedStyle(textareaRef.current).lineHeight, 10)
-      )}px`;
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    if (textareaRef.current) {
-      const pastedText = e.clipboardData.getData('text/plain');
-      if (pastedText.includes('\n')) {
-        setTimeout(() => {
-          updateHeight();
-        }, 0);
+  const handlePaste = () => {
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
       }
-    }
+    }, 0);
   };
 
   return (
@@ -107,14 +104,14 @@ function ChatPanel({
         left="5.5rem"
         width="calc(100% - 12rem)"
         minH="4rem"
+        maxH="14rem"
         ref={textareaRef}
         value={textMessage}
-        onChange={handleTextareaChange}
+        onChange={(e) => setTextMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         p="1.2rem"
         rows={1}
-        maxH="14rem"
         resize="none"
         border="none"
         placeholder="Write your message here"
