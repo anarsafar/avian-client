@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Button,
   Flex,
@@ -8,19 +8,18 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-// import { useEffect } from 'react';
-import api, { RequestType } from '@/api';
+import api, { ErrorResponse, RequestType } from '@/api';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import ContactCard from './ContactCard';
 import { SkeletonLoading } from '@/components/loading';
 import { ContactInterface } from '@/utils/contact.interface';
 import groupContactsByFirstLetter from '@/utils/groupContacts';
-// import useActiveConversation from '@/hooks/store/useActiveConversation';
+import useLogout from '@/hooks/auth/useLogout';
 
 function Contacts({ contactName }: { contactName: string }): JSX.Element {
-  const { getPersistedData } = usePersist();
+  const { getPersistedData, persistData } = usePersist();
+  const { logoutHandler } = useLogout();
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
-  //   const { activeConversation, setActiveConversation } = useActiveConversation();
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
@@ -31,7 +30,6 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
     data: contacts,
     isLoading,
     isError,
-    // isSuccess,
     refetch,
   } = useQuery({
     queryKey: ['contacts', accessToken?.accessToken],
@@ -47,25 +45,30 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
     networkMode: 'always',
   });
 
-  //   useEffect(() => {
-  //     if (activeConversation && isSuccess) {
-  //       const newActiveConversation = contacts.contacts.find(
-  //         (contact) => contact.user._id === activeConversation.user._id
-  //       );
-
-  //       if (
-  //         newActiveConversation &&
-  //         newActiveConversation.isBlocked !== activeConversation.isBlocked
-  //       ) {
-  //         setActiveConversation(newActiveConversation);
-  //       }
-  //     }
-  //   }, [
-  //     activeConversation,
-  //     contacts?.contacts,
-  //     isSuccess,
-  //     setActiveConversation,
-  //   ]);
+  const { mutate: getNewAccessToken } = useMutation({
+    mutationFn: (token?: string | undefined) =>
+      api<{ accessToken: string }, null>(
+        null,
+        'refresh',
+        RequestType.Post,
+        token
+      ),
+    mutationKey: ['get-new-access-token'],
+    onSuccess: (newAccessToken) => {
+      persistData<{ accessToken: string }>(
+        newAccessToken,
+        'access-token',
+        StorageType.Local
+      );
+      refetch();
+    },
+    onError: (accessError: ErrorResponse) => {
+      console.error('Error from refresh route ', accessError);
+      logoutHandler();
+    },
+    retry: false,
+    networkMode: 'always',
+  });
 
   let content: React.ReactNode;
 
@@ -101,7 +104,7 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
           _hover={{
             bg: '#FF5F44',
           }}
-          onClick={() => refetch()}
+          onClick={() => getNewAccessToken(accessToken?.accessToken)}
         >
           Try again
         </Button>
