@@ -4,8 +4,7 @@ function formatLastSeen(lastSeenDate: string): string {
 
   const timeDifference = currentDate.getTime() - lastSeen.getTime();
   const hoursDifference = Math.floor(timeDifference / (1000 * 60 * 60));
-
-  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  const daysDifference = Math.floor(hoursDifference / 24);
 
   const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
@@ -13,29 +12,33 @@ function formatLastSeen(lastSeenDate: string): string {
     hour12: false,
   };
 
-  const daysDifference = Math.floor(hoursDifference / 24);
-
-  if (daysDifference === 0) {
+  if (currentDate.getDate() === lastSeen.getDate()) {
     const formattedTime = lastSeen.toLocaleTimeString('en-US', timeOptions);
     return `last active today at ${formattedTime}`;
   }
-  if (daysDifference === 1) {
+  if (currentDate.getDate() - lastSeen.getDate() === 1) {
     const formattedTime = lastSeen.toLocaleTimeString('en-US', timeOptions);
     return `last active yesterday at ${formattedTime}`;
   }
-  if (daysDifference > 1 && daysDifference < 7) {
-    return `last active ${rtf.format(-daysDifference, 'day')}`;
+
+  if (daysDifference < 30) {
+    const formattedDate = lastSeen.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    });
+    return `last active on ${formattedDate}`;
   }
-  if (daysDifference >= 7 && daysDifference < 30) {
-    const weeksDifference = Math.floor(daysDifference / 7);
-    return `last active ${rtf.format(-weeksDifference, 'week')}`;
-  }
-  if (daysDifference >= 30 && daysDifference < 365) {
-    const monthsDifference = Math.floor(daysDifference / 30);
-    return `last seen ${rtf.format(-monthsDifference, 'month')}`;
-  }
+  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  const monthsDifference = Math.floor(daysDifference / 30);
   const yearsDifference = Math.floor(daysDifference / 365);
-  return `last seen ${rtf.format(-yearsDifference, 'year')}`;
+
+  if (daysDifference < 365) {
+    return `last active ${rtf.format(-monthsDifference, 'month')}`;
+  }
+  return `last active ${rtf.format(-yearsDifference, 'year')}`;
 }
 
 export default formatLastSeen;
