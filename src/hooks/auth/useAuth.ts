@@ -34,7 +34,6 @@ const useAuth = () => {
     queryKey: ['user', accessToken],
     queryFn: () =>
       api<UserInterface, null>(null, 'user', RequestType.Get, accessToken),
-    enabled: false,
     refetchOnWindowFocus: false,
     retry: false,
     networkMode: 'always',
@@ -56,27 +55,19 @@ const useAuth = () => {
     },
     onError: (error: ErrorResponse) => {
       console.error('Error from refresh route ', error);
-      setLoading(false);
     },
     retry: false,
     networkMode: 'always',
   });
 
   useEffect(() => {
-    if (accessToken) {
-      getUser();
-    } else {
-      getNewAccessToken(accessToken);
-    }
-  }, [getUser, getNewAccessToken, accessToken]);
-
-  useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && isLoading) {
       setUser(userData);
       setLoading(false);
-    }
-    if (isUserError) {
+    } else if (isUserError && isLoading) {
       getNewAccessToken(accessToken);
+    } else if (isError) {
+      setLoading(false);
     }
   }, [
     accessToken,
@@ -84,7 +75,9 @@ const useAuth = () => {
     isSuccess,
     isUserError,
     setUser,
+    isError,
     userData,
+    isLoading,
   ]);
 
   return { user, isLoading, isError, accessToken, getUser };
