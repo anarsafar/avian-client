@@ -100,7 +100,7 @@ function ChatPanel({
         autoCorrect="off"
         autoComplete="off"
         position="absolute"
-        bottom="1.2rem"
+        bottom="1.5rem"
         left="5.5rem"
         width="calc(100% - 12rem)"
         minH="4rem"
@@ -133,19 +133,16 @@ function ChatPanel({
         }}
       />
       <Button
-        variant="unstyled"
         bg="violet-2"
         borderRadius="50%"
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        p="1rem"
-        h="3.2rem"
+        p="1.8rem 1rem"
         isDisabled={textMessage.trim().length === 0}
         onClick={sendMessage}
         _hover={{
           bg: 'violet-3',
         }}
       >
-        <Image src={sendIcon} w="100%" />
+        <Image src={sendIcon} w="100%" ps="3px" />
       </Button>
     </Flex>
   );
