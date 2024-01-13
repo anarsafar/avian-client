@@ -45,6 +45,8 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
+  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
+
   const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal();
 
   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
@@ -63,7 +65,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
       <ModalOverlay />
-      <ModalContent position="relative">
+      <ModalContent position="relative" bg={bgTheme}>
         <ModalHeader
           p={0}
           mt="1.6rem"

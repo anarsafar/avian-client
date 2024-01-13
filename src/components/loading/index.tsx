@@ -1,7 +1,10 @@
 import {
+  Box,
   Flex,
+  HStack,
   Heading,
   Skeleton,
+  SkeletonCircle,
   Spinner,
   Stack,
   useColorModeValue,
@@ -86,5 +89,33 @@ export function SkeletonLoading() {
         <Skeleton height="3rem" m="0.5rem 1.8rem" />
       </Stack>
     </>
+  );
+}
+
+export function AddContactSkeleton() {
+  return (
+    <Flex direction="column" gap="1rem">
+      <HStack gap="1rem">
+        <SkeletonCircle size="20" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.4rem" w="14rem" mt="1rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="20" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.4rem" w="14rem" mt="1rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="20" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.4rem" w="14rem" mt="1rem" />
+        </Box>
+      </HStack>
+    </Flex>
   );
 }

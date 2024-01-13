@@ -91,8 +91,10 @@ function useAddContact({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent borderRadius="1.2rem" p="1.6rem" bg={bgColor}>
+      <ModalContent p="1.6rem" bg={bgColor}>
         <ModalHeader
+          p="0"
+          mb="1.6rem"
           fontSize="1.8rem"
           fontWeight={400}
           lineHeight="1.8rem"
@@ -101,7 +103,7 @@ function useAddContact({
         >
           New Contact
         </ModalHeader>
-        <ModalBody>
+        <ModalBody p="0">
           <FormControl>
             <Input
               backgroundColor={inputColor}

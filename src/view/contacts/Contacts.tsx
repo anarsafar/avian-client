@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Button,
   Flex,
@@ -8,67 +7,15 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 
-import api, { ErrorResponse, RequestType } from '@/api';
-import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import ContactCard from './ContactCard';
 import { SkeletonLoading } from '@/components/loading';
-import { ContactInterface } from '@/utils/contact.interface';
 import groupContactsByFirstLetter from '@/utils/groupContacts';
-import useLogout from '@/hooks/auth/useLogout';
+import useContacts from '@/hooks/contact/useContacts';
 
 function Contacts({ contactName }: { contactName: string }): JSX.Element {
-  const { getPersistedData, persistData } = usePersist();
-  const { logoutHandler } = useLogout();
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
-
-  const accessToken = getPersistedData<{ accessToken: string }>(
-    'access-token',
-    StorageType.Local
-  );
-
-  const {
-    data: contacts,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ['contacts', accessToken?.accessToken],
-    queryFn: () =>
-      api<{ contacts: ContactInterface[] }, null>(
-        null,
-        'contacts',
-        RequestType.Get,
-        accessToken?.accessToken
-      ),
-    enabled: typeof accessToken !== undefined,
-    retry: false,
-    networkMode: 'always',
-  });
-
-  const { mutate: getNewAccessToken } = useMutation({
-    mutationFn: (token?: string | undefined) =>
-      api<{ accessToken: string }, null>(
-        null,
-        'refresh',
-        RequestType.Post,
-        token
-      ),
-    mutationKey: ['get-new-access-token'],
-    onSuccess: (newAccessToken) => {
-      persistData<{ accessToken: string }>(
-        newAccessToken,
-        'access-token',
-        StorageType.Local
-      );
-      refetch();
-    },
-    onError: (accessError: ErrorResponse) => {
-      console.error('Error from refresh route ', accessError);
-      logoutHandler();
-    },
-    retry: false,
-    networkMode: 'always',
-  });
+  const { contacts, isError, isLoading, getNewAccessToken, accessToken } =
+    useContacts();
 
   let content: React.ReactNode;
 

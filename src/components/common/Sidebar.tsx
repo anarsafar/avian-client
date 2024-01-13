@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SearchIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Flex,
   FormControl,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -15,6 +11,8 @@ import { ReactNode, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
 import useAddContact from '@/hooks/contact/useAddContact';
+import useAddConversation from '@/hooks/conversations/useAddConversation';
+import SearchInput from './SearchInput';
 
 interface SidebarProps {
   children: (contactName: string) => ReactNode | ReactNode;
@@ -27,7 +25,7 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
   const input = useColorModeValue('input-light', 'input-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
   const placeholder = useColorModeValue('gray-4', 'text-darker');
-
+  const { addConversationOpen, addConversationModal } = useAddConversation();
   const [contactName, setContactName] = useState<string>('');
 
   const { modal, onOpen } = useAddContact({
@@ -40,6 +38,7 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
   return (
     <Box as="section" id="inbox" p="2.2rem 0">
       {modal}
+      {addConversationModal}
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -57,7 +56,14 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
         >
           {header}
         </Text>
-        <Button variant="unstyled" w="1.7rem" h="1.7rem" onClick={onOpen}>
+        <Button
+          variant="unstyled"
+          w="1.7rem"
+          h="1.7rem"
+          onClick={() =>
+            type === 'contacts' ? onOpen() : addConversationOpen()
+          }
+        >
           {type === 'contacts' ? (
             <Box>
               <svg
@@ -97,34 +103,7 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
       </Flex>
       <Box ms="1.7rem" me="2.7rem">
         <FormControl mt="2.2rem">
-          <InputGroup backgroundColor={input} borderRadius="0.9rem">
-            <InputLeftElement pointerEvents="none" mt="0.4rem" ms="0.4rem">
-              <SearchIcon color={logo} fontSize="1.4rem" />
-            </InputLeftElement>
-            <Input
-              type="text"
-              p="1.7rem 1.7rem 1.7rem 3.2rem"
-              border="none"
-              placeholder="Search..."
-              fontFamily="openSans"
-              fontSize="1.2rem"
-              fontWeight="400"
-              lineHeight="1.6rem"
-              letterSpacing="0.16px"
-              color={text}
-              focusBorderColor={logo}
-              value={contactName}
-              onChange={(e) => setContactName(e.target.value)}
-              _placeholder={{
-                fontFamily: 'openSans',
-                fontSize: '1.2rem',
-                color: placeholder,
-                fontWeight: '400',
-                lineHeight: '1.6rem',
-                letterSpacing: '0.16px',
-              }}
-            />
-          </InputGroup>
+          <SearchInput value={contactName} onChange={setContactName} />
         </FormControl>
       </Box>
       <Scrollbars style={{ height: 'calc(100vh - 12.5rem)' }} autoHide>
