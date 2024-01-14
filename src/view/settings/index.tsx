@@ -14,9 +14,10 @@ import {
   useColorMode,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import UpdateAccount from '../../components/update-account';
+import useUserOperations from '@/hooks/user';
 
 interface SettingsProps {
   account: boolean;
@@ -30,6 +31,7 @@ function Settings() {
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
   const bgTheme = useColorModeValue('bg-light', 'bg-dark');
+  const { updateUser } = useUserOperations();
 
   const { toggleColorMode, colorMode } = useColorMode();
   const { persistData, getPersistedData } = usePersist();
@@ -52,6 +54,10 @@ function Settings() {
       return settings;
     }
   );
+
+  useEffect(() => {
+    updateUser({ theme: colorMode });
+  }, [colorMode, updateUser]);
 
   const handleSetttingPreferences = (
     type: 'account' | 'notifications' | 'darkMode'

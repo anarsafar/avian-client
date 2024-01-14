@@ -51,6 +51,7 @@ import Inbox from '@/view/messages/conversations/Inbox';
 import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
+import ThemeSwitch from '@/components/theme-switch/ThemeSwitch';
 
 function AppLayout() {
   useSocket();
@@ -67,7 +68,7 @@ function AppLayout() {
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const text = useColorModeValue('gray-4', 'text-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
@@ -249,17 +250,18 @@ function AppLayout() {
                       </svg>
                     </Tab>
 
-                    <Button
-                      mt="auto"
-                      variant="unstyled"
-                      onClick={toggleColorMode}
-                    >
-                      {colorMode === 'light' ? (
-                        <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
-                      ) : (
-                        <SunIcon color={logo} w="2.3rem" h="2.3rem" />
-                      )}
-                    </Button>
+                    <Menu>
+                      <MenuButton as={Button} variant="unstyled" mt="auto">
+                        {colorMode === 'dark' ? (
+                          <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
+                        ) : (
+                          <SunIcon color={logo} w="2.3rem" h="2.3rem" />
+                        )}
+                      </MenuButton>
+                      <MenuList p=".7rem" minW="0" w="10rem">
+                        <ThemeSwitch />
+                      </MenuList>
+                    </Menu>
 
                     <Tab>
                       <svg

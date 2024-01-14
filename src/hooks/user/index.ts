@@ -45,9 +45,11 @@ const useUserOperations = () => {
       );
     },
     mutationKey: ['update-user'],
-    onSuccess: (res) => {
+    onSuccess: (res, variables) => {
       setUser(res.user);
-      toast('success', 'Profile info updated', { message: '' });
+      if (!('theme' in variables)) {
+        toast('success', 'Profile info updated', { message: '' });
+      }
     },
     onError: (error: ErrorResponse) =>
       toast('error', 'Profile update fail', error),

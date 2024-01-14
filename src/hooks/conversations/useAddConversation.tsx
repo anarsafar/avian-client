@@ -129,7 +129,7 @@ const useAddConversation = () => {
   const addConversationModal = (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent bg={bgTheme}>
+      <ModalContent bg={bgTheme} borderRadius="1rem">
         <ModalHeader
           fontSize="1.8rem"
           fontWeight={400}
@@ -137,8 +137,8 @@ const useAddConversation = () => {
           letterSpacing="0.16px"
           color={textTheme}
           p="0"
-          mt="1.6rem"
-          ms="1.6rem"
+          mt="2.6rem"
+          ms="2.6rem"
         >
           Compose
         </ModalHeader>
@@ -155,8 +155,8 @@ const useAddConversation = () => {
           h="2rem"
           p="4px"
           position="absolute"
-          right="1.6rem"
-          top="1.6rem"
+          right="2.6rem"
+          top="2.6rem"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -174,13 +174,13 @@ const useAddConversation = () => {
             />
           </svg>
         </Flex>
-        <ModalBody p="1.6rem 0.5rem">
+        <ModalBody p="2.6rem 0.5rem 1.6rem 0.5rem">
           <Tabs variant="unstyled" isFitted isLazy>
             <TabList
               borderRadius="0.8rem"
               bg={inputTheme}
               p="0.4rem"
-              mx="1.1rem"
+              mx="2.1rem"
             >
               <Tab
                 fontFamily="openSans"
@@ -209,7 +209,7 @@ const useAddConversation = () => {
             </TabList>
             <TabPanels>
               <TabPanel p="0" mt="1.6rem">
-                <Box px="1.1rem">
+                <Box px="2.1rem">
                   <SearchInput
                     value={searchContact}
                     onChange={setSearchContact}
@@ -226,7 +226,7 @@ const useAddConversation = () => {
                   }}
                   autoHide
                 >
-                  <Box mx="1.2rem">{contactsUI}</Box>
+                  <Box mx="1rem">{contactsUI}</Box>
                 </Scrollbars>
               </TabPanel>
               <TabPanel p="0">
