@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-key */
+/* eslint-disable no-underscore-dangle */
 import {
   Avatar,
   Box,
@@ -95,6 +95,7 @@ const useAddConversation = () => {
 
     contactsUI = filteredContacts?.sort().map((contact) => (
       <Flex
+        key={contact.user._id}
         gap="1rem"
         as="button"
         textAlign="left"

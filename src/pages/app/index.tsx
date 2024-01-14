@@ -250,7 +250,7 @@ function AppLayout() {
                       </svg>
                     </Tab>
 
-                    <Menu>
+                    <Menu isLazy lazyBehavior="unmount">
                       <MenuButton as={Button} variant="unstyled" mt="auto">
                         {colorMode === 'dark' ? (
                           <MoonIcon color={logo} w="2.3rem" h="2.3rem" />
@@ -258,7 +258,7 @@ function AppLayout() {
                           <SunIcon color={logo} w="2.3rem" h="2.3rem" />
                         )}
                       </MenuButton>
-                      <MenuList p=".7rem" minW="0" w="10rem">
+                      <MenuList p=".7rem" minW="0" w="10rem" zIndex="100">
                         <ThemeSwitch />
                       </MenuList>
                     </Menu>

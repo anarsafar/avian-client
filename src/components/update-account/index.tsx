@@ -1,11 +1,16 @@
 import {
   Avatar,
-  AvatarBadge,
   Box,
   Button,
   Flex,
   FormControl,
   FormLabel,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
   Text,
   VisuallyHiddenInput,
   useColorModeValue,
@@ -13,8 +18,10 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { EditIcon } from '@chakra-ui/icons';
+import { CloseIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 
+import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import CustomInput from '@/components/auth/CustomInput';
 import {
   UpdateUserInterface,
@@ -43,6 +50,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
   const { updateUser, isPending, deleteUser, isDeleting } = useUserOperations();
   const { modal, onOpen } = useConfiramtion();
   const [avatar, setAvatar] = useState<File | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
   const avatarRef = useRef<HTMLInputElement | null>(null);
 
   const user = useUser((state) => state.user);
@@ -50,6 +58,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const errorTheme = useColorModeValue('red.300', 'red.400');
+  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const handleAvatar = () => {
     avatarRef?.current?.click();
@@ -99,35 +108,14 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
         >
           Edit your info
         </Text>
-        <Flex
+        <Box
           onClick={() => closeMenu()}
-          justifyContent="center"
-          alignItems="center"
           as="button"
-          border="1px solid"
           borderColor={iconTheme}
-          borderRadius="50%"
-          w="2rem"
-          h="2rem"
-          p="4px"
           cursor="pointer"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 12 12"
-            fill="none"
-          >
-            <path
-              d="M3 9L9 3M3 3L9 9"
-              stroke={iconTheme}
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Flex>
+          <CloseIcon fontSize="0.8rem" />
+        </Box>
       </Flex>
       <Box>
         <VisuallyHiddenInput
@@ -148,26 +136,60 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
         >
           Avatar
         </FormLabel>
-        <Flex
-          as={Button}
-          variant="unstyled"
-          h="auto"
-          onClick={handleAvatar}
-          gap="1rem"
-        >
-          <Avatar
-            name={user?.userInfo.name}
-            src={avatar ? URL.createObjectURL(avatar) : user?.userInfo.avatar}
-            size="xl"
-            _hover={{
-              transition: 'all 0.4s',
-              transform: 'scale(0.9)',
+        <Flex as={Button} variant="unstyled" h="auto" gap="1rem">
+          <Popover arrowSize={10} placement="right">
+            <PopoverTrigger>
+              <Avatar
+                name={user?.userInfo.name}
+                src={
+                  avatar ? URL.createObjectURL(avatar) : user?.userInfo.avatar
+                }
+                border="2px solid"
+                borderColor={bgTheme}
+                size="xl"
+                _hover={{
+                  border: '2px solid',
+                  borderColor: 'violet-2',
+                }}
+              />
+            </PopoverTrigger>
+            <Portal>
+              <PopoverContent w="7rem" bg={bgTheme}>
+                <PopoverArrow bg={bgTheme} />
+                <PopoverBody>
+                  <Flex justifyContent="center" alignItems="center" gap="1rem">
+                    <EditIcon
+                      color="violet-2"
+                      fontSize="2rem"
+                      as="button"
+                      cursor="pointer"
+                      onClick={handleAvatar}
+                    />
+                    <ViewIcon
+                      fontSize="2rem"
+                      as="button"
+                      cursor="pointer"
+                      color="violet-2"
+                      onClick={() => setOpen(true)}
+                    />
+                  </Flex>
+                </PopoverBody>
+              </PopoverContent>
+            </Portal>
+          </Popover>
+
+          <Lightbox
+            open={open}
+            close={() => setOpen(false)}
+            plugins={[Zoom]}
+            styles={{ container: { backgroundColor: 'rgba(0, 0, 0, .7)' } }}
+            slides={[{ src: user?.userInfo.avatar as string }]}
+            zoom={{
+              scrollToZoom: true,
+              maxZoomPixelRatio: 5,
             }}
-          >
-            <AvatarBadge boxSize="2rem" border="none">
-              <EditIcon color="violet-2" fontSize="1.7rem" />
-            </AvatarBadge>
-          </Avatar>
+          />
+
           <Text
             alignSelf="flex-end"
             fontFamily="openSans"
