@@ -91,7 +91,7 @@ function useAddContact({
       isCentered
     >
       <ModalOverlay />
-      <ModalContent p="1.6rem" bg={bgColor} borderRadius="1rem">
+      <ModalContent p="2.6rem" bg={bgColor} borderRadius="1rem">
         <ModalHeader
           p="0"
           mb="1.6rem"

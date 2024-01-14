@@ -258,7 +258,7 @@ function AppLayout() {
                           <SunIcon color={logo} w="2.3rem" h="2.3rem" />
                         )}
                       </MenuButton>
-                      <MenuList p=".7rem" minW="0" w="10rem" zIndex="100">
+                      <MenuList p=".7rem" minW="0" w="14rem" zIndex="100">
                         <ThemeSwitch />
                       </MenuList>
                     </Menu>
