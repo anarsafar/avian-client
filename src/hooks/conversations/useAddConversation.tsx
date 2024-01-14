@@ -226,7 +226,7 @@ const useAddConversation = () => {
                   }}
                   autoHide
                 >
-                  <Box>{contactsUI}</Box>
+                  <Box mx="1.2rem">{contactsUI}</Box>
                 </Scrollbars>
               </TabPanel>
               <TabPanel p="0">
