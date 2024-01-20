@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable no-underscore-dangle */
 import {
   Avatar,
@@ -220,9 +221,14 @@ const useAddConversation = () => {
                 <Scrollbars
                   style={{
                     maxHeight: '17.6rem',
-                    height: contacts
-                      ? `${contacts.contacts.length * 58}px`
-                      : 'auto',
+                    height:
+                      contacts && contacts?.contacts.length > 0
+                        ? `${contacts.contacts.length * 58}px`
+                        : isError
+                        ? '8rem'
+                        : isLoading
+                        ? '17.6rem'
+                        : '4rem',
                     marginTop: '1.2rem',
                   }}
                   autoHide

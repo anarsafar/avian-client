@@ -1,12 +1,11 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-
-import useSocket from '@/hooks/store/useSocket';
+import { useSocket } from '@/context/socket.context';
 
 function ChatBody() {
   const [messages, setMessages] = useState<string[]>([]);
-  const { socket } = useSocket();
+  const socket = useSocket();
 
   useEffect(() => {
     const handlePrivateMessage = (msg: string) => {
@@ -14,10 +13,10 @@ function ChatBody() {
       window.scrollTo(0, document.body.scrollHeight);
     };
 
-    socket.on('private message', handlePrivateMessage);
+    socket?.on('private message', handlePrivateMessage);
 
     return () => {
-      socket.off('private message', handlePrivateMessage);
+      socket?.off('private message', handlePrivateMessage);
     };
   }, [socket]);
 

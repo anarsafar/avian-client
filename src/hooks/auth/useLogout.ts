@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import useActiveConversation from '../store/useActiveConversation';
+import { useSocket } from '@/context/socket.context';
 
 const useLogout = () => {
   const navigate = useNavigate();
+  const socket = useSocket();
   const queryClient = useQueryClient();
   const { getPersistedData } = usePersist();
   const { clearActiveConversation } = useActiveConversation();
@@ -37,6 +39,7 @@ const useLogout = () => {
     localStorage.clear();
     sessionStorage.clear();
     queryClient.clear();
+    socket?.close();
     clearActiveConversation();
     navigate('/auth/signin');
   };

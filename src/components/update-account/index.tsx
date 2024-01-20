@@ -165,13 +165,15 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
                       cursor="pointer"
                       onClick={handleAvatar}
                     />
-                    <ViewIcon
-                      fontSize="2rem"
-                      as="button"
-                      cursor="pointer"
-                      color="violet-2"
-                      onClick={() => setOpen(true)}
-                    />
+                    {(user?.userInfo.avatar || avatar) && (
+                      <ViewIcon
+                        fontSize="2rem"
+                        as="button"
+                        cursor="pointer"
+                        color="violet-2"
+                        onClick={() => setOpen(true)}
+                      />
+                    )}
                   </Flex>
                 </PopoverBody>
               </PopoverContent>
@@ -183,7 +185,13 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
             close={() => setOpen(false)}
             plugins={[Zoom]}
             styles={{ container: { backgroundColor: 'rgba(0, 0, 0, .7)' } }}
-            slides={[{ src: user?.userInfo.avatar as string }]}
+            slides={[
+              {
+                src: avatar
+                  ? URL.createObjectURL(avatar)
+                  : (user?.userInfo.avatar as string),
+              },
+            ]}
             zoom={{
               scrollToZoom: true,
               maxZoomPixelRatio: 5,

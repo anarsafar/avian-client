@@ -40,18 +40,18 @@ import logout from '@assets/common/logout.svg';
 import Sidebar from '@/components/common/Sidebar';
 import { Loading } from '@/components/loading';
 import UpdateAccount from '@/components/update-account';
+import ThemeSwitch from '@/components/theme-switch/ThemeSwitch';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useUser from '@/hooks/store/useUser';
-import useSocket from '@/hooks/store/useSocket';
 
 import Inbox from '@/view/messages/conversations/Inbox';
 import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
-import ThemeSwitch from '@/components/theme-switch/ThemeSwitch';
+import { useSocket } from '@/context/socket.context';
 
 function AppLayout() {
   useSocket();
@@ -86,7 +86,13 @@ function AppLayout() {
   }
 
   const updateInfo = (
-    <Modal isOpen={isSettingsOpen} onClose={onClose} size="xl" isCentered>
+    <Modal
+      isOpen={isSettingsOpen}
+      onClose={onClose}
+      size="xl"
+      isCentered
+      trapFocus={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalBody p="2rem" bg={bg}>

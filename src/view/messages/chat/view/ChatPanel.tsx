@@ -2,7 +2,7 @@ import { AttachmentIcon } from '@chakra-ui/icons';
 import { useRef, useState } from 'react';
 import { Button, Flex, Image, Textarea } from '@chakra-ui/react';
 import sendIcon from '@assets/common/sendIcon.svg';
-import useSocket from '@/hooks/store/useSocket';
+import { useSocket } from '@/context/socket.context';
 
 interface PropTypes {
   textColor: string;
@@ -18,13 +18,12 @@ function ChatPanel({
   logoColor,
 }: PropTypes) {
   const [textMessage, setTextMessage] = useState<string>('');
-
-  const { socket } = useSocket();
+  const socket = useSocket();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const sendMessage = () => {
     const trimmedMsg = textMessage.trim();
-    socket.emit('private message', trimmedMsg);
+    socket?.emit('private message', trimmedMsg);
     setTextMessage('');
 
     if (textareaRef.current) {

@@ -11,6 +11,7 @@ import ResetPassword from '@/pages/password/ResetPassword';
 import Animate from '@/components/common/Animate';
 
 import Protected from './Protected';
+import { SocketProvider } from '@/context/socket.context';
 
 function AppRoutes() {
   return (
@@ -21,13 +22,15 @@ function AppRoutes() {
             path="/"
             index
             element={
-              <Protected
-                element={
-                  <Animate>
-                    <AppLayout />
-                  </Animate>
-                }
-              />
+              <SocketProvider>
+                <Protected
+                  element={
+                    <Animate>
+                      <AppLayout />
+                    </Animate>
+                  }
+                />
+              </SocketProvider>
             }
           />
           <Route path="auth/signin" element={<AuthView isSignUp={false} />} />
