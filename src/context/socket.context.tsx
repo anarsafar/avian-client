@@ -37,8 +37,7 @@ export function SocketProvider({ children }: SocketI) {
     return () => {
       newSocket.close();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [accessToken]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

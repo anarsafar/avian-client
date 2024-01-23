@@ -80,7 +80,15 @@ const useAuth = () => {
     isLoading,
   ]);
 
-  return { user, isLoading, isError, accessToken, getUser };
+  return {
+    user,
+    isLoading,
+    isError,
+    accessToken,
+    getUser,
+    getNewAccessToken,
+    setLoading,
+  };
 };
 
 export default useAuth;

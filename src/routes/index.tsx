@@ -22,15 +22,15 @@ function AppRoutes() {
             path="/"
             index
             element={
-              <SocketProvider>
-                <Protected
-                  element={
+              <Protected
+                element={
+                  <SocketProvider>
                     <Animate>
                       <AppLayout />
                     </Animate>
-                  }
-                />
-              </SocketProvider>
+                  </SocketProvider>
+                }
+              />
             }
           />
           <Route path="auth/signin" element={<AuthView isSignUp={false} />} />

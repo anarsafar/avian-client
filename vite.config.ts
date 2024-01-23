@@ -14,5 +14,9 @@ export default defineConfig({
       '@hooks': path.resolve(__dirname, './src/hooks'),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      include: '**/*.tsx',
+    }),
+  ],
 });
