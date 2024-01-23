@@ -121,7 +121,9 @@ const useAddConversation = () => {
             {contact.user.userInfo.name}
           </Text>
           <Text mt="0.4rem" color={textTheme} fontWeight={400} fontSize="1rem">
-            {formatLastSeen(contact.user.lastSeen)}
+            {contact.user.online
+              ? 'Online'
+              : formatLastSeen(contact.user.lastSeen)}
           </Text>
         </Box>
       </Flex>
