@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import { AttachmentIcon } from '@chakra-ui/icons';
 import { useRef, useState } from 'react';
 import { Button, Flex, Image, Textarea } from '@chakra-ui/react';
 import sendIcon from '@assets/common/sendIcon.svg';
 import { useSocket } from '@/context/socket.context';
+import useUser from '@/hooks/store/useUser';
 
 interface PropTypes {
   textColor: string;
@@ -19,11 +21,19 @@ function ChatPanel({
 }: PropTypes) {
   const [textMessage, setTextMessage] = useState<string>('');
   const socket = useSocket();
+  const { user } = useUser();
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const sendMessage = () => {
     const trimmedMsg = textMessage.trim();
-    socket?.emit('private message', trimmedMsg);
+    const message = {
+      userId: user?._id,
+      messageBody: trimmedMsg,
+      timeStamp: new Date(),
+    };
+
+    socket?.emit('private message', message);
     setTextMessage('');
 
     if (textareaRef.current) {

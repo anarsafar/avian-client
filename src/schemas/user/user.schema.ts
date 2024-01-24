@@ -28,6 +28,7 @@ const socialAuthInfo = z.object({
 });
 
 export const UserZodSchema = z.object({
+  _id: z.string(),
   authType: z.union([z.literal('local'), z.literal('social')]),
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
