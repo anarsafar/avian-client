@@ -5,12 +5,10 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Portal,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Text,
   VisuallyHiddenInput,
   useColorModeValue,
@@ -18,7 +16,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { CloseIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
+import { CloseIcon, DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -47,7 +45,15 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     resolver: zodResolver(UpdateUserValidate),
   });
 
-  const { updateUser, isPending, deleteUser, isDeleting } = useUserOperations();
+  const {
+    updateUser,
+    isPending,
+    deleteUser,
+    isDeleting,
+    deleteAvatar,
+    isDeletingAvatar,
+    isDeleteSuccess,
+  } = useUserOperations();
   const { modal, onOpen } = useConfiramtion();
   const [avatar, setAvatar] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -58,7 +64,6 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const errorTheme = useColorModeValue('red.300', 'red.400');
-  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const handleAvatar = () => {
     avatarRef?.current?.click();
@@ -89,12 +94,23 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     setDefaults();
   }, [setDefaults]);
 
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      setAvatar(null);
+    }
+  }, [isDeleteSuccess]);
+
   return (
     <Box>
       {modal({
         action: () => deleteUser(),
         isLoading: isDeleting,
-        modalHeader: 'Delete Account',
+        modalHeader: 'Delete',
+      })}
+      {modal({
+        action: () => deleteAvatar(),
+        isLoading: isDeletingAvatar,
+        modalHeader: 'Delete',
       })}
       <Flex id="header" justifyContent="space-between" alignItems="center">
         <Text
@@ -137,48 +153,87 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
           Avatar
         </FormLabel>
         <Flex as={Button} variant="unstyled" h="auto" gap="1rem">
-          <Popover arrowSize={10} placement="right">
-            <PopoverTrigger>
-              <Avatar
-                name={user?.userInfo.name}
-                src={
-                  avatar ? URL.createObjectURL(avatar) : user?.userInfo.avatar
-                }
-                border="2px solid"
-                borderColor={bgTheme}
-                size="xl"
-                _hover={{
-                  border: '2px solid',
-                  borderColor: 'violet-2',
-                }}
-              />
-            </PopoverTrigger>
-            <Portal>
-              <PopoverContent w="7rem" bg={bgTheme}>
-                <PopoverArrow bg={bgTheme} />
-                <PopoverBody>
-                  <Flex justifyContent="center" alignItems="center" gap="1rem">
+          <Menu>
+            {({ isOpen }) => (
+              <>
+                <MenuButton
+                  isActive={isOpen}
+                  as={Button}
+                  variant="unstyled"
+                  transform={isOpen ? 'scale(1.1)' : 'scale(1)'}
+                  transition="transform 0.3s ease-in-out"
+                  w="5rem"
+                  h="5rem"
+                  _hover={{
+                    transform: `scale(1.1)`,
+                  }}
+                >
+                  <Avatar
+                    src={
+                      avatar
+                        ? URL.createObjectURL(avatar)
+                        : user?.userInfo.avatar
+                    }
+                    bg="gray.500"
+                    w="100%"
+                    h="100%"
+                  />
+                </MenuButton>
+                <MenuList w="10rem" zIndex={20}>
+                  <MenuItem
+                    fontSize="1.2rem"
+                    fontFamily="openSans"
+                    color={textTheme}
+                    fontWeight={600}
+                    onClick={handleAvatar}
+                  >
                     <EditIcon
                       color="violet-2"
-                      fontSize="2rem"
+                      fontSize="1.5rem"
                       as="button"
                       cursor="pointer"
-                      onClick={handleAvatar}
                     />
-                    {(user?.userInfo.avatar || avatar) && (
+                    <Text ms="1rem">Edit</Text>
+                  </MenuItem>
+                  {(user?.userInfo.avatar || avatar) && (
+                    <MenuItem
+                      fontSize="1.2rem"
+                      fontFamily="openSans"
+                      color={textTheme}
+                      fontWeight={600}
+                      onClick={() => setOpen(true)}
+                    >
                       <ViewIcon
-                        fontSize="2rem"
+                        fontSize="1.5rem"
                         as="button"
                         cursor="pointer"
                         color="violet-2"
-                        onClick={() => setOpen(true)}
                       />
-                    )}
-                  </Flex>
-                </PopoverBody>
-              </PopoverContent>
-            </Portal>
-          </Popover>
+                      <Text ms="1rem">View</Text>
+                    </MenuItem>
+                  )}
+                  {user?.userInfo.avatar && (
+                    <MenuItem
+                      fontSize="1.2rem"
+                      fontFamily="openSans"
+                      fontWeight={600}
+                      onClick={onOpen}
+                    >
+                      <DeleteIcon
+                        fontSize="1.5rem"
+                        as="button"
+                        cursor="pointer"
+                        color="red.400"
+                      />
+                      <Text ms="1rem" color="red-3">
+                        Delete
+                      </Text>
+                    </MenuItem>
+                  )}
+                </MenuList>
+              </>
+            )}
+          </Menu>
 
           <Lightbox
             open={open}

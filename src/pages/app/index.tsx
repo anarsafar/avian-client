@@ -306,10 +306,10 @@ function AppLayout() {
                         }}
                       >
                         <Avatar
-                          name={user?.userInfo.name}
                           src={user?.userInfo.avatar}
                           w="100%"
                           h="100%"
+                          bg="gray.500"
                         >
                           <AvatarBadge
                             boxSize="1.25em"

@@ -74,11 +74,38 @@ const useUserOperations = () => {
     networkMode: 'always',
   });
 
+  const {
+    mutateAsync: deleteAvatar,
+    isPending: isDeletingAvatar,
+    isSuccess: isDeleteSuccess,
+  } = useMutation({
+    mutationFn: () => {
+      return api<{ user: UserInterface }, undefined>(
+        undefined,
+        'user/delete-avatar',
+        RequestType.Delete,
+        token?.accessToken
+      );
+    },
+    mutationKey: ['delete-avatar'],
+    onSuccess: (res) => {
+      toast('success', 'Avatar Deleted Sucessfully', { message: '' });
+      setUser(res.user);
+    },
+    onError: (error: ErrorResponse) =>
+      toast('error', 'Avatar Delete Error', error),
+    retry: false,
+    networkMode: 'always',
+  });
+
   return {
     updateUser,
     isPending,
     isDeleting,
     deleteUser,
+    deleteAvatar,
+    isDeletingAvatar,
+    isDeleteSuccess,
   };
 };
 
