@@ -3,7 +3,7 @@
 import {
   Avatar,
   Box,
-  Divider,
+  //   Divider,
   Flex,
   Text,
   useColorModeValue,
@@ -75,19 +75,28 @@ function ChatBody() {
     return (
       <Fragment key={index}>
         {showDateLabel && (
-          <Flex alignItems="center" gap="1.2rem">
-            <Divider variant="dashed" colorScheme={textTheme} />
+          <Flex
+            alignItems="center"
+            justifyContent="center"
+            gap="1.2rem"
+            position="sticky"
+            top="0"
+          >
+            {/* <Divider variant="dashed" colorScheme={textTheme} /> */}
             <Text
               lineHeight="1.6rem"
               letterSpacing="0.18px"
               fontFamily="openSans"
-              fontSize="1.2rem"
-              fontWeight={300}
+              fontSize="1rem"
+              fontWeight={600}
               color={textTheme}
+              padding="0.3rem 0.8rem"
+              borderRadius="0.5rem"
+              bg={hoverTheme}
             >
               {messageDateLabel}
             </Text>
-            <Divider variant="dashed" colorScheme={textTheme} />
+            {/* <Divider variant="dashed" colorScheme={textTheme} /> */}
           </Flex>
         )}
         <Flex

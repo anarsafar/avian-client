@@ -52,11 +52,13 @@ import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
 import { useSocket } from '@/context/socket.context';
+import useNetworkStatus from '@/hooks/network';
 
 function AppLayout() {
   useSocket();
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
+  const { isOnline } = useNetworkStatus();
   const user = useUser((state) => state.user);
 
   const activeTabIndex = getPersistedData<number>(
@@ -309,7 +311,10 @@ function AppLayout() {
                           w="100%"
                           h="100%"
                         >
-                          <AvatarBadge boxSize="1.25em" bg="green.500" />
+                          <AvatarBadge
+                            boxSize="1.25em"
+                            bg={isOnline ? 'green.500' : 'red.500'}
+                          />
                         </Avatar>
                       </MenuButton>
                       <MenuList w="18rem" zIndex={20}>
