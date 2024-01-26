@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { AttachmentIcon } from '@chakra-ui/icons';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Image, Textarea } from '@chakra-ui/react';
 import sendIcon from '@assets/common/sendIcon.svg';
 import { useSocket } from '@/context/socket.context';
@@ -22,8 +22,20 @@ function ChatPanel({
   const [textMessage, setTextMessage] = useState<string>('');
   const socket = useSocket();
   const { user } = useUser();
-
+  let timerId: NodeJS.Timeout;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleStopTyping = () => {
+    socket?.emit('stop typing', user?._id);
+  };
+
+  const handleTyping = () => {
+    clearTimeout(timerId);
+    socket?.emit('typing', user?._id);
+    timerId = setTimeout(() => {
+      handleStopTyping();
+    }, 2000);
+  };
 
   const sendMessage = () => {
     const trimmedMsg = textMessage.trim();
@@ -34,12 +46,23 @@ function ChatPanel({
     };
 
     socket?.emit('private message', message);
+    handleStopTyping();
+
     setTextMessage('');
 
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const countLineBreaks = (inputString: string): number => {
     const matches = inputString.match(/\r|\n/g);
@@ -82,6 +105,8 @@ function ChatPanel({
       if (textMessage.trim().length !== 0 && e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
+      } else {
+        handleTyping();
       }
     }
   };

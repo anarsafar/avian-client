@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-nested-ternary */
 import {
   Avatar,
   Box,
@@ -11,10 +13,12 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
+import { useEffect, useState } from 'react';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import formatLastSeen from '@/utils/formatLastSeen';
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import { ContactInterface } from '@/utils/contact.interface';
+import { useSocket } from '@/context/socket.context';
 
 interface PropTypes {
   darkerTextColor: string;
@@ -23,10 +27,25 @@ interface PropTypes {
 
 function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const { activeConversation } = useActiveConversation();
+  const socket = useSocket();
   const textTheme = useColorModeValue('gray-4', 'text-dark');
+  const [typing, setTyping] = useState<boolean>(false);
   const { infoOnOpen, modal } = useContactInfo({
     contact: activeConversation as ContactInterface,
   });
+
+  useEffect(() => {
+    socket?.on('typing', (userId: string) => {
+      if (activeConversation?.user._id === userId) {
+        setTyping(true);
+      }
+    });
+    socket?.on('stop typing', (userId: string) => {
+      if (activeConversation?.user._id === userId) {
+        setTyping(false);
+      }
+    });
+  }, [activeConversation?.user._id, socket]);
 
   return (
     <Flex
@@ -69,7 +88,9 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
               overflow="hidden"
               textOverflow="ellipsis"
             >
-              {activeConversation?.user.online
+              {typing
+                ? 'typing...'
+                : activeConversation?.user.online
                 ? 'Online'
                 : formatLastSeen(activeConversation?.user.lastSeen as string)}
             </Text>
