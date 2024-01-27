@@ -59,8 +59,8 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
       <Button variant="unstyled" h="auto" onClick={infoOnOpen}>
         <Flex alignItems="center" gap="1.2rem">
           <Avatar
-            name={activeConversation?.user.userInfo.name}
             src={activeConversation?.user.userInfo.avatar}
+            bg="gray.500"
             loading="eager"
             w="3.3rem"
             h="3.3rem"
