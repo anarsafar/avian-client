@@ -29,7 +29,6 @@ function useContacts() {
     data: contacts,
     isLoading,
     isError,
-    isSuccess,
     refetch: refetchContacts,
   } = useQuery({
     queryKey: ['contacts', accessToken?.accessToken],
@@ -82,7 +81,7 @@ function useContacts() {
   }, [socket]);
 
   useEffect(() => {
-    if (isSuccess && activeConversation) {
+    if (activeConversation && contacts) {
       const newActiveContact = contacts?.contacts.find(
         (contact) => contact.user._id === activeConversation?.user._id
       );
@@ -90,13 +89,8 @@ function useContacts() {
         setActiveConversation(newActiveContact);
       }
     }
-  }, [
-    isSuccess,
-    contacts,
-    setActiveConversation,
-    activeConversation?.user._id,
-    activeConversation,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts]);
 
   return { contacts, accessToken, getNewAccessToken, isLoading, isError };
 }
