@@ -16,7 +16,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { CloseIcon, DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -124,14 +124,38 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
         >
           Edit your info
         </Text>
-        <Box
-          onClick={() => closeMenu()}
+        <Flex
           as="button"
-          borderColor={iconTheme}
           cursor="pointer"
+          justifyContent="center"
+          alignItems="center"
+          onClick={closeMenu}
+          border="1px solid"
+          borderColor={iconTheme}
+          borderRadius="50%"
+          w="2rem"
+          h="2rem"
+          p="4px"
+          position="absolute"
+          right="1.6rem"
+          top="1.6rem"
         >
-          <CloseIcon fontSize="0.8rem" />
-        </Box>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+          >
+            <path
+              d="M3 9L9 3M3 3L9 9"
+              stroke={iconTheme}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </Flex>
       </Flex>
       <Box>
         <VisuallyHiddenInput

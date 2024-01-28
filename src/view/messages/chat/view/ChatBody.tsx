@@ -111,8 +111,8 @@ function ChatBody() {
           {isFirstMessageFromUser && !isCurrentUser && (
             <Avatar
               alignSelf="flex-start"
-              name={activeConversation?.user.userInfo.name}
               src={activeConversation?.user.userInfo.avatar}
+              bg="gray.500"
               loading="eager"
               w="3.3rem"
               h="3.3rem"
