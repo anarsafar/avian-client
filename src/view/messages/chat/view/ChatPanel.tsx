@@ -5,6 +5,7 @@ import { Button, Flex, Image, Textarea } from '@chakra-ui/react';
 import sendIcon from '@assets/common/sendIcon.svg';
 import { useSocket } from '@/context/socket.context';
 import useUser from '@/hooks/store/useUser';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 interface PropTypes {
   textColor: string;
@@ -24,6 +25,7 @@ function ChatPanel({
   const { user } = useUser();
   let timerId: NodeJS.Timeout;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { activeConversation } = useActiveConversation();
 
   const handleStopTyping = () => {
     socket?.emit('stop typing', user?._id);
@@ -39,13 +41,16 @@ function ChatPanel({
 
   const sendMessage = () => {
     const trimmedMsg = textMessage.trim();
-    const message = {
-      userId: user?._id,
-      messageBody: trimmedMsg,
-      timeStamp: new Date(),
+    const messageContent = {
+      message: {
+        messageBody: trimmedMsg,
+        timeStamp: new Date(),
+      },
+      senderId: user?._id,
+      recipientId: activeConversation?.user._id,
     };
 
-    socket?.emit('private message', message);
+    socket?.emit('private message', messageContent);
     handleStopTyping();
 
     setTextMessage('');

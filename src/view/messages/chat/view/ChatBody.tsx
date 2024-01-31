@@ -17,9 +17,11 @@ import useActiveConversation from '@/hooks/store/useActiveConversation';
 import formatDateLabel from '@/utils/formatDate';
 
 interface MessageI {
-  userId: string;
-  messageBody: string;
-  timeStamp: string;
+  message: {
+    messageBody: string;
+    timeStamp: Date;
+  };
+  senderId: string;
 }
 
 function ChatBody() {
@@ -43,6 +45,15 @@ function ChatBody() {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   useEffect(() => {
+    socket?.emit(
+      'join-private-chat',
+      null,
+      user?._id,
+      activeConversation?.user._id
+    );
+  }, [activeConversation?.user._id, socket, user?._id]);
+
+  useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
       setMessages((prevMessages) => [...prevMessages, message]);
     };
@@ -62,10 +73,10 @@ function ChatBody() {
   }, [messages]);
 
   const renderMessages = messages.map((message, index) => {
-    const isCurrentUser = message.userId === user?._id;
+    const isCurrentUser = message.senderId === user?._id;
     const isFirstMessageFromUser =
-      index === 0 || messages[index - 1].userId !== message.userId;
-    const messageDateLabel = formatDateLabel(message.timeStamp);
+      index === 0 || messages[index - 1].senderId !== message.senderId;
+    const messageDateLabel = formatDateLabel(String(message.message.timeStamp));
 
     const showDateLabel = messageDateLabel !== lastDisplayedDate;
     if (showDateLabel) {
@@ -124,7 +135,7 @@ function ChatBody() {
             fontWeight={300}
             lineHeight="1.8rem"
           >
-            {dateFormatter.format(new Date(message.timeStamp))}
+            {dateFormatter.format(new Date(message.message.timeStamp))}
           </Text>
           <Box
             maxW="calc(calc(100vw - 36rem) * 0.3)"
@@ -138,7 +149,7 @@ function ChatBody() {
             p="1.2rem"
             bg={hoverTheme}
           >
-            {message.messageBody}
+            {message.message.messageBody}
           </Box>
         </Flex>
       </Fragment>

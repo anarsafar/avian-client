@@ -1,9 +1,21 @@
+/* eslint-disable no-underscore-dangle */
 import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { ConversationInterface } from '@/utils/conversation.interface';
+import useUser from '@/hooks/store/useUser';
 
-function ConversationCard(): JSX.Element {
+function ConversationCard({
+  conversation,
+}: {
+  conversation: ConversationInterface;
+}): JSX.Element {
   const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const hover = useColorModeValue('hover-light', 'accent-dark');
+  const { user } = useUser();
+
+  const cardUser = conversation.participants.find(
+    (participant) => participant._id !== user?._id
+  );
 
   return (
     <Flex
@@ -18,7 +30,12 @@ function ConversationCard(): JSX.Element {
         bg: hover,
       }}
     >
-      <Avatar name="Oshigaki Kisame" w="3.3rem" h="3.3rem" />
+      <Avatar
+        bg="gray.500"
+        src={cardUser?.userInfo.avatar}
+        w="3.3rem"
+        h="3.3rem"
+      />
       <Stack
         direction="column"
         textAlign="left"
@@ -34,7 +51,7 @@ function ConversationCard(): JSX.Element {
           overflow="hidden"
           textOverflow="ellipsis"
         >
-          Dawn Sabrina
+          {cardUser?.userInfo.name}
         </Text>
         <Text
           fontSize="1.1rem"

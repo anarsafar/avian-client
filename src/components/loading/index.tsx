@@ -119,3 +119,66 @@ export function AddContactSkeleton() {
     </Flex>
   );
 }
+
+export function ConversationsSkeleton() {
+  return (
+    <Flex direction="column" gap="3rem" ms="1.6rem" mt="1.7rem">
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+      <HStack gap="1rem">
+        <SkeletonCircle size="3.3rem" />
+        <Box>
+          <Skeleton height="1.4rem" w="10rem" />
+          <Skeleton height="1.2rem" w="17rem" mt="1.3rem" />
+        </Box>
+      </HStack>
+    </Flex>
+  );
+}

@@ -70,6 +70,7 @@ function useContacts() {
 
   useEffect(() => {
     socket?.on('refreshData', (userId: string) => {
+      console.log('refreshing data');
       const user = contacts?.contacts.find(
         (contact) => contact.user._id === userId
       );
@@ -86,6 +87,7 @@ function useContacts() {
         (contact) => contact.user._id === activeConversation?.user._id
       );
       if (newActiveContact) {
+        console.log('contact updated info', newActiveContact);
         setActiveConversation(newActiveContact);
       }
     }
