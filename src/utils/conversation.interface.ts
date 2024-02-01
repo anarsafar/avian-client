@@ -6,6 +6,7 @@ const objectId = z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {
 });
 
 const ConversationI = z.object({
+  _id: objectId,
   participants: z.array(ContactModel),
   type: z.union([z.literal('private'), z.literal('group')]).default('private'),
   conversationName: z.string().optional(),

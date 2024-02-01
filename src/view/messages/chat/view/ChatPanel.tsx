@@ -2,10 +2,13 @@
 import { AttachmentIcon } from '@chakra-ui/icons';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Flex, Image, Textarea } from '@chakra-ui/react';
+
 import sendIcon from '@assets/common/sendIcon.svg';
 import { useSocket } from '@/context/socket.context';
+
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 interface PropTypes {
   textColor: string;
@@ -26,6 +29,7 @@ function ChatPanel({
   let timerId: NodeJS.Timeout;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { activeConversation } = useActiveConversation();
+  const { activeContact } = useActiveContact();
 
   const handleStopTyping = () => {
     socket?.emit('stop typing', user?._id);
@@ -46,8 +50,9 @@ function ChatPanel({
         messageBody: trimmedMsg,
         timeStamp: new Date(),
       },
+      chatId: activeConversation?._id,
       senderId: user?._id,
-      recipientId: activeConversation?.user._id,
+      recipientId: activeContact?.user._id,
     };
 
     socket?.emit('private message', messageContent);

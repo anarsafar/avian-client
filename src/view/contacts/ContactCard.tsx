@@ -11,11 +11,15 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
+import useActiveContact from '@/hooks/store/useActiveContact';
+
 import { ContactInterface } from '@/utils/contact.interface';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
+import useConversation from '@/hooks/conversations/useConversation';
 
 interface ContactCardInterface {
   textTheme: string;
@@ -32,12 +36,23 @@ function ContactCard({
   const { modal: infoModal, infoOnOpen } = useContactInfo({
     contact,
   });
-  const { setActiveConversation } = useActiveConversation();
+  const { setActiveContact } = useActiveContact();
+  const { setActiveConversation, clearConversation } = useActiveConversation();
+  const { conversations } = useConversation();
+
   const { modal: customModal, onOpen: customOpen } = useCustomModal();
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
 
   const startConversation = () => {
-    setActiveConversation(contact);
+    setActiveContact(contact);
+    const newActiveConversation = conversations?.conversations.find((chat) => {
+      return chat.participants.find((user) => user._id === contact.user._id);
+    });
+    if (newActiveConversation) {
+      setActiveConversation(newActiveConversation);
+    } else {
+      clearConversation();
+    }
   };
 
   return (

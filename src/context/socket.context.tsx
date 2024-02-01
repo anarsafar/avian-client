@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
-import usePersist, { StorageType } from '@/hooks/store/usePersist';
+import useAuth from '@/hooks/auth/useAuth';
 
 interface SocketI {
   children: React.ReactNode;
@@ -14,11 +14,7 @@ export function useSocket() {
 
 export function SocketProvider({ children }: SocketI) {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { getPersistedData } = usePersist();
-  const accessToken = getPersistedData<{ accessToken: string }>(
-    'access-token',
-    StorageType.Local
-  );
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     const socketURL = import.meta.env.VITE_SOCKET_URL;
@@ -26,7 +22,7 @@ export function SocketProvider({ children }: SocketI) {
       transportOptions: {
         polling: {
           extraHeaders: {
-            Authorization: `Bearer ${accessToken?.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       },

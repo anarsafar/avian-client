@@ -1,10 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import { Flex, useColorModeValue } from '@chakra-ui/react';
 
 import ChatHeader from './view/ChatHeader';
 import ChatPanel from './view/ChatPanel';
 import NoChatSelected from './NoChatSelected';
-import useActiveConversation from '@/hooks/store/useActiveConversation';
 import ChatBody from './view/ChatBody';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 function ChatView() {
   const inputColor = useColorModeValue('input-light', 'input-dark');
@@ -12,7 +13,8 @@ function ChatView() {
   const placeholderColor = useColorModeValue('gray-4', 'text-darker');
   const darkerTextColor = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const textColor = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
-  const { activeConversation } = useActiveConversation();
+
+  const { activeContact } = useActiveContact();
 
   const contactChatView = (
     <Flex direction="column">
@@ -27,7 +29,11 @@ function ChatView() {
     </Flex>
   );
 
-  return activeConversation ? contactChatView : <NoChatSelected />;
+  if (activeContact) {
+    return contactChatView;
+  }
+
+  return <NoChatSelected />;
 }
 
 export default ChatView;

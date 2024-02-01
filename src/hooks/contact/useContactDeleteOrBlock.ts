@@ -2,19 +2,19 @@
 import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import useActiveConversation from '@hooks/store/useActiveConversation';
 import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import useActiveContact from '../store/useActiveContact';
 
 interface Action {
   action: 'block' | 'delete';
 }
 
 function useContactDeleteOrBlock(contactId: string) {
-  const { activeConversation, setActiveConversation, clearActiveConversation } =
-    useActiveConversation();
+  const { activeContact, setActiveContact, clearActiveContact } =
+    useActiveContact();
 
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
@@ -33,15 +33,15 @@ function useContactDeleteOrBlock(contactId: string) {
       ),
     mutationKey: ['block-or-delete-contact'],
     onSuccess: (res, variables) => {
-      if (contactId === activeConversation?.user._id) {
+      if (contactId === activeContact?.user._id) {
         if (variables.action === 'block') {
           const newActiveConvesation = {
-            ...activeConversation,
-            isBlocked: !activeConversation.isBlocked,
+            ...activeContact,
+            isBlocked: !activeContact.isBlocked,
           };
-          setActiveConversation(newActiveConvesation);
+          setActiveContact(newActiveConvesation);
         } else {
-          clearActiveConversation();
+          clearActiveContact();
         }
       }
       queryClient.invalidateQueries({ queryKey: ['contacts'] });

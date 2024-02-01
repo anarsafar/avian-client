@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import usePersist, { StorageType } from '@hooks/store/usePersist';
 
+import usePersist, { StorageType } from '@hooks/store/usePersist';
 import api, { RequestType } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
 

@@ -1,30 +1,32 @@
 import { create } from 'zustand';
-import { ContactInterface } from '@/utils/contact.interface';
+import { ConversationInterface } from '@/utils/conversation.interface';
 
-interface Contact {
-  activeConversation: ContactInterface | null;
-  setActiveConversation: (newConversation: ContactInterface) => void;
-  clearActiveConversation: () => void;
+interface Conversation {
+  activeConversation: ConversationInterface | null;
+  setActiveConversation: (newActiveConvesation: ConversationInterface) => void;
+  clearConversation: () => void;
 }
 
-const useActiveConversation = create<Contact>((set) => {
-  const initalConversation = sessionStorage.getItem('activeConversation');
+const useActiveConversation = create<Conversation>((set) => {
+  const initialActiveConversation =
+    sessionStorage.getItem('activeConversation');
 
   return {
-    activeConversation: initalConversation
-      ? (JSON.parse(initalConversation) as ContactInterface)
+    activeConversation: initialActiveConversation
+      ? (JSON.parse(initialActiveConversation) as ConversationInterface)
       : null,
 
-    setActiveConversation: (newConversation) => {
+    setActiveConversation: (newActiveConvesation) => {
       sessionStorage.setItem(
         'activeConversation',
-        JSON.stringify(newConversation)
+        JSON.stringify(newActiveConvesation)
       );
 
-      set({ activeConversation: newConversation });
+      set({ activeConversation: newActiveConvesation });
     },
-    clearActiveConversation: () => {
+    clearConversation: () => {
       set({ activeConversation: null });
+      sessionStorage.removeItem('activeConversation');
     },
   };
 });

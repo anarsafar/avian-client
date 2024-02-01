@@ -14,11 +14,12 @@ import {
 } from '@chakra-ui/react';
 import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
-import useActiveConversation from '@/hooks/store/useActiveConversation';
-import formatLastSeen from '@/utils/formatLastSeen';
-import useContactInfo from '@/hooks/contact/useContactInfo';
-import { ContactInterface } from '@/utils/contact.interface';
+
 import { useSocket } from '@/context/socket.context';
+import useContactInfo from '@/hooks/contact/useContactInfo';
+import formatLastSeen from '@/utils/formatLastSeen';
+import { ContactInterface } from '@/utils/contact.interface';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 interface PropTypes {
   darkerTextColor: string;
@@ -26,26 +27,27 @@ interface PropTypes {
 }
 
 function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
-  const { activeConversation } = useActiveConversation();
   const socket = useSocket();
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const [typing, setTyping] = useState<boolean>(false);
+  const { activeContact } = useActiveContact();
+
   const { infoOnOpen, modal } = useContactInfo({
-    contact: activeConversation as ContactInterface,
+    contact: activeContact as ContactInterface,
   });
 
   useEffect(() => {
     socket?.on('typing', (userId: string) => {
-      if (activeConversation?.user._id === userId) {
+      if (activeContact?.user._id === userId) {
         setTyping(true);
       }
     });
     socket?.on('stop typing', (userId: string) => {
-      if (activeConversation?.user._id === userId) {
+      if (activeContact?.user._id === userId) {
         setTyping(false);
       }
     });
-  }, [activeConversation?.user._id, socket]);
+  }, [activeContact?.user._id, socket]);
 
   return (
     <Flex
@@ -59,7 +61,7 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
       <Button variant="unstyled" h="auto" onClick={infoOnOpen}>
         <Flex alignItems="center" gap="1.2rem">
           <Avatar
-            src={activeConversation?.user.userInfo.avatar}
+            src={activeContact?.user.userInfo.avatar}
             bg="gray.500"
             loading="eager"
             w="3.3rem"
@@ -76,7 +78,7 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
               overflow="hidden"
               textOverflow="ellipsis"
             >
-              {activeConversation?.user.userInfo.name}
+              {activeContact?.user.userInfo.name}
             </Text>
             <Text
               textAlign="left"
@@ -90,9 +92,9 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
             >
               {typing
                 ? 'typing...'
-                : activeConversation?.user.online
+                : activeContact?.user.online
                 ? 'Online'
-                : formatLastSeen(activeConversation?.user.lastSeen as string)}
+                : formatLastSeen(activeContact?.user.lastSeen as string)}
             </Text>
           </Box>
         </Flex>

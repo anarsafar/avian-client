@@ -1,7 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+
 import { ConversationInterface } from '@/utils/conversation.interface';
+
 import useUser from '@/hooks/store/useUser';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
+import useContacts from '@/hooks/contact/useContacts';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 function ConversationCard({
   conversation,
@@ -11,11 +16,29 @@ function ConversationCard({
   const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const hover = useColorModeValue('hover-light', 'accent-dark');
+
   const { user } = useUser();
+
+  const { setActiveConversation } = useActiveConversation();
+  const { setActiveContact, clearActiveContact } = useActiveContact();
+  const { contacts } = useContacts();
 
   const cardUser = conversation.participants.find(
     (participant) => participant._id !== user?._id
   );
+
+  const handleConversation = () => {
+    setActiveConversation(conversation);
+    const newActiveContact = contacts?.contacts.find((contact) =>
+      conversation.participants.find((usr) => usr._id === contact.user._id)
+    );
+
+    if (newActiveContact) {
+      setActiveContact(newActiveContact);
+    } else {
+      clearActiveContact();
+    }
+  };
 
   return (
     <Flex
@@ -26,6 +49,7 @@ function ConversationCard({
       lineHeight="1.8rem"
       letterSpacing="0.16px"
       borderRadius="0.9rem"
+      onClick={handleConversation}
       _hover={{
         bg: hover,
       }}

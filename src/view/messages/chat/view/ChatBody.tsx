@@ -1,20 +1,15 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
-import {
-  Avatar,
-  Box,
-  //   Divider,
-  Flex,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Avatar, Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
 import { useSocket } from '@/context/socket.context';
+import formatDateLabel from '@/utils/formatDate';
+
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
-import formatDateLabel from '@/utils/formatDate';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 interface MessageI {
   message: {
@@ -34,6 +29,7 @@ function ChatBody() {
   const socket = useSocket();
   const { user } = useUser();
   const { activeConversation } = useActiveConversation();
+  const { activeContact } = useActiveContact();
 
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
@@ -45,13 +41,15 @@ function ChatBody() {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   useEffect(() => {
+    const conversationId = activeConversation?._id || null;
+
     socket?.emit(
       'join-private-chat',
-      null,
+      conversationId,
       user?._id,
-      activeConversation?.user._id
+      activeContact?.user._id
     );
-  }, [activeConversation?.user._id, socket, user?._id]);
+  }, [activeContact?.user._id, activeConversation?._id, socket, user?._id]);
 
   useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
@@ -93,7 +91,6 @@ function ChatBody() {
             position="sticky"
             top="0"
           >
-            {/* <Divider variant="dashed" colorScheme={textTheme} /> */}
             <Text
               lineHeight="1.6rem"
               letterSpacing="0.18px"
@@ -107,7 +104,6 @@ function ChatBody() {
             >
               {messageDateLabel}
             </Text>
-            {/* <Divider variant="dashed" colorScheme={textTheme} /> */}
           </Flex>
         )}
         <Flex
@@ -122,7 +118,7 @@ function ChatBody() {
           {isFirstMessageFromUser && !isCurrentUser && (
             <Avatar
               alignSelf="flex-start"
-              src={activeConversation?.user.userInfo.avatar}
+              src={activeContact?.user.userInfo.avatar}
               bg="gray.500"
               loading="eager"
               w="3.3rem"

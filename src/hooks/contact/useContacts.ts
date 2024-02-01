@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useLogout from '@hooks/auth/useLogout';
+import useActiveContact from '@hooks/store/useActiveContact';
 
-import { useEffect } from 'react';
-import useActiveConversation from '@hooks/store/useActiveConversation';
 import { ContactInterface } from '@/utils/contact.interface';
 import api, { RequestType } from '@/api';
 import { useSocket } from '@/context/socket.context';
@@ -16,7 +16,8 @@ interface Contacts {
 
 function useContacts() {
   const { getPersistedData, persistData } = usePersist();
-  const { activeConversation, setActiveConversation } = useActiveConversation();
+  const { activeContact, setActiveContact } = useActiveContact();
+
   const socket = useSocket();
   const { logoutHandler } = useLogout();
 
@@ -70,7 +71,6 @@ function useContacts() {
 
   useEffect(() => {
     socket?.on('refreshData', (userId: string) => {
-      console.log('refreshing data');
       const user = contacts?.contacts.find(
         (contact) => contact.user._id === userId
       );
@@ -82,13 +82,12 @@ function useContacts() {
   }, [socket]);
 
   useEffect(() => {
-    if (activeConversation && contacts) {
+    if (activeContact && contacts) {
       const newActiveContact = contacts?.contacts.find(
-        (contact) => contact.user._id === activeConversation?.user._id
+        (contact) => contact.user._id === activeContact?.user._id
       );
       if (newActiveContact) {
-        console.log('contact updated info', newActiveContact);
-        setActiveConversation(newActiveContact);
+        setActiveContact(newActiveContact);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
