@@ -11,11 +11,15 @@ import ContactCard from './ContactCard';
 import { SkeletonLoading } from '@/components/loading';
 import groupContactsByFirstLetter from '@/utils/groupContacts';
 import useContacts from '@/hooks/contact/useContacts';
+import useToken from '@/hooks/auth/useToken';
 
 function Contacts({ contactName }: { contactName: string }): JSX.Element {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
-  const { contacts, isError, isLoading, getNewAccessToken, accessToken } =
-    useContacts();
+  const { contacts, isError, isLoading, refetchContacts } = useContacts();
+
+  const { getNewAccessToken } = useToken(() => {
+    refetchContacts();
+  });
 
   let content: React.ReactNode;
 
@@ -51,7 +55,7 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
           _hover={{
             bg: '#FF5F44',
           }}
-          onClick={() => getNewAccessToken(accessToken?.accessToken)}
+          onClick={() => getNewAccessToken()}
         >
           Try again
         </Button>

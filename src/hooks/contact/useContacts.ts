@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
-import useLogout from '@hooks/auth/useLogout';
 import useActiveContact from '@hooks/store/useActiveContact';
 
 import { ContactInterface } from '@/utils/contact.interface';
@@ -15,11 +14,10 @@ interface Contacts {
 }
 
 function useContacts() {
-  const { getPersistedData, persistData } = usePersist();
+  const { getPersistedData } = usePersist();
   const { activeContact, setActiveContact } = useActiveContact();
 
   const socket = useSocket();
-  const { logoutHandler } = useLogout();
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
@@ -41,30 +39,6 @@ function useContacts() {
         accessToken?.accessToken
       ),
     enabled: typeof accessToken !== undefined,
-    retry: false,
-    networkMode: 'always',
-  });
-
-  const { mutate: getNewAccessToken } = useMutation({
-    mutationFn: (token?: string | undefined) =>
-      api<{ accessToken: string }, null>(
-        null,
-        'refresh',
-        RequestType.Post,
-        token
-      ),
-    mutationKey: ['get-new-access-token'],
-    onSuccess: (newAccessToken) => {
-      persistData<{ accessToken: string }>(
-        newAccessToken,
-        'access-token',
-        StorageType.Local
-      );
-      refetchContacts();
-    },
-    onError: () => {
-      logoutHandler();
-    },
     retry: false,
     networkMode: 'always',
   });
@@ -93,7 +67,13 @@ function useContacts() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contacts]);
 
-  return { contacts, accessToken, getNewAccessToken, isLoading, isError };
+  return {
+    contacts,
+    accessToken,
+    isLoading,
+    isError,
+    refetchContacts,
+  };
 }
 
 export default useContacts;

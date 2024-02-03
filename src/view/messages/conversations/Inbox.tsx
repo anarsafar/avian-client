@@ -4,6 +4,8 @@ import { Fragment, ReactNode } from 'react';
 import { Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
 import useConversation from '@/hooks/conversations/useConversation';
+import useToken from '@/hooks/auth/useToken';
+
 import ConversationCard from './ConversationCard';
 import { ConversationsSkeleton } from '@/components/loading';
 
@@ -12,6 +14,7 @@ function Inbox({ contactName }: { contactName: string }) {
 
   const { conversations, isError, isLoading, refetchConversations } =
     useConversation();
+  const { getNewAccessToken } = useToken(() => refetchConversations());
 
   let content: ReactNode;
 
@@ -47,7 +50,7 @@ function Inbox({ contactName }: { contactName: string }) {
           _hover={{
             bg: '#FF5F44',
           }}
-          onClick={() => refetchConversations()}
+          onClick={() => getNewAccessToken()}
         >
           Try again
         </Button>

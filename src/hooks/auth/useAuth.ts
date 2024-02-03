@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import useUser from '@hooks/store/useUser';
 import usePersist, { StorageType } from '../store/usePersist';
-import api, { ErrorResponse, RequestType } from '@/api';
+import api, { RequestType } from '@/api';
 import { UserInterface } from '@/schemas/user/user.schema';
+import useToken from './useToken';
 
 interface AccessToken {
   accessToken: string;
@@ -13,7 +14,7 @@ interface AccessToken {
 
 const useAuth = () => {
   const [isLoading, setLoading] = useState<boolean>(true);
-  const { persistData, getPersistedData } = usePersist();
+  const { getPersistedData } = usePersist();
   const user = useUser((state) => state.user);
   const setUser = useUser((state) => state.setUser);
 
@@ -40,24 +41,9 @@ const useAuth = () => {
     staleTime: 1000 * 60 * 60 * 5,
   });
 
-  const { mutate: getNewAccessToken, isError } = useMutation({
-    mutationFn: (token?: string | undefined) =>
-      api<AccessToken, null>(null, 'refresh', RequestType.Post, token),
-    mutationKey: ['refresh'],
-    onSuccess: (newAccessToken) => {
-      persistData<AccessToken>(
-        newAccessToken,
-        'access-token',
-        StorageType.Local
-      );
-      setAccessToken(newAccessToken.accessToken);
-      getUser();
-    },
-    onError: (error: ErrorResponse) => {
-      console.error('Error from refresh route ', error);
-    },
-    retry: false,
-    networkMode: 'always',
+  const { getNewAccessToken, isError } = useToken((token) => {
+    setAccessToken(token.accessToken);
+    getUser();
   });
 
   useEffect(() => {
@@ -65,7 +51,7 @@ const useAuth = () => {
       setUser(userData);
       setLoading(false);
     } else if (isUserError && isLoading) {
-      getNewAccessToken(accessToken);
+      getNewAccessToken();
     } else if (isError) {
       setLoading(false);
     }
