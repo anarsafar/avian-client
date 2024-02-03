@@ -1,5 +1,5 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
-import Sidebar from '@components/common/Sidebar';
 import { Fragment, ReactNode } from 'react';
 import { Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 
@@ -7,7 +7,7 @@ import useConversation from '@/hooks/conversations/useConversation';
 import ConversationCard from './ConversationCard';
 import { ConversationsSkeleton } from '@/components/loading';
 
-function Inbox(): JSX.Element {
+function Inbox({ contactName }: { contactName: string }) {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
 
   const { conversations, isError, isLoading, refetchConversations } =
@@ -68,18 +68,38 @@ function Inbox(): JSX.Element {
       </Text>
     );
   } else {
-    content = conversations?.conversations.map((conversation, index) => (
-      <Fragment key={index}>
-        <ConversationCard conversation={conversation} />
-      </Fragment>
-    ));
+    const filteredConvsersations = conversations?.conversations.filter(
+      (conversation) =>
+        conversation.participants.find((participant) =>
+          participant.userInfo.name
+            .toLowerCase()
+            .includes(contactName.toLowerCase().trim())
+        )
+    );
+    if (filteredConvsersations?.length === 0) {
+      content = (
+        <Text
+          lineHeight="1.8rem"
+          fontFamily="openSans"
+          fontSize="1.2rem"
+          p="1rem 1.8rem"
+          color={textTheme}
+          fontWeight={600}
+          textAlign="center"
+        >
+          Conversation not found
+        </Text>
+      );
+    } else {
+      content = filteredConvsersations?.map((conversation, index) => (
+        <Fragment key={index}>
+          <ConversationCard conversation={conversation} />
+        </Fragment>
+      ));
+    }
   }
 
-  return (
-    <Sidebar header="Messages" type="conversation">
-      {() => content}
-    </Sidebar>
-  );
+  return content;
 }
 
 export default Inbox;

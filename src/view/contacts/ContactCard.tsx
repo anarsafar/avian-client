@@ -11,15 +11,16 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useActiveContact from '@/hooks/store/useActiveContact';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 import { ContactInterface } from '@/utils/contact.interface';
-import useActiveConversation from '@/hooks/store/useActiveConversation';
-import useConversation from '@/hooks/conversations/useConversation';
+import { ConversationInterface } from '@/utils/conversation.interface';
 
 interface ContactCardInterface {
   textTheme: string;
@@ -38,7 +39,14 @@ function ContactCard({
   });
   const { setActiveContact } = useActiveContact();
   const { setActiveConversation, clearConversation } = useActiveConversation();
-  const { conversations } = useConversation();
+
+  const queryClient = useQueryClient();
+
+  const [data] = queryClient.getQueriesData({
+    queryKey: ['conversations'],
+  });
+
+  const conversations = data[1] as { conversations: ConversationInterface[] };
 
   const { modal: customModal, onOpen: customOpen } = useCustomModal();
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);

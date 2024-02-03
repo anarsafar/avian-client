@@ -31,13 +31,23 @@ function ChatPanel({
   const { activeConversation } = useActiveConversation();
   const { activeContact } = useActiveContact();
 
+  const generateRoomIdentifier = (
+    senderId: string | undefined,
+    recipientId: string | undefined
+  ): string => {
+    const sortedUserIds = [senderId, recipientId].sort();
+    return `${sortedUserIds[0]}-${sortedUserIds[1]}`;
+  };
+
+  const roomId = generateRoomIdentifier(activeContact?.user._id, user?._id);
+
   const handleStopTyping = () => {
-    socket?.emit('stop typing', user?._id);
+    socket?.emit('stop typing', user?._id, roomId);
   };
 
   const handleTyping = () => {
     clearTimeout(timerId);
-    socket?.emit('typing', user?._id);
+    socket?.emit('typing', user?._id, roomId);
     timerId = setTimeout(() => {
       handleStopTyping();
     }, 2000);

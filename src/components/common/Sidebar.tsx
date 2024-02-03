@@ -15,7 +15,7 @@ import useAddConversation from '@/hooks/conversations/useAddConversation';
 import SearchInput from './SearchInput';
 
 interface SidebarProps {
-  children: (contactName: string) => ReactNode | ReactNode;
+  children: (contactName: string) => ReactNode;
   header: 'Messages' | 'Contacts';
   type: 'conversation' | 'contacts';
 }

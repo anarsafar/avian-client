@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { ConversationInterface } from '@/utils/conversation.interface';
+import { ContactInterface } from '@/utils/contact.interface';
 
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
-import useContacts from '@/hooks/contact/useContacts';
 import useActiveContact from '@/hooks/store/useActiveContact';
 
 function ConversationCard({
@@ -21,7 +22,14 @@ function ConversationCard({
 
   const { setActiveConversation } = useActiveConversation();
   const { setActiveContact, clearActiveContact } = useActiveContact();
-  const { contacts } = useContacts();
+
+  const queryClient = useQueryClient();
+
+  const [data] = queryClient.getQueriesData({
+    queryKey: ['contacts'],
+  });
+
+  const contacts = data[1] as { contacts: ContactInterface[] };
 
   const cardUser = conversation.participants.find(
     (participant) => participant._id !== user?._id

@@ -363,7 +363,11 @@ function AppLayout() {
             <GridItem area="sidebar">
               <TabPanels>
                 <TabPanel h="100vh" p="0">
-                  <Inbox />
+                  <Sidebar header="Messages" type="conversation">
+                    {(contactName: string) => (
+                      <Inbox contactName={contactName} />
+                    )}
+                  </Sidebar>
                 </TabPanel>
                 <TabPanel h="100vh" p="0">
                   <Sidebar header="Contacts" type="contacts">

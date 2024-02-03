@@ -77,35 +77,52 @@ function Contacts({ contactName }: { contactName: string }): JSX.Element {
         .toLowerCase()
         .includes(contactName.toLowerCase().trim())
     );
-
-    const groupedContacts = groupContactsByFirstLetter(filteredContacts || []);
-    content = (
-      <>
-        {Object.keys(groupedContacts)
-          .sort()
-          .map((letter) => (
-            <VStack key={letter} align="stretch">
-              <Text
-                lineHeight="1.8rem"
-                fontFamily="openSans"
-                fontSize="1.2rem"
-                p="1rem 1.8rem"
-                color={textTheme}
-                fontWeight={600}
-              >
-                {letter}
-              </Text>
-              {groupedContacts[letter].map((contact) => (
-                <ContactCard
-                  key={contact.user._id}
-                  contact={contact}
-                  textTheme={textTheme}
-                />
-              ))}
-            </VStack>
-          ))}
-      </>
-    );
+    if (filteredContacts?.length === 0) {
+      content = (
+        <Text
+          lineHeight="1.8rem"
+          fontFamily="openSans"
+          fontSize="1.2rem"
+          p="1rem 1.8rem"
+          color={textTheme}
+          fontWeight={600}
+          textAlign="center"
+        >
+          Contact not found
+        </Text>
+      );
+    } else {
+      const groupedContacts = groupContactsByFirstLetter(
+        filteredContacts || []
+      );
+      content = (
+        <>
+          {Object.keys(groupedContacts)
+            .sort()
+            .map((letter) => (
+              <VStack key={letter} align="stretch">
+                <Text
+                  lineHeight="1.8rem"
+                  fontFamily="openSans"
+                  fontSize="1.2rem"
+                  p="1rem 1.8rem"
+                  color={textTheme}
+                  fontWeight={600}
+                >
+                  {letter}
+                </Text>
+                {groupedContacts[letter].map((contact) => (
+                  <ContactCard
+                    key={contact.user._id}
+                    contact={contact}
+                    textTheme={textTheme}
+                  />
+                ))}
+              </VStack>
+            ))}
+        </>
+      );
+    }
   }
 
   return content;
