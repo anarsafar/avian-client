@@ -33,11 +33,12 @@ function ContactCard({
 }: ContactCardInterface): JSX.Element {
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
+  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const { modal: infoModal, infoOnOpen } = useContactInfo({
     contact,
   });
-  const { setActiveContact } = useActiveContact();
+  const { setActiveContact, activeContact } = useActiveContact();
   const { setActiveConversation, clearConversation } = useActiveConversation();
 
   const queryClient = useQueryClient();
@@ -46,7 +47,9 @@ function ContactCard({
     queryKey: ['conversations'],
   });
 
-  const conversations = data[1] as { conversations: ConversationInterface[] };
+  const conversations = (data ? data[1] : { conversations: [] }) as {
+    conversations: ConversationInterface[];
+  };
 
   const { modal: customModal, onOpen: customOpen } = useCustomModal();
   const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
@@ -70,6 +73,7 @@ function ContactCard({
       variant="unstyled"
       height="auto"
       cursor="pointer"
+      bg={activeContact?.user._id === contact.user._id ? hoverTheme : bgTheme}
       _hover={{
         bg: hoverTheme,
       }}

@@ -176,7 +176,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
         >
           Avatar
         </FormLabel>
-        <Flex as={Button} variant="unstyled" h="auto" gap="1rem">
+        <Flex h="auto" gap="1rem">
           <Menu>
             {({ isOpen }) => (
               <>

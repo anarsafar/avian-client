@@ -17,10 +17,12 @@ function ConversationCard({
   const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const hover = useColorModeValue('hover-light', 'accent-dark');
+  const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const { user } = useUser();
 
   const { setActiveConversation } = useActiveConversation();
+  const { activeContact } = useActiveContact();
   const { setActiveContact, clearActiveContact } = useActiveContact();
 
   const queryClient = useQueryClient();
@@ -29,7 +31,9 @@ function ConversationCard({
     queryKey: ['contacts'],
   });
 
-  const contacts = data[1] as { contacts: ContactInterface[] };
+  const contacts = (data ? data[1] : { conversations: [] }) as {
+    contacts: ContactInterface[];
+  };
 
   const cardUser = conversation.participants.find(
     (participant) => participant._id !== user?._id
@@ -58,6 +62,7 @@ function ConversationCard({
       letterSpacing="0.16px"
       borderRadius="0.9rem"
       onClick={handleConversation}
+      bg={activeContact?.user._id === cardUser?._id ? hover : bgTheme}
       _hover={{
         bg: hover,
       }}

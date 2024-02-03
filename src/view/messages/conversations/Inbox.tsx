@@ -91,11 +91,15 @@ function Inbox({ contactName }: { contactName: string }) {
         </Text>
       );
     } else {
-      content = filteredConvsersations?.map((conversation, index) => (
-        <Fragment key={index}>
-          <ConversationCard conversation={conversation} />
-        </Fragment>
-      ));
+      content = (
+        <Flex gap=".5rem" direction="column">
+          {filteredConvsersations?.map((conversation, index) => (
+            <Fragment key={index}>
+              <ConversationCard conversation={conversation} />
+            </Fragment>
+          ))}
+        </Flex>
+      );
     }
   }
 
