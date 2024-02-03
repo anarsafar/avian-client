@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import { Avatar, Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -49,6 +48,7 @@ function ChatBody() {
       user?._id,
       activeContact?.user._id
     );
+    setMessages([]);
   }, [activeContact?.user._id, activeConversation?._id, socket, user?._id]);
 
   useEffect(() => {

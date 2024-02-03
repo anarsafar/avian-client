@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
 import api, { RequestType } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
+import { useSocket } from '@/context/socket.context';
 
 interface ConversationI {
   conversations: ConversationInterface[];
@@ -10,7 +12,7 @@ interface ConversationI {
 
 const useConversation = () => {
   const { getPersistedData } = usePersist();
-
+  const socket = useSocket();
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
     StorageType.Local
@@ -34,6 +36,18 @@ const useConversation = () => {
     retry: false,
     networkMode: 'always',
   });
+
+  useEffect(() => {
+    socket?.on('refreshData', (userId: string) => {
+      const shouldUpdate = conversations?.conversations.find((chat) =>
+        chat.participants.find((participant) => participant._id === userId)
+      );
+      if (shouldUpdate) {
+        refetchConversations();
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
 
   return { conversations, isLoading, isError, refetchConversations };
 };
