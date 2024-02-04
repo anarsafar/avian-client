@@ -17,8 +17,8 @@ function NoChatSelected() {
       <Box textAlign="center">
         <Flex justifyContent="center">
           <svg
-            width="32"
-            height="32"
+            width="42"
+            height="42"
             viewBox="0 0 16 16"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -35,7 +35,7 @@ function NoChatSelected() {
           No Conversations
         </Text>
         <Text fontSize="1.2rem" fontWeight={400} mt="0.8rem">
-          click plus icon to add a new one or select from conversation list
+          click plus icon to add a new one or select from messages list
         </Text>
       </Box>
     </Flex>

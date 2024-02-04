@@ -52,8 +52,7 @@ function useContacts() {
         refetchContacts();
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket]);
+  }, [contacts, refetchContacts, socket]);
 
   useEffect(() => {
     if (activeContact && contacts) {

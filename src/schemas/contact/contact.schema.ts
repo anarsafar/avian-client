@@ -5,6 +5,7 @@ export const ValidateContact = z.object({
     .string()
     .trim()
     .min(1, { message: 'provide username or email' })
+    .min(3, { message: 'invalid username' })
     .refine(
       (value) => {
         const isEmail = /\S+@\S+\.\S+/.test(value);

@@ -67,7 +67,7 @@ function Inbox({ contactName }: { contactName: string }) {
         fontWeight={600}
         textAlign="center"
       >
-        You don't have any contacts
+        You don't have any messages
       </Text>
     );
   } else {
