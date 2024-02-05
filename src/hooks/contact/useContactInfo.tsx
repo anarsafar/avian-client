@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {
   AtSignIcon,
   BellIcon,
@@ -32,6 +31,7 @@ import { useState } from 'react';
 
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useCustomModal from '@/hooks/custom/useConfirmation';
+
 import { ContactInterface } from '@/utils/contact.interface';
 import formatLastSeen from '@/utils/formatLastSeen';
 
@@ -117,7 +117,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
               onClick={() => setOpen(true)}
               w="4rem"
               h="4rem"
-              name={contact.user.userInfo.name}
+              bg="gray.500"
               src={contact.user.userInfo?.avatar}
               loading="eager"
               _hover={{

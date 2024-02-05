@@ -28,8 +28,7 @@ function ConversationCard({
   const { user } = useUser();
 
   const { setActiveConversation } = useActiveConversation();
-  const { activeContact } = useActiveContact();
-  const { setActiveContact } = useActiveContact();
+  const { activeContact, setActiveContact } = useActiveContact();
 
   const queryClient = useQueryClient();
 

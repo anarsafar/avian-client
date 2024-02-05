@@ -1,12 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useActiveContact from '@hooks/store/useActiveContact';
+import useCustomToast from '@hooks/custom/useCustomToast';
 
-import api, { RequestType } from '@/api';
+import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { useSocket } from '@/context/socket.context';
+import useActiveConversation from '../store/useActiveConversation';
 
 interface ConversationI {
   conversations: ConversationInterface[];
@@ -19,7 +21,10 @@ const useConversation = () => {
     'access-token',
     StorageType.Local
   );
-  const { setActiveContact, activeContact } = useActiveContact();
+  const { setActiveContact, activeContact, clearActiveContact } =
+    useActiveContact();
+  const { clearConversation } = useActiveConversation();
+  const toast = useCustomToast();
 
   const {
     data: conversations,
@@ -39,6 +44,29 @@ const useConversation = () => {
     retry: false,
     networkMode: 'always',
   });
+
+  const { mutate: deleteConversation, isPending: isConversationDeleting } =
+    useMutation({
+      mutationFn: (conversationId: string) =>
+        api<SuccessResponse, null>(
+          null,
+          `conversations/${conversationId}`,
+          RequestType.Delete,
+          accessToken?.accessToken
+        ),
+      mutationKey: ['delete-conversation'],
+      onSuccess: (message) => {
+        clearActiveContact();
+        clearConversation();
+
+        toast('success', 'Conversation deleted', message);
+        refetchConversations();
+      },
+      onError: (error: ErrorResponse) =>
+        toast('error', "Conversation couldn't deleted", error),
+      retry: false,
+      networkMode: 'always',
+    });
 
   useEffect(() => {
     socket?.on('refreshData', () => {
@@ -61,7 +89,14 @@ const useConversation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations]);
 
-  return { conversations, isLoading, isError, refetchConversations };
+  return {
+    conversations,
+    isLoading,
+    isError,
+    refetchConversations,
+    deleteConversation,
+    isConversationDeleting,
+  };
 };
 
 export default useConversation;

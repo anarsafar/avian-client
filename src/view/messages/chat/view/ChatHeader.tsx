@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-nested-ternary */
 import {
   Avatar,
@@ -16,10 +15,15 @@ import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
 import { useSocket } from '@/context/socket.context';
-import useContactInfo from '@/hooks/contact/useContactInfo';
+
 import formatLastSeen from '@/utils/formatLastSeen';
 import { ContactInterface } from '@/utils/contact.interface';
+
 import useActiveContact from '@/hooks/store/useActiveContact';
+import useConversation from '@/hooks/conversations/useConversation';
+import useContactInfo from '@/hooks/contact/useContactInfo';
+import useConfiramtion from '@/hooks/custom/useConfirmation';
+import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 interface PropTypes {
   darkerTextColor: string;
@@ -30,7 +34,12 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const socket = useSocket();
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const [typing, setTyping] = useState<boolean>(false);
+
   const { activeContact } = useActiveContact();
+  const { activeConversation } = useActiveConversation();
+
+  const { deleteConversation, isConversationDeleting } = useConversation();
+  const { modal: confirmModal, onOpen } = useConfiramtion();
 
   const { infoOnOpen, modal } = useContactInfo({
     contact: activeContact as ContactInterface,
@@ -127,7 +136,13 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
               <InfoOutlineIcon />
               <Text ms="1rem">Contact Information</Text>
             </MenuItem>
-            <MenuItem fontSize="1.3rem" fontFamily="openSans" fontWeight={400}>
+            <MenuItem
+              fontSize="1.3rem"
+              fontFamily="openSans"
+              fontWeight={400}
+              onClick={onOpen}
+              isDisabled={!activeConversation}
+            >
               <DeleteIcon color="red-3" />
               <Text ms="1rem" color="red-3">
                 Delete Conversation
@@ -137,6 +152,11 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
         </Menu>
       </Flex>
       {modal}
+      {confirmModal({
+        action: () => deleteConversation(activeConversation?._id as string),
+        isLoading: isConversationDeleting,
+        modalHeader: 'Delete Conversation',
+      })}
     </Flex>
   );
 }
