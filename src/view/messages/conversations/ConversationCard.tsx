@@ -1,4 +1,11 @@
-import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+  Avatar,
+  AvatarBadge,
+  Flex,
+  Stack,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ConversationInterface } from '@/utils/conversation.interface';
@@ -72,7 +79,14 @@ function ConversationCard({
         src={cardUser?.userInfo.avatar}
         w="3.3rem"
         h="3.3rem"
-      />
+      >
+        <AvatarBadge
+          borderColor="papayawhip"
+          border="2px solid"
+          bg={cardUser?.online ? 'green.500' : 'red.500'}
+          boxSize="1.25em"
+        />
+      </Avatar>
       <Stack
         direction="column"
         textAlign="left"

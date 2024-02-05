@@ -313,6 +313,7 @@ function AppLayout() {
                         >
                           <AvatarBadge
                             boxSize="1.25em"
+                            border="2px solid"
                             bg={isOnline ? 'green.500' : 'red.500'}
                           />
                         </Avatar>

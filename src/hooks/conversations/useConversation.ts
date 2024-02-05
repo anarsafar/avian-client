@@ -41,13 +41,8 @@ const useConversation = () => {
   });
 
   useEffect(() => {
-    socket?.on('refreshData', (userId: string) => {
-      const shouldUpdate = conversations?.conversations.find((chat) =>
-        chat.participants.find((participant) => participant._id === userId)
-      );
-      if (shouldUpdate) {
-        refetchConversations();
-      }
+    socket?.on('refreshData', () => {
+      refetchConversations();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
