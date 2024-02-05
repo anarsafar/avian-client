@@ -23,11 +23,16 @@ import Scrollbars from 'react-custom-scrollbars';
 
 import useContacts from '@hooks/contact/useContacts';
 import useToken from '@hooks/auth/useToken';
+import useActiveContact from '@hooks/store/useActiveContact';
+import useActiveConversation from '@hooks/store/useActiveConversation';
 
+import { useQueryClient } from '@tanstack/react-query';
 import SearchInput from '@/components/common/SearchInput';
 import { AddContactSkeleton } from '@/components/loading';
 
 import formatLastSeen from '@/utils/formatLastSeen';
+import { ContactInterface } from '@/utils/contact.interface';
+import { ConversationInterface } from '@/utils/conversation.interface';
 
 const useAddConversation = () => {
   const { isOpen, onOpen: addConversationOpen, onClose } = useDisclosure();
@@ -42,8 +47,33 @@ const useAddConversation = () => {
 
   const { contacts, isError, isLoading, refetchContacts } = useContacts();
   const { getNewAccessToken } = useToken(() => refetchContacts());
+  const { setActiveContact } = useActiveContact();
+  const { setActiveConversation, clearConversation } = useActiveConversation();
 
   let contactsUI: ReactNode;
+
+  const queryClient = useQueryClient();
+
+  const [data] = queryClient.getQueriesData({
+    queryKey: ['conversations'],
+  });
+
+  const conversations = (data ? data[1] : { conversations: [] }) as {
+    conversations: ConversationInterface[];
+  };
+
+  const handleActiveContact = (contact: ContactInterface) => {
+    setActiveContact(contact);
+    const newActiveConversation = conversations?.conversations.find((chat) => {
+      return chat.participants.find((user) => user._id === contact.user._id);
+    });
+    if (newActiveConversation) {
+      setActiveConversation(newActiveConversation);
+    } else {
+      clearConversation();
+    }
+    onClose();
+  };
 
   if (isLoading) {
     contactsUI = <AddContactSkeleton />;
@@ -109,9 +139,10 @@ const useAddConversation = () => {
         w="100%"
         borderRadius="0.8rem"
         _hover={{ bg: hoverTheme }}
+        onClick={() => handleActiveContact(contact)}
       >
         <Avatar
-          name={contact.user.userInfo.name}
+          bg="gray.500"
           src={contact.user.userInfo.avatar}
           w="3.3rem"
           h="3.3rem"
