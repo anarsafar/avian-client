@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Flex, useColorModeValue } from '@chakra-ui/react';
 
 import ChatHeader from './view/ChatHeader';

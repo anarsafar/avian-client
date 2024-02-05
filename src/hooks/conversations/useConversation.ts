@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
+import useActiveContact from '@hooks/store/useActiveContact';
+
 import api, { RequestType } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { useSocket } from '@/context/socket.context';
@@ -17,6 +19,7 @@ const useConversation = () => {
     'access-token',
     StorageType.Local
   );
+  const { setActiveContact, activeContact } = useActiveContact();
 
   const {
     data: conversations,
@@ -48,6 +51,20 @@ const useConversation = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
+
+  useEffect(() => {
+    if (activeContact) {
+      conversations?.conversations.forEach((chat) => {
+        const newActiveContact = chat.participants.find(
+          (user) => user._id === activeContact.user._id
+        );
+        if (newActiveContact) {
+          setActiveContact({ user: newActiveContact, isBlocked: false });
+        }
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversations]);
 
   return { conversations, isLoading, isError, refetchConversations };
 };

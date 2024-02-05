@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { DeleteIcon, EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,

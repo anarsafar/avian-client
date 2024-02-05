@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-underscore-dangle */
 import {
   Avatar,
   Box,
@@ -20,14 +19,19 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ReactNode, useState } from 'react';
-import useContacts from '@hooks/contact/useContacts';
 import Scrollbars from 'react-custom-scrollbars';
+
+import useContacts from '@hooks/contact/useContacts';
+import useToken from '@hooks/auth/useToken';
+
 import SearchInput from '@/components/common/SearchInput';
 import { AddContactSkeleton } from '@/components/loading';
+
 import formatLastSeen from '@/utils/formatLastSeen';
 
 const useAddConversation = () => {
   const { isOpen, onOpen: addConversationOpen, onClose } = useDisclosure();
+
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const inputTheme = useColorModeValue('input-light', 'input-dark');
@@ -35,8 +39,9 @@ const useAddConversation = () => {
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
 
   const [searchContact, setSearchContact] = useState<string>('');
-  const { contacts, isError, isLoading, getNewAccessToken, accessToken } =
-    useContacts();
+
+  const { contacts, isError, isLoading, refetchContacts } = useContacts();
+  const { getNewAccessToken } = useToken(() => refetchContacts());
 
   let contactsUI: ReactNode;
 
@@ -67,7 +72,7 @@ const useAddConversation = () => {
           _hover={{
             bg: '#FF5F44',
           }}
-          onClick={() => getNewAccessToken(accessToken?.accessToken)}
+          onClick={() => getNewAccessToken()}
         >
           Try again
         </Button>

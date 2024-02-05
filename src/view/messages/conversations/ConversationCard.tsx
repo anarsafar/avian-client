@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { Avatar, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -23,7 +22,7 @@ function ConversationCard({
 
   const { setActiveConversation } = useActiveConversation();
   const { activeContact } = useActiveContact();
-  const { setActiveContact, clearActiveContact } = useActiveContact();
+  const { setActiveContact } = useActiveContact();
 
   const queryClient = useQueryClient();
 
@@ -48,7 +47,8 @@ function ConversationCard({
     if (newActiveContact) {
       setActiveContact(newActiveContact);
     } else {
-      clearActiveContact();
+      const newActiceContact = { user: cardUser } as ContactInterface;
+      setActiveContact(newActiceContact);
     }
   };
 
