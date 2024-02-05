@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { Avatar, Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
 import { useSocket } from '@/context/socket.context';
@@ -144,8 +144,9 @@ function ChatBody() {
             color={textTheme}
             p="1.2rem"
             bg={hoverTheme}
+            whiteSpace="pre-wrap"
           >
-            {message.message.messageBody}
+            {message.message.messageBody.replace(/<br\s*\/?>/g, '\n')}
           </Box>
         </Flex>
       </Fragment>

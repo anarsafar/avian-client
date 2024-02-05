@@ -76,7 +76,7 @@ function ResetPassword() {
       ),
     mutationKey: ['change-password'],
     onSuccess: (successData) => {
-      navigate('/auth/signin');
+      navigate('/');
       toast('success', 'Reset success', successData);
     },
     onError: (error: ErrorResponse) => {

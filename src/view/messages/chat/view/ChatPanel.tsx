@@ -57,7 +57,7 @@ function ChatPanel({
     const trimmedMsg = textMessage.trim();
     const messageContent = {
       message: {
-        messageBody: trimmedMsg,
+        messageBody: trimmedMsg.replace(/\n/g, '<br/>'),
         timeStamp: new Date(),
       },
       chatId: activeConversation?._id,
