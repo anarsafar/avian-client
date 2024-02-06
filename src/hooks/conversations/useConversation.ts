@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useActiveContact from '@hooks/store/useActiveContact';
 import useCustomToast from '@hooks/custom/useCustomToast';
+import useActiveConversation from '@hooks/store/useActiveConversation';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { useSocket } from '@/context/socket.context';
-import useActiveConversation from '../store/useActiveConversation';
 
 interface ConversationI {
   conversations: ConversationInterface[];
@@ -17,13 +17,15 @@ interface ConversationI {
 const useConversation = () => {
   const { getPersistedData } = usePersist();
   const socket = useSocket();
+
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
     StorageType.Local
   );
   const { setActiveContact, activeContact, clearActiveContact } =
     useActiveContact();
-  const { clearConversation } = useActiveConversation();
+  const { clearConversation, activeConversation, setActiveConversation } =
+    useActiveConversation();
   const toast = useCustomToast();
 
   const {
@@ -43,6 +45,8 @@ const useConversation = () => {
     enabled: typeof accessToken !== undefined,
     retry: false,
     networkMode: 'always',
+    refetchOnWindowFocus: false,
+    refetchInterval: !activeConversation && activeContact ? 100 : false,
   });
 
   const { mutate: deleteConversation, isPending: isConversationDeleting } =
@@ -85,6 +89,21 @@ const useConversation = () => {
           setActiveContact({ user: newActiveContact, isBlocked: false });
         }
       });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversations]);
+
+  useEffect(() => {
+    if (activeContact && conversations && !activeConversation) {
+      const newActiveConvesation = conversations.conversations.find((chat) => {
+        const conversation = chat.participants.find(
+          (user) => user._id === activeContact.user._id
+        );
+        return conversation;
+      });
+      if (newActiveConvesation) {
+        setActiveConversation(newActiveConvesation);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations]);

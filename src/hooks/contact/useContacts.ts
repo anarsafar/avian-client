@@ -40,6 +40,7 @@ function useContacts() {
     enabled: typeof accessToken !== undefined,
     retry: false,
     networkMode: 'always',
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
