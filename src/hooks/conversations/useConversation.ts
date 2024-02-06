@@ -5,6 +5,7 @@ import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useActiveContact from '@hooks/store/useActiveContact';
 import useCustomToast from '@hooks/custom/useCustomToast';
 import useActiveConversation from '@hooks/store/useActiveConversation';
+import useUser from '@hooks/store/useUser';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
@@ -17,6 +18,7 @@ interface ConversationI {
 const useConversation = () => {
   const { getPersistedData } = usePersist();
   const socket = useSocket();
+  const { user: userData } = useUser();
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
@@ -75,6 +77,15 @@ const useConversation = () => {
   useEffect(() => {
     socket?.on('refreshData', () => {
       refetchConversations();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on('update-conversations', (userId: string) => {
+      if (userId === userData?._id) {
+        refetchConversations();
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);

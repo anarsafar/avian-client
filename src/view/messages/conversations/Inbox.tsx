@@ -71,14 +71,15 @@ function Inbox({ contactName }: { contactName: string }) {
       </Text>
     );
   } else {
-    const filteredConvsersations = conversations?.conversations.filter(
-      (conversation) =>
+    const filteredConvsersations = conversations?.conversations
+      .filter((conversation) =>
         conversation.participants.find((participant) =>
           participant.userInfo.name
             .toLowerCase()
             .includes(contactName.toLowerCase().trim())
         )
-    );
+      )
+      .reverse();
     if (filteredConvsersations?.length === 0) {
       content = (
         <Text
