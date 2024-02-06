@@ -66,8 +66,10 @@ const useUserOperations = () => {
         token?.accessToken
       );
     },
-    mutationKey: ['delete-user'],
-    onSuccess: () => logoutHandler(),
+    mutationKey: ['delete-account'],
+    onMutate: () => logoutHandler(),
+    onSuccess: () =>
+      toast('success', 'Account Deleted Sucessfully', { message: '' }),
     onError: (error: ErrorResponse) =>
       toast('error', 'Account Delete Error', error),
     retry: false,

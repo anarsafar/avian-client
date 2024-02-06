@@ -55,6 +55,8 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
     isDeleteSuccess,
   } = useUserOperations();
   const { modal, onOpen } = useConfiramtion();
+  const { modal: deleteModal, onOpen: deleteOnOpen } = useConfiramtion();
+
   const [avatar, setAvatar] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const avatarRef = useRef<HTMLInputElement | null>(null);
@@ -103,14 +105,14 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
   return (
     <Box>
       {modal({
-        action: () => deleteUser(),
-        isLoading: isDeleting,
-        modalHeader: 'Delete',
-      })}
-      {modal({
         action: () => deleteAvatar(),
         isLoading: isDeletingAvatar,
         modalHeader: 'Delete',
+      })}
+      {deleteModal({
+        action: () => deleteUser(),
+        isLoading: isDeleting,
+        modalHeader: 'Delete Account',
       })}
       <Flex id="header" justifyContent="space-between" alignItems="center">
         <Text
@@ -375,7 +377,7 @@ function UpdateAccount({ onClose }: UpdateAccountProps) {
           Update Info
         </Button>
         <Button
-          onClick={onOpen}
+          onClick={deleteOnOpen}
           marginTop="1.4rem"
           w="100%"
           padding="2rem"
