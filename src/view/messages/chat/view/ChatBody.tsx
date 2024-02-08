@@ -40,8 +40,10 @@ function ChatBody() {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   useEffect(() => {
-    const conversationId = activeConversation?._id || null;
-
+    const conversationId = activeConversation?._id || '';
+    if (socket) {
+      socket.auth.room = conversationId;
+    }
     socket?.emit(
       'join-private-chat',
       conversationId,
@@ -53,6 +55,9 @@ function ChatBody() {
 
   useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
+      if (socket) {
+        socket.auth.serverOffset = message.message.timeStamp;
+      }
       setMessages((prevMessages) => [...prevMessages, message]);
     };
 
