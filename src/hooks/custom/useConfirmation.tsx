@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import {
   Button,
   Flex,
@@ -11,6 +10,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useRef } from 'react';
 
 interface ModalInterface {
   modalHeader: string;
@@ -23,9 +23,16 @@ function useConfiramtion() {
   const bg = useColorModeValue('bg-light', 'bg-dark');
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
+  const initialRef = useRef(null);
 
   const modal = ({ action, modalHeader, isLoading }: ModalInterface) => (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      size="lg"
+      initialFocusRef={initialRef}
+    >
       <ModalOverlay />
       <ModalContent py="1rem" bg={bg}>
         <ModalHeader
@@ -88,6 +95,10 @@ function useConfiramtion() {
             lineHeight="1.8rem"
             fontFamily="openSans"
             fontSize="1.2rem"
+            border="1px solid transparent"
+            _focus={{
+              border: '1px solid white',
+            }}
             color="white"
             _hover={{
               bg: 'violet-1',
@@ -105,6 +116,11 @@ function useConfiramtion() {
             _hover={{
               bg: 'red-1',
             }}
+            border="1px solid transparent"
+            _focus={{
+              border: '1px solid white',
+            }}
+            ref={initialRef}
             isLoading={isLoading}
             onClick={async () => {
               await action();

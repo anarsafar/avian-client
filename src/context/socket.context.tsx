@@ -62,12 +62,8 @@ export function SocketProvider({ children }: SocketI) {
     return () => {
       newSocket.close();
     };
-  }, [
-    accessToken,
-    activeContact?.user._id,
-    activeConversation?._id,
-    user?._id,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken]);
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
