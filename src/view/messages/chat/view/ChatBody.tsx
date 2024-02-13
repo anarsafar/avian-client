@@ -1,25 +1,20 @@
 /* eslint-disable react/no-array-index-key */
 import { Avatar, Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
+import useMessages from '@hooks/store/useMessages';
 import { useSocket } from '@/context/socket.context';
 import formatDateLabel from '@/utils/formatDate';
 
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
-
-interface MessageI {
-  message: {
-    messageBody: string;
-    timeStamp: Date;
-  };
-  senderId: string;
-}
+import useInfiniteMessages from '@/hooks/messages';
+import { MessageI } from '@/schemas/message';
 
 function ChatBody() {
-  const [messages, setMessages] = useState<MessageI[]>([]);
+  const { clearMessages, setMessages, messages } = useMessages();
 
   let lastDisplayedDate = '';
   const textTheme = useColorModeValue('gray-4', 'text-dark');
@@ -29,6 +24,23 @@ function ChatBody() {
   const { user } = useUser();
   const { activeConversation } = useActiveConversation();
   const { activeContact } = useActiveContact();
+
+  const {
+    messages: data,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteMessages(activeConversation?._id);
+
+  useEffect(() => {
+    const messagesFromDb = data?.pages
+      .map((page) => page.messages.flat())
+      .flat();
+
+    if (messagesFromDb) {
+      setMessages(messagesFromDb);
+    }
+  }, [data, setMessages]);
 
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
@@ -50,15 +62,20 @@ function ChatBody() {
       user?._id,
       activeContact?.user._id
     );
-    setMessages([]);
-  }, [activeContact?.user._id, activeConversation?._id, socket, user?._id]);
+  }, [
+    activeContact?.user._id,
+    activeConversation?._id,
+    clearMessages,
+    socket,
+    user?._id,
+  ]);
 
   useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
       if (socket) {
-        socket.auth.serverOffset = message.message.timeStamp;
+        socket.auth.serverOffset = message.timestamp;
       }
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages(message);
     };
 
     socket?.on('private message', handlePrivateMessage);
@@ -66,6 +83,7 @@ function ChatBody() {
     return () => {
       socket?.off('private message', handlePrivateMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
   useEffect(() => {
@@ -76,10 +94,10 @@ function ChatBody() {
   }, [messages]);
 
   const renderMessages = messages.map((message, index) => {
-    const isCurrentUser = message.senderId === user?._id;
+    const isCurrentUser = message.sender === user?._id;
     const isFirstMessageFromUser =
-      index === 0 || messages[index - 1].senderId !== message.senderId;
-    const messageDateLabel = formatDateLabel(String(message.message.timeStamp));
+      index === 0 || messages[index - 1].sender !== message.sender;
+    const messageDateLabel = formatDateLabel(String(message.timestamp));
 
     const showDateLabel = messageDateLabel !== lastDisplayedDate;
     if (showDateLabel) {
@@ -136,7 +154,7 @@ function ChatBody() {
             fontWeight={300}
             lineHeight="1.8rem"
           >
-            {dateFormatter.format(new Date(message.message.timeStamp))}
+            {dateFormatter.format(new Date(message.timestamp))}
           </Text>
           <Box
             maxW="calc(calc(100vw - 36rem) * 0.3)"
@@ -151,7 +169,7 @@ function ChatBody() {
             bg={hoverTheme}
             whiteSpace="pre-wrap"
           >
-            {message.message.messageBody.replace(/<br\s*\/?>/g, '\n')}
+            {message.content.replace(/<br\s*\/?>/g, '\n')}
           </Box>
         </Flex>
       </Fragment>
@@ -166,6 +184,10 @@ function ChatBody() {
     >
       <Box flexGrow="1" p="1.6rem 2.4rem 1.6rem 2.4rem" h="auto" me="1rem">
         <Flex direction="column" gap="0.8rem">
+          {isFetchingNextPage && <p>Loading...</p>}
+          {hasNextPage && (
+            <button onClick={() => fetchNextPage()}>Load More</button>
+          )}
           {renderMessages}
         </Flex>
       </Box>
