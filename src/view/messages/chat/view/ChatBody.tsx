@@ -124,6 +124,8 @@ function ChatBody() {
               padding="0.3rem 0.8rem"
               borderRadius="0.5rem"
               bg={hoverTheme}
+              minW="10rem"
+              textAlign="center"
             >
               {messageDateLabel}
             </Text>
