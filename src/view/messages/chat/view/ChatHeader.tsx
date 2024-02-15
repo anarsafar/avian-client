@@ -10,11 +10,13 @@ import {
   MenuList,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
 import { useSocket } from '@/context/socket.context';
+import SearchMessage from '@/components/searchMessage';
 
 import formatLastSeen from '@/utils/formatLastSeen';
 import { ContactInterface } from '@/utils/contact.interface';
@@ -33,6 +35,8 @@ interface PropTypes {
 function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const socket = useSocket();
   const textTheme = useColorModeValue('gray-4', 'text-dark');
+  const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
+
   const [typing, setTyping] = useState<boolean>(false);
 
   const { activeContact } = useActiveContact();
@@ -40,6 +44,7 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
 
   const { deleteConversation, isConversationDeleting } = useConversation();
   const { modal: confirmModal, onOpen } = useConfiramtion();
+  const { isOpen, onOpen: openSearchMessage, onClose } = useDisclosure();
 
   const { infoOnOpen, modal } = useContactInfo({
     contact: activeContact as ContactInterface,
@@ -108,8 +113,16 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
           </Box>
         </Flex>
       </Button>
+      <SearchMessage isOpen={isOpen} onClose={onClose} />
       <Flex direction="row" alignItems="center" ms="auto" gap="1.2rem">
-        <Button variant="unstyled">
+        <Button
+          variant="unstyled"
+          onClick={openSearchMessage}
+          _hover={{ bg: hoverTheme }}
+          borderRadius="50%"
+          w="3rem"
+          h="3rem"
+        >
           <SearchIcon color={logoColor} fontSize="1.8rem" />
         </Button>
 
