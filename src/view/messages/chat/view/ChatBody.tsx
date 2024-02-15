@@ -1,27 +1,52 @@
 /* eslint-disable react/no-array-index-key */
-import { Avatar, Box, Flex, Text, useColorModeValue } from '@chakra-ui/react';
-import React, { Fragment, useEffect, useRef } from 'react';
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Spinner,
+  Text,
+  VisuallyHidden,
+  useColorModeValue,
+} from '@chakra-ui/react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
+import { useInView } from 'react-intersection-observer';
 
 import useMessages from '@hooks/store/useMessages';
-import { useSocket } from '@/context/socket.context';
-import formatDateLabel from '@/utils/formatDate';
-
+import { ArrowDownIcon } from '@chakra-ui/icons';
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
 import useInfiniteMessages from '@/hooks/messages';
+
 import { MessageI } from '@/schemas/message';
+import { useSocket } from '@/context/socket.context';
+import formatDateLabel from '@/utils/formatDate';
 
-function ChatBody() {
-  const { clearMessages, setMessages, messages } = useMessages();
-
+function ChatBody({ dateColor }: { dateColor: string }) {
   let lastDisplayedDate = '';
+  const options: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Baku',
+  };
+  const dateFormatter = new Intl.DateTimeFormat('en-US', options);
+
+  const scrollRef = useRef<Scrollbars | null>(null);
+  const { ref, inView } = useInView();
+
+  const [showScrollToBottomButton, setShowScrollToBottomButton] =
+    useState(false);
+
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
-  const scrollRef = useRef<Scrollbars | null>(null);
+
   const socket = useSocket();
   const { user } = useUser();
+  const { clearMessages, setMessages, messages } = useMessages();
+
   const { activeConversation } = useActiveConversation();
   const { activeContact } = useActiveContact();
 
@@ -30,7 +55,22 @@ function ChatBody() {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
+    refetchMessages,
   } = useInfiniteMessages(activeConversation?._id);
+
+  const handleScroll = () => scrollRef.current?.scrollToBottom();
+
+  const displayScrollBottom = () => {
+    const { top } = scrollRef.current?.getValues() || {};
+    if (top) {
+      setShowScrollToBottomButton(top < 1);
+    }
+  };
+
+  useEffect(() => {
+    displayScrollBottom();
+    handleScroll();
+  }, [messages]);
 
   useEffect(() => {
     const messagesFromDb = data?.pages
@@ -41,15 +81,6 @@ function ChatBody() {
       setMessages(messagesFromDb);
     }
   }, [data, setMessages]);
-
-  const options: Intl.DateTimeFormatOptions = {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-    timeZone: 'Asia/Baku',
-  };
-
-  const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   useEffect(() => {
     const conversationId = activeConversation?._id || '';
@@ -71,11 +102,18 @@ function ChatBody() {
   ]);
 
   useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, fetchNextPage, hasNextPage]);
+
+  useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
       if (socket) {
         socket.auth.serverOffset = message.timestamp;
       }
       setMessages(message);
+      refetchMessages();
     };
 
     socket?.on('private message', handlePrivateMessage);
@@ -85,13 +123,6 @@ function ChatBody() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
-
-  useEffect(() => {
-    // Scroll to the bottom when messages change
-    if (scrollRef.current !== null) {
-      scrollRef.current?.scrollToBottom();
-    }
-  }, [messages]);
 
   const renderMessages = messages.map((message, index) => {
     const isCurrentUser = message.sender === user?._id;
@@ -123,7 +154,7 @@ function ChatBody() {
               color={textTheme}
               padding="0.3rem 0.8rem"
               borderRadius="0.5rem"
-              bg={hoverTheme}
+              bg={dateColor}
               minW="10rem"
               textAlign="center"
             >
@@ -180,17 +211,45 @@ function ChatBody() {
 
   return (
     <Scrollbars
-      style={{ height: 'calc(100vh - 14rem)' }}
+      style={{
+        height: 'calc(100vh - 14rem)',
+      }}
       autoHide
       ref={scrollRef}
+      onScroll={displayScrollBottom}
     >
       <Box flexGrow="1" p="1.6rem 2.4rem 1.6rem 2.4rem" h="auto" me="1rem">
         <Flex direction="column" gap="0.8rem">
-          {isFetchingNextPage && <p>Loading...</p>}
-          {hasNextPage && (
-            <button onClick={() => fetchNextPage()}>Load More</button>
+          <VisuallyHidden ref={ref} h="2rem">
+            fetch new data
+          </VisuallyHidden>
+          {isFetchingNextPage && (
+            <Flex justify="center" align="center" my="1rem">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Flex>
           )}
           {renderMessages}
+          {showScrollToBottomButton && messages.length > 20 && (
+            <Button
+              variant="unstyled"
+              bg={dateColor}
+              borderRadius="50%"
+              w="3rem"
+              h="3rem"
+              left="50%"
+              position="sticky"
+              bottom={0}
+              onClick={handleScroll}
+            >
+              <ArrowDownIcon fontSize="1.6rem" color={textTheme} />
+            </Button>
+          )}
         </Flex>
       </Box>
     </Scrollbars>

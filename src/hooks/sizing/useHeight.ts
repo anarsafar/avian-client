@@ -4,7 +4,7 @@ function useHeight() {
   const [height, setHeigth] = useState<number | string>(0);
 
   const updateContainerHeight = () => {
-    setHeigth(window.innerHeight);
+    setHeigth(window.innerHeight - 1);
   };
 
   useEffect(() => {

@@ -18,7 +18,7 @@ function ChatView() {
   const contactChatView = (
     <Flex direction="column">
       <ChatHeader darkerTextColor={darkerTextColor} logoColor={logoColor} />
-      <ChatBody />
+      <ChatBody dateColor={inputColor} />
       <ChatPanel
         textColor={textColor}
         placeholderColor={placeholderColor}

@@ -17,8 +17,10 @@ const useInfiniteMessages = (conversationId: string | undefined) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetching,
     isError,
     error,
+    refetch: refetchMessages,
   } = useInfiniteQuery({
     queryKey: ['messages', accessToken?.accessToken, conversationId],
     queryFn: async ({ pageParam = 1 }) => {
@@ -45,6 +47,8 @@ const useInfiniteMessages = (conversationId: string | undefined) => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetchMessages,
+    isFetching,
     isError,
     error,
   };
