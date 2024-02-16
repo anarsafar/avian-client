@@ -34,6 +34,7 @@ const useInfiniteMessages = (conversationId: string | undefined) => {
     },
     initialPageParam: 1,
     enabled: !!accessToken,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage) =>
       lastPage.pagination.page < lastPage.pagination.totalPages
         ? lastPage.pagination.page + 1

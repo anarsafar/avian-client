@@ -23,6 +23,7 @@ import useInfiniteMessages from '@/hooks/messages';
 import { MessageI } from '@/schemas/message';
 import { useSocket } from '@/context/socket.context';
 import formatDateLabel from '@/utils/formatDate';
+import ObserverMessage from '../../ObservedMessage';
 
 function ChatBody({ dateColor }: { dateColor: string }) {
   let lastDisplayedDate = '';
@@ -35,10 +36,12 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   const scrollRef = useRef<Scrollbars | null>(null);
+  const updateRef = useRef<boolean>(false);
   const { ref, inView } = useInView();
 
   const [showScrollToBottomButton, setShowScrollToBottomButton] =
     useState(false);
+  const [shouldScroll, setScroll] = useState<boolean>(true);
 
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
@@ -69,8 +72,11 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
   useEffect(() => {
     displayScrollBottom();
-    handleScroll();
-  }, [messages]);
+    if (shouldScroll) {
+      handleScroll();
+      updateRef.current = true;
+    }
+  }, [messages, shouldScroll]);
 
   useEffect(() => {
     const messagesFromDb = data?.pages
@@ -102,7 +108,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   ]);
 
   useEffect(() => {
-    if (inView && hasNextPage) {
+    if (inView && hasNextPage && updateRef.current) {
+      setScroll(false);
       fetchNextPage();
     }
   }, [inView, fetchNextPage, hasNextPage]);
@@ -112,17 +119,33 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       if (socket) {
         socket.auth.serverOffset = message.timestamp;
       }
+      setScroll(true);
       setMessages(message);
       refetchMessages();
     };
 
     socket?.on('private message', handlePrivateMessage);
+    socket?.on('update-messages', (userId: string) => {
+      if (userId === user?._id) {
+        refetchMessages();
+      }
+    });
 
     return () => {
       socket?.off('private message', handlePrivateMessage);
+      socket?.off('update-messages');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
+
+  const handleIntersect = (message: MessageI) => {
+    socket?.emit(
+      'mark-as-read',
+      message._id,
+      user?._id,
+      activeConversation?._id
+    );
+  };
 
   const renderMessages = messages.map((message, index) => {
     const isCurrentUser = message.sender === user?._id;
@@ -181,6 +204,31 @@ function ChatBody({ dateColor }: { dateColor: string }) {
               h="3.3rem"
             />
           )}
+          <Box display={isCurrentUser ? 'block' : 'none'}>
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g clipPath="url(#clip0_1542_2319)">
+                <path
+                  d="M7.81383 0.594604C7.74394 0.594604 7.65384 0.611451 7.61438 0.633373C7.57484 0.654546 6.58781 2.10559 5.42038 3.85769C5.0531 4.40895 4.77776 4.82146 4.47442 5.27617C4.65747 5.45773 4.82343 5.62191 4.97886 5.77484C5.24634 5.37722 5.53494 4.94514 5.8367 4.49285C7.57686 1.88472 8.11144 1.05763 8.12268 0.957758C8.14198 0.772262 7.99134 0.594604 7.81383 0.594604ZM0.362363 4.29624C0.234206 4.29566 0.0895315 4.39237 0.0341281 4.52476C-0.0112138 4.63287 -0.0112116 4.66622 0.0331561 4.76875C0.0625721 4.83658 0.747069 5.54836 1.63266 6.43124C3.04388 7.8382 3.19248 7.97466 3.3019 7.97466C3.36804 7.97466 3.45404 7.95778 3.49359 7.93586C3.5157 7.92462 3.86703 7.417 4.38147 6.65874C4.23945 6.51821 4.0728 6.35316 3.88186 6.16298C3.56692 6.63476 3.28584 7.05546 3.28253 7.0596C3.27503 7.06897 2.64808 6.45736 1.89021 5.70113C1.01488 4.82766 0.476879 4.31698 0.415611 4.30199C0.398748 4.29824 0.380537 4.29624 0.362363 4.29624Z"
+                  fill={message.isRead ? '#4CAF50' : 'gray'}
+                />
+                <path
+                  d="M3.50897 5.83627C2.62337 4.95338 1.9386 4.24189 1.90916 4.17397C1.86476 4.07148 1.86475 4.03793 1.91013 3.92978C1.97346 3.77839 2.15325 3.67365 2.2919 3.70752C2.35317 3.72251 2.89102 4.23259 3.76634 5.10607C4.52421 5.86231 5.15086 6.47365 5.15887 6.46462C5.16637 6.45525 6.12864 5.01464 7.29606 3.26252C8.4635 1.51039 9.45101 0.0595487 9.49053 0.0383948C9.53006 0.0172221 9.61944 -3.05176e-05 9.68938 -3.05176e-05C9.86681 -3.05176e-05 10.0177 0.177238 9.99836 0.362808C9.98712 0.462676 9.45318 1.28991 7.71302 3.89805C6.46357 5.77074 5.40896 7.32024 5.36945 7.3414C5.32992 7.36257 5.24354 7.37979 5.17747 7.37979C5.06805 7.37979 4.92019 7.24324 3.50897 5.83627Z"
+                  fill={message.isRead ? '#4CAF50' : 'gray'}
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_1542_2319">
+                  <rect width="10" height="9.51846" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </Box>
           <Text
             order={isCurrentUser ? '0' : '1'}
             fontSize="1rem"
@@ -189,21 +237,14 @@ function ChatBody({ dateColor }: { dateColor: string }) {
           >
             {dateFormatter.format(new Date(message.timestamp))}
           </Text>
-          <Box
-            maxW="calc(calc(100vw - 36rem) * 0.3)"
-            fontSize="1.2rem"
-            borderRadius={
-              isCurrentUser ? '10px 1px 10px 10px' : '1px 10px 10px 10px'
-            }
-            fontWeight={400}
-            ms={isCurrentUser || isFirstMessageFromUser ? 'auto' : '4.1rem'}
-            color={textTheme}
-            p="1.2rem"
-            bg={hoverTheme}
-            whiteSpace="pre-wrap"
-          >
-            {message.content.replace(/<br\s*\/?>/g, '\n')}
-          </Box>
+          <ObserverMessage
+            onIntersect={() => handleIntersect(message)}
+            isCurrentUser={isCurrentUser}
+            isFirstMessageFromUser={isFirstMessageFromUser}
+            textTheme={textTheme}
+            hoverTheme={hoverTheme}
+            message={message}
+          />
         </Flex>
       </Fragment>
     );
