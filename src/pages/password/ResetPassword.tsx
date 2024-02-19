@@ -18,6 +18,7 @@ import passwordIcon from '@assets/common/icons8-password-94.png';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
+import useNotifications from '@/hooks/notifications';
 
 import CustomInput from '@/components/auth/CustomInput';
 
@@ -27,11 +28,13 @@ import {
 } from '@/schemas/user/reset.schemas';
 import { ConfirmationBaseInterface } from '@/schemas/user/confirmaton.schema';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import generateNotification from '@/utils/notifications.helper';
 
 function ResetPassword() {
   const { getPersistedData } = usePersist();
   const navigate = useNavigate();
   const toast = useCustomToast();
+  const { addNotification } = useNotifications();
 
   const [email, setEmail] = useState<string | undefined>(() => {
     const data = getPersistedData<ConfirmationBaseInterface>(
@@ -75,7 +78,10 @@ function ResetPassword() {
         RequestType.Patch
       ),
     mutationKey: ['change-password'],
-    onSuccess: (successData) => {
+    onSuccess: async (successData, variables) => {
+      const notification = await generateNotification('reset');
+      await addNotification({ notification, email: variables.email });
+
       navigate('/');
       toast('success', 'Reset success', successData);
     },

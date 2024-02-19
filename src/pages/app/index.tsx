@@ -53,6 +53,7 @@ import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
 import { useSocket } from '@/context/socket.context';
 import useNetworkStatus from '@/hooks/network';
+import Notification from '@/components/notifications';
 
 function AppLayout() {
   useSocket();
@@ -377,16 +378,10 @@ function AppLayout() {
                     )}
                   </Sidebar>
                 </TabPanel>
-                <TabPanel>
-                  <Text
-                    fontSize="1.3rem"
-                    fontFamily="openSans"
-                    color={text}
-                    fontWeight={400}
-                    mt="2.2rem"
-                  >
-                    Coming soon
-                  </Text>
+                <TabPanel h="100vh" p="0">
+                  <Sidebar header="Notifications" type="notification">
+                    {() => <Notification />}
+                  </Sidebar>
                 </TabPanel>
                 <TabPanel>
                   <Settings />

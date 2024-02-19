@@ -33,6 +33,8 @@ import usePersist, { StorageType } from '@/hooks/store/usePersist';
 
 import api, { ErrorResponse, RequestType } from '@/api';
 import { LoginInterface, LoginValidate } from '@/schemas/user/auth.schemas';
+import useNotifications from '@/hooks/notifications';
+import generateNotification from '@/utils/notifications.helper';
 
 interface AccessToken {
   accessToken: string;
@@ -51,6 +53,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const toast = useCustomToast();
   const { persistData } = usePersist();
+  const { addNotification } = useNotifications();
   const text = useColorModeValue('gray-4', 'text-dark');
   const errorColor = useColorModeValue('red.300', 'red.400');
 
@@ -62,8 +65,15 @@ export default function SignIn() {
     mutationFn: (data: LoginInterface) =>
       api<AccessToken, LoginInterface>(data, 'auth/login', RequestType.Post),
     mutationKey: ['login'],
-    onSuccess: (accessToken) => {
-      persistData<AccessToken>(accessToken, 'access-token', StorageType.Local);
+    onSuccess: async (newAccessToken, variables) => {
+      persistData<AccessToken>(
+        newAccessToken,
+        'access-token',
+        StorageType.Local
+      );
+      const notification = await generateNotification('login');
+      const { email } = variables;
+      await addNotification({ notification, email });
       navigate('/');
     },
     onError: (error: ErrorResponse) => {

@@ -2,7 +2,13 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext",
+      "WebWorker.ImportScripts",
+      "WebWorker"
+    ],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -25,6 +31,12 @@
       "@hooks/*": ["src/hooks/*"]
     }
   },
-  "include": ["vite.config.ts", ".eslintrc.cjs", "src", "tailwind.config.js"],
+  "include": [
+    "vite.config.ts",
+    ".eslintrc.cjs",
+    "src",
+    "tailwind.config.js",
+    "public/OneSignalSDKWorker.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

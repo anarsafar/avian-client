@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '@/hooks/auth/useAuth';
 import useLogout from '@/hooks/auth/useLogout';
 import { RouteLoading } from '@/components/loading';
+import runOneSignal from '@/notifications';
 
 interface ComponentProps {
   element: ReactNode;
@@ -22,6 +23,10 @@ function Protected({ element }: ComponentProps): ReactNode {
       logoutHandler();
     }
   }, [isLoading, user, navigate, isError, accessToken, logoutHandler]);
+
+  useEffect(() => {
+    runOneSignal();
+  }, []);
 
   if (user) {
     return element;
