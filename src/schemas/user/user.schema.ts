@@ -1,5 +1,13 @@
 import * as z from 'zod';
 
+const ContactSchema = z.object({
+  user: z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {
+    message: 'Invalid ObjectId format',
+  }),
+  isBlocked: z.boolean().default(false),
+  notification: z.boolean().default(true),
+});
+
 const localAuthInfo = z.object({
   email: z
     .string()
@@ -94,6 +102,14 @@ export const UserZodSchema = z.object({
       theme: z.union([z.literal('os'), z.literal('light'), z.literal('dark')]),
     })
     .optional(),
+  online: z.boolean().default(false).optional(),
+  lastSeen: z.date().optional(),
+  contacts: z.array(ContactSchema),
+  conversations: z.array(
+    z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {
+      message: 'Invalid ObjectId format',
+    })
+  ),
 });
 
 export type UserInterface = z.infer<typeof UserZodSchema>;

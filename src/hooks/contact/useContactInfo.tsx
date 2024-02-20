@@ -2,7 +2,7 @@ import {
   AtSignIcon,
   BellIcon,
   DeleteIcon,
-  NotAllowedIcon,
+  //   NotAllowedIcon,
 } from '@chakra-ui/icons';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -49,7 +49,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
 
   const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal();
 
-  const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
+  //   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
 
   const [open, setOpen] = useState<boolean>(false);
   const [isTooltipVisible, setTooltipVisible] = useState<boolean>(false);
@@ -245,7 +245,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
             lineHeight="1.8rem"
             letterSpacing="0.16px"
           >
-            <ListItem
+            {/* <ListItem
               color="red-3"
               as="button"
               w="100%"
@@ -259,7 +259,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
                 me="1.2rem"
               />
               {contact.isBlocked ? 'unblock' : 'block'} contact
-            </ListItem>
+            </ListItem> */}
             <ListItem
               color="red-3"
               w="100%"
@@ -283,11 +283,11 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
         action: () => deleteOrBlockContact({ action: 'delete' }),
         isLoading: isPending,
       })}
-      {blockContactModal({
+      {/* {blockContactModal({
         modalHeader: contact.isBlocked ? 'Unblock Contact' : 'Block Contact',
         isLoading: isPending,
         action: () => deleteOrBlockContact({ action: 'block' }),
-      })}
+      })} */}
     </Modal>
   );
   return { infoIsOpen, infoOnOpen, infoOnClose, modal };

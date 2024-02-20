@@ -18,6 +18,7 @@ export const ContactModel = z.object({
 const ContactI = z.object({
   user: ContactModel,
   isBlocked: z.boolean(),
+  notification: z.boolean(),
 });
 
 export type ContactInterface = z.infer<typeof ContactI>;

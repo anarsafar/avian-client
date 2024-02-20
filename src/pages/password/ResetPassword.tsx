@@ -80,7 +80,7 @@ function ResetPassword() {
     mutationKey: ['change-password'],
     onSuccess: async (successData, variables) => {
       const notification = await generateNotification('reset');
-      await addNotification({ notification, email: variables.email });
+      await addNotification({ notification, searchParam: variables.email });
 
       navigate('/');
       toast('success', 'Reset success', successData);

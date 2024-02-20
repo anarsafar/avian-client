@@ -24,14 +24,14 @@ const useNotifications = () => {
   } = useMutation({
     mutationFn: ({
       notification,
-      email,
+      searchParam,
     }: {
       notification: ValidateNotifactionI;
-      email: string;
+      searchParam: string;
     }) =>
       api<SuccessResponse, ValidateNotifactionI>(
         notification,
-        `notifications/${email}`,
+        `notifications/${searchParam}`,
         RequestType.Post
       ),
     mutationKey: ['add-notification'],

@@ -1,5 +1,12 @@
 /* eslint-disable react/no-array-index-key */
-import { Box, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Spinner,
+  Text,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { Fragment, ReactNode } from 'react';
 
@@ -47,7 +54,17 @@ function Notification() {
   let content: ReactNode;
 
   if (isLoading) {
-    content = <h1>loading...</h1>;
+    content = (
+      <Flex justifyContent="center" alignItems="center" h="100%">
+        <Spinner
+          thickness="2px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="md"
+        />
+      </Flex>
+    );
   } else if (isError) {
     <Flex
       p="1.7rem 0.8rem 1.6rem 1.8rem"
@@ -62,7 +79,7 @@ function Notification() {
         color={textTheme}
         fontWeight={600}
       >
-        Can't get contacts
+        Can't get notifications
       </Text>
       <Button
         variant="unstyled"
@@ -93,7 +110,7 @@ function Notification() {
         fontWeight={600}
         textAlign="center"
       >
-        You don't have any contacts
+        You don't have any notifications
       </Text>
     );
   } else {
@@ -118,7 +135,7 @@ function Notification() {
     );
   }
 
-  return <Box>{content}</Box>;
+  return <Box h="calc(100vh - 15rem)">{content}</Box>;
 }
 
 export default Notification;

@@ -16,7 +16,7 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { useLayoutEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -59,6 +59,7 @@ export default function SignIn() {
 
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('accessToken');
+  const idString = queryParams.get('id');
   const socialError = queryParams.get('error');
 
   const { mutateAsync: logIn, isPending } = useMutation({
@@ -73,7 +74,7 @@ export default function SignIn() {
       );
       const notification = await generateNotification('login');
       const { email } = variables;
-      await addNotification({ notification, email });
+      await addNotification({ notification, searchParam: email });
       navigate('/');
     },
     onError: (error: ErrorResponse) => {
@@ -93,7 +94,17 @@ export default function SignIn() {
       );
       navigate('/');
     }
-  }, [token, socialError, persistData, navigate, toast]);
+  }, [token, persistData, navigate, idString]);
+
+  useEffect(() => {
+    const handleNotification = async (id: string) => {
+      const notification = await generateNotification('login');
+      await addNotification({ notification, searchParam: id });
+    };
+    if (idString) {
+      handleNotification(idString);
+    }
+  }, [addNotification, idString]);
 
   useLayoutEffect(() => {
     if (socialError) {

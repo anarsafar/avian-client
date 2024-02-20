@@ -42,28 +42,30 @@ function NotificationCard({ notification }: { notification: NotificationI }) {
       letterSpacing="0.16px"
       gap="1rem"
     >
-      <Flex
-        w="3.3rem"
-        h="3rem"
-        justifyContent="center"
-        alignItems="center"
-        borderRadius="50%"
-        bg={
-          notification.type === 'reset'
-            ? '#ADDFFF'
-            : notification.type === 'login'
-            ? '#FFFFAD'
-            : 'C8E6C9'
-        }
-      >
-        {notification.type === 'reset' ? (
-          <RepeatIcon fontSize="1.2rem" color="#004680" />
-        ) : notification.type === 'login' ? (
-          <UnlockIcon fontSize="1.2rem" color="#807600" />
-        ) : (
-          <SmallAddIcon fontSize="1.2rem" color="#1B5E20" />
-        )}
-      </Flex>
+      <Box flexBasis="4rem">
+        <Flex
+          w="3.3rem"
+          h="3.3rem"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius="50%"
+          bg={
+            notification.type === 'reset'
+              ? '#ADDFFF'
+              : notification.type === 'login'
+              ? '#FFFFAD'
+              : 'C8E6C9'
+          }
+        >
+          {notification.type === 'reset' ? (
+            <RepeatIcon fontSize="1.2rem" color="#004680" />
+          ) : notification.type === 'login' ? (
+            <UnlockIcon fontSize="1.2rem" color="#807600" />
+          ) : (
+            <SmallAddIcon fontSize="1.2rem" color="#1B5E20" />
+          )}
+        </Flex>
+      </Box>
       <Box>
         <Text
           as="h1"
