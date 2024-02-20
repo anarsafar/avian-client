@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useEffect } from 'react';
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
@@ -50,8 +51,16 @@ function ContactCard({
     conversations: ConversationInterface[];
   };
 
-  const { modal: customModal, onOpen: customOpen } = useCustomModal();
-  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
+  const { modal: customModal, onOpen: customOpen, onClose } = useCustomModal();
+  const { isPending, deleteOrBlockContact, isError } = useContact(
+    contact.user._id
+  );
+
+  useEffect(() => {
+    if (isError) {
+      onClose();
+    }
+  }, [isError, onClose]);
 
   const startConversation = () => {
     setActiveContact(contact);

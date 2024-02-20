@@ -134,7 +134,7 @@ function useConfiramtion() {
     </Modal>
   );
 
-  return { modal, onOpen };
+  return { modal, onOpen, onClose };
 }
 
 export default useConfiramtion;

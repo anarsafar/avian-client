@@ -23,7 +23,11 @@ function useContactDeleteOrBlock(contactId: string) {
     getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
   );
 
-  const { mutateAsync: deleteOrBlockContact, isPending } = useMutation({
+  const {
+    mutateAsync: deleteOrBlockContact,
+    isPending,
+    isError,
+  } = useMutation({
     mutationFn: (action: Action) =>
       api<SuccessResponse, Action>(
         action,
@@ -58,7 +62,7 @@ function useContactDeleteOrBlock(contactId: string) {
     networkMode: 'always',
   });
 
-  return { deleteOrBlockContact, isPending };
+  return { deleteOrBlockContact, isPending, isError };
 }
 
 export default useContactDeleteOrBlock;

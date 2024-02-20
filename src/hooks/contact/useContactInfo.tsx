@@ -27,7 +27,7 @@ import {
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useCustomModal from '@/hooks/custom/useConfirmation';
@@ -47,7 +47,11 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
   const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
-  const { modal: deleteContactModal, onOpen: deleteOpen } = useCustomModal();
+  const {
+    modal: deleteContactModal,
+    onOpen: deleteOpen,
+    onClose,
+  } = useCustomModal();
 
   //   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
 
@@ -60,7 +64,15 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
     });
   };
 
-  const { isPending, deleteOrBlockContact } = useContact(contact.user._id);
+  const { isPending, deleteOrBlockContact, isError } = useContact(
+    contact.user._id
+  );
+
+  useEffect(() => {
+    if (isError) {
+      onClose();
+    }
+  }, [isError, onClose]);
 
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
