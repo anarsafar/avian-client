@@ -3,7 +3,6 @@ import {
   BellIcon,
   DeleteIcon,
   PlusSquareIcon,
-  //   NotAllowedIcon,
 } from '@chakra-ui/icons';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -59,13 +58,13 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
     onClose,
   } = useCustomModal();
 
-  //   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
   const { modal: addContactModal, onOpen: addContactOpen } = useCustomModal();
 
   const [open, setOpen] = useState<boolean>(false);
   const [isTooltipVisible, setTooltipVisible] = useState<boolean>(false);
   const { isPending, deleteOrBlockContact, isError } = useContact(
-    contact.user._id
+    contact.user._id,
+    infoOnClose
   );
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
@@ -84,7 +83,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
     contacts: ContactInterface[];
   };
 
-  const isContactExist = contacts.contacts.find(
+  const isContactExist = contacts?.contacts.find(
     (ct) => ct.user._id === contact.user._id
   );
 
@@ -99,6 +98,7 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
     mutationKey: ['add-contact'],
     onSuccess: () => {
       infoOnClose();
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
       toast('success', `Contact added successfully`, { message: '' });
     },
     onError: (error: ErrorResponse) =>
@@ -303,21 +303,6 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
             lineHeight="1.8rem"
             letterSpacing="0.16px"
           >
-            {/* <ListItem
-              color="red-3"
-              as="button"
-              w="100%"
-              textAlign="left"
-              onClick={blockOpen}
-            >
-              <ListIcon
-                as={NotAllowedIcon}
-                color="red-3"
-                fontSize="2rem"
-                me="1.2rem"
-              />
-              {contact.isBlocked ? 'unblock' : 'block'} contact
-            </ListItem> */}
             {isContactExist ? (
               <ListItem
                 color="red-3"
@@ -366,11 +351,6 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
               addContact({ contact: contact.user.userInfo.username }),
             isLoading: addingContact,
           })}
-      {/* {blockContactModal({
-        modalHeader: contact.isBlocked ? 'Unblock Contact' : 'Block Contact',
-        isLoading: isPending,
-        action: () => deleteOrBlockContact({ action: 'block' }),
-      })} */}
     </Modal>
   );
   return { infoIsOpen, infoOnOpen, infoOnClose, modal };

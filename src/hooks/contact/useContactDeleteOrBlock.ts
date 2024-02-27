@@ -6,16 +6,12 @@ import usePersist, { StorageType } from '@hooks/store/usePersist';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
-import useActiveContact from '../store/useActiveContact';
 
 interface Action {
   action: 'block' | 'delete';
 }
 
-function useContactDeleteOrBlock(contactId: string) {
-  const { activeContact, setActiveContact, clearActiveContact } =
-    useActiveContact();
-
+function useContactDeleteOrBlock(contactId: string, onClose?: () => void) {
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
   const queryClient = useQueryClient();
@@ -36,19 +32,11 @@ function useContactDeleteOrBlock(contactId: string) {
         accessToken?.accessToken
       ),
     mutationKey: ['block-or-delete-contact'],
-    onSuccess: (res, variables) => {
-      if (contactId === activeContact?.user._id) {
-        if (variables.action === 'block') {
-          const newActiveConvesation = {
-            ...activeContact,
-            isBlocked: !activeContact.isBlocked,
-          };
-          setActiveContact(newActiveConvesation);
-        } else {
-          clearActiveContact();
-        }
-      }
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      if (onClose) {
+        onClose();
+      }
     },
     onError: (error: ErrorResponse, variables: Action) =>
       toast(
