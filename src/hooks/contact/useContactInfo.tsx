@@ -2,6 +2,7 @@ import {
   AtSignIcon,
   BellIcon,
   DeleteIcon,
+  PlusSquareIcon,
   //   NotAllowedIcon,
 } from '@chakra-ui/icons';
 import Lightbox from 'yet-another-react-lightbox';
@@ -29,11 +30,16 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useContact from '@/hooks/contact/useContactDeleteOrBlock';
 import useCustomModal from '@/hooks/custom/useConfirmation';
 
 import { ContactInterface } from '@/utils/contact.interface';
 import formatLastSeen from '@/utils/formatLastSeen';
+import usePersist, { StorageType } from '../store/usePersist';
+import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import { ValidateContactType } from '@/schemas/contact/contact.schema';
+import useCustomToast from '../custom/useCustomToast';
 
 function useContactInfo({ contact }: { contact: ContactInterface }) {
   const {
@@ -54,19 +60,59 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   } = useCustomModal();
 
   //   const { modal: blockContactModal, onOpen: blockOpen } = useCustomModal();
+  const { modal: addContactModal, onOpen: addContactOpen } = useCustomModal();
 
   const [open, setOpen] = useState<boolean>(false);
   const [isTooltipVisible, setTooltipVisible] = useState<boolean>(false);
+  const { isPending, deleteOrBlockContact, isError } = useContact(
+    contact.user._id
+  );
+  const toast = useCustomToast();
+  const { getPersistedData } = usePersist();
+
+  const accessToken = getPersistedData<{ accessToken: string }>(
+    'access-token',
+    StorageType.Local
+  );
+  const queryClient = useQueryClient();
+
+  const [data] = queryClient.getQueriesData({
+    queryKey: ['contacts'],
+  });
+
+  const contacts = (data ? data[1] : { contacts: [] }) as {
+    contacts: ContactInterface[];
+  };
+
+  const isContactExist = contacts.contacts.find(
+    (ct) => ct.user._id === contact.user._id
+  );
+
+  const { mutateAsync: addContact, isPending: addingContact } = useMutation({
+    mutationFn: (ct: ValidateContactType) =>
+      api<SuccessResponse, ValidateContactType>(
+        ct,
+        `contacts`,
+        RequestType.Post,
+        accessToken?.accessToken
+      ),
+    mutationKey: ['add-contact'],
+    onSuccess: () => {
+      infoOnClose();
+      toast('success', `Contact added successfully`, { message: '' });
+    },
+    onError: (error: ErrorResponse) =>
+      toast('error', `Error adding contact`, error),
+    retry: false,
+    networkMode: 'always',
+  });
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(contact.user.userInfo?.username).then(() => {
       setTooltipVisible(true);
       setTimeout(() => setTooltipVisible(false), 1000);
     });
   };
-
-  const { isPending, deleteOrBlockContact, isError } = useContact(
-    contact.user._id
-  );
 
   useEffect(() => {
     if (isError) {
@@ -272,29 +318,54 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
               />
               {contact.isBlocked ? 'unblock' : 'block'} contact
             </ListItem> */}
-            <ListItem
-              color="red-3"
-              w="100%"
-              textAlign="left"
-              as="button"
-              onClick={deleteOpen}
-            >
-              <ListIcon
-                as={DeleteIcon}
+            {isContactExist ? (
+              <ListItem
                 color="red-3"
-                fontSize="2rem"
-                me="1.2rem"
-              />
-              delete contact
-            </ListItem>
+                w="100%"
+                textAlign="left"
+                as="button"
+                onClick={deleteOpen}
+              >
+                <ListIcon
+                  as={DeleteIcon}
+                  color="red-3"
+                  fontSize="2rem"
+                  me="1.2rem"
+                />
+                delete contact
+              </ListItem>
+            ) : (
+              <ListItem
+                color="violet-3"
+                w="100%"
+                textAlign="left"
+                as="button"
+                onClick={addContactOpen}
+              >
+                <ListIcon
+                  as={PlusSquareIcon}
+                  color="violet-3"
+                  fontSize="2rem"
+                  me="1.2rem"
+                />
+                add contact
+              </ListItem>
+            )}
           </List>
         </ModalBody>
       </ModalContent>
-      {deleteContactModal({
-        modalHeader: 'Delete Contact',
-        action: () => deleteOrBlockContact({ action: 'delete' }),
-        isLoading: isPending,
-      })}
+      {isContactExist
+        ? deleteContactModal({
+            modalHeader: 'Delete Contact',
+            action: () => deleteOrBlockContact({ action: 'delete' }),
+            isLoading: isPending,
+          })
+        : addContactModal({
+            modalHeader: 'Add Contact',
+            action: () =>
+              addContact({ contact: contact.user.userInfo.username }),
+            isLoading: addingContact,
+          })}
       {/* {blockContactModal({
         modalHeader: contact.isBlocked ? 'Unblock Contact' : 'Block Contact',
         isLoading: isPending,
