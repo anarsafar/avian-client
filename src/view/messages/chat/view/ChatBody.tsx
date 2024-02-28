@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable react/no-array-index-key */
 import {
   Avatar,
@@ -15,6 +16,7 @@ import { useInView } from 'react-intersection-observer';
 
 import useMessages from '@hooks/store/useMessages';
 import { ArrowDownIcon } from '@chakra-ui/icons';
+import notificationSound from '@assets/sound/notification.mp3';
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
@@ -24,6 +26,7 @@ import { MessageI } from '@/schemas/message';
 import { useSocket } from '@/context/socket.context';
 import formatDateLabel from '@/utils/formatDate';
 import ObserverMessage from '../../ObservedMessage';
+import useContacts from '@/hooks/contact/useContacts';
 
 function ChatBody({ dateColor }: { dateColor: string }) {
   let lastDisplayedDate = '';
@@ -37,6 +40,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
   const scrollRef = useRef<Scrollbars | null>(null);
   const updateRef = useRef<boolean>(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const { ref, inView } = useInView();
 
   const [showScrollToBottomButton, setShowScrollToBottomButton] =
@@ -48,6 +52,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
   const socket = useSocket();
   const { user } = useUser();
+  const { contacts } = useContacts();
   const { clearMessages, setMessages, messages } = useMessages();
 
   const { activeConversation } = useActiveConversation();
@@ -69,6 +74,25 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       setShowScrollToBottomButton(top < 1);
     }
   };
+
+  useEffect(() => {
+    socket?.on('notification', (senderId: string, recipientId: string) => {
+      const contact = contacts?.contacts.find(
+        (person) => person.user._id === senderId
+      );
+      if (
+        recipientId === user?._id &&
+        user.notification &&
+        contact?.notification
+      ) {
+        audioRef.current?.play();
+      }
+    });
+
+    return () => {
+      socket?.off('notification');
+    };
+  }, [contacts?.contacts, socket, user?._id, user?.notification]);
 
   useEffect(() => {
     displayScrollBottom();
@@ -259,6 +283,9 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       ref={scrollRef}
       onScroll={displayScrollBottom}
     >
+      <VisuallyHidden>
+        <audio ref={audioRef} src={notificationSound} />
+      </VisuallyHidden>
       <Box flexGrow="1" p="1.6rem 2.4rem 1.6rem 2.4rem" h="auto" me="1rem">
         <Flex direction="column" gap="0.8rem">
           <VisuallyHidden ref={ref} h="2rem">
