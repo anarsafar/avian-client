@@ -113,6 +113,12 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   }, [data, setMessages]);
 
   useEffect(() => {
+    if (!activeConversation) {
+      clearMessages();
+    }
+  }, [activeConversation, clearMessages]);
+
+  useEffect(() => {
     const conversationId = activeConversation?._id || '';
     if (socket) {
       socket.auth.room = conversationId;
@@ -158,6 +164,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     return () => {
       socket?.off('private message', handlePrivateMessage);
       socket?.off('update-messages');
+      clearMessages();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
