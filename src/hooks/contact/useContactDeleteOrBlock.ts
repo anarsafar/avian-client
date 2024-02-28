@@ -3,9 +3,13 @@ import { useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import usePersist, { StorageType } from '@hooks/store/usePersist';
+import useActiveContact from '@hooks/store/useActiveContact';
+import useActiveConversation from '@hooks/store/useActiveConversation';
+import useUser from '@hooks/store/useUser';
 import useCustomToast from '@/hooks/custom/useCustomToast';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
+import { ContactInterface } from '@/utils/contact.interface';
 
 interface Action {
   action: 'block' | 'delete';
@@ -14,6 +18,10 @@ interface Action {
 function useContactDeleteOrBlock(contactId: string, onClose?: () => void) {
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
+  const { activeContact, setActiveContact } = useActiveContact();
+  const { user } = useUser();
+  const { activeConversation } = useActiveConversation();
+
   const queryClient = useQueryClient();
   const { current: accessToken } = useRef(
     getPersistedData<{ accessToken: string }>('access-token', StorageType.Local)
@@ -34,6 +42,13 @@ function useContactDeleteOrBlock(contactId: string, onClose?: () => void) {
     mutationKey: ['block-or-delete-contact'],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      if (contactId === activeContact?.user._id) {
+        const contact = activeConversation?.participants.find(
+          (participant) => participant._id !== user?._id
+        );
+        const newActiceContact = { user: contact } as ContactInterface;
+        setActiveContact(newActiceContact);
+      }
       if (onClose) {
         onClose();
       }

@@ -6,7 +6,6 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useQueryClient } from '@tanstack/react-query';
 
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { ContactInterface } from '@/utils/contact.interface';
@@ -14,6 +13,7 @@ import { ContactInterface } from '@/utils/contact.interface';
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
+import useContacts from '@/hooks/contact/useContacts';
 
 function ConversationCard({
   conversation,
@@ -26,19 +26,10 @@ function ConversationCard({
   const bgTheme = useColorModeValue('bg-light', 'bg-dark');
 
   const { user } = useUser();
+  const { contacts } = useContacts();
 
   const { setActiveConversation } = useActiveConversation();
   const { activeContact, setActiveContact } = useActiveContact();
-
-  const queryClient = useQueryClient();
-
-  const [data] = queryClient.getQueriesData({
-    queryKey: ['contacts'],
-  });
-
-  const contacts = (data ? data[1] : { conversations: [] }) as {
-    contacts: ContactInterface[];
-  };
 
   const cardUser = conversation.participants.find(
     (participant) => participant._id !== user?._id
@@ -46,8 +37,8 @@ function ConversationCard({
 
   const handleConversation = () => {
     setActiveConversation(conversation);
-    const newActiveContact = contacts?.contacts.find((contact) =>
-      conversation.participants.find((usr) => usr._id === contact.user._id)
+    const newActiveContact = contacts?.contacts.find(
+      (contact) => contact.user._id === cardUser?._id
     );
 
     if (newActiveContact) {

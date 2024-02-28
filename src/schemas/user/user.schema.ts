@@ -104,6 +104,7 @@ export const UserZodSchema = z.object({
     .optional(),
   online: z.boolean().default(false).optional(),
   lastSeen: z.date().optional(),
+  notification: z.boolean().default(true),
   contacts: z.array(ContactSchema),
   conversations: z.array(
     z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {

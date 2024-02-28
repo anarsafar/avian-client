@@ -6,6 +6,7 @@ import useActiveContact from '@hooks/store/useActiveContact';
 import useCustomToast from '@hooks/custom/useCustomToast';
 import useActiveConversation from '@hooks/store/useActiveConversation';
 import useUser from '@hooks/store/useUser';
+import useContacts from '@hooks/contact/useContacts';
 
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
@@ -19,7 +20,7 @@ const useConversation = () => {
   const { getPersistedData } = usePersist();
   const socket = useSocket();
   const { user: userData } = useUser();
-
+  const { contacts } = useContacts();
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
     StorageType.Local
@@ -92,14 +93,12 @@ const useConversation = () => {
 
   useEffect(() => {
     if (activeContact) {
-      conversations?.conversations.forEach((chat) => {
-        const newActiveContact = chat.participants.find(
-          (user) => user._id === activeContact.user._id
-        );
-        if (newActiveContact) {
-          setActiveContact({ user: newActiveContact, isBlocked: false });
-        }
-      });
+      const newActiveContact = contacts?.contacts.find(
+        (contact) => contact.user._id === activeContact.user._id
+      );
+      if (newActiveContact) {
+        setActiveContact(newActiveContact);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations]);

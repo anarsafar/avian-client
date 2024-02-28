@@ -39,6 +39,8 @@ import usePersist, { StorageType } from '../store/usePersist';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ValidateContactType } from '@/schemas/contact/contact.schema';
 import useCustomToast from '../custom/useCustomToast';
+import useNotifications from '../notifications';
+import useContacts from './useContacts';
 
 function useContactInfo({ contact }: { contact: ContactInterface }) {
   const {
@@ -47,6 +49,9 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
     onClose: infoOnClose,
   } = useDisclosure();
 
+  const [isNotificationChecked, setNotificationChecked] = useState<boolean>(
+    () => contact.notification
+  );
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
@@ -68,20 +73,14 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
   );
   const toast = useCustomToast();
   const { getPersistedData } = usePersist();
+  const { changeNotification } = useNotifications();
+  const { contacts } = useContacts();
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',
     StorageType.Local
   );
   const queryClient = useQueryClient();
-
-  const [data] = queryClient.getQueriesData({
-    queryKey: ['contacts'],
-  });
-
-  const contacts = (data ? data[1] : { contacts: [] }) as {
-    contacts: ContactInterface[];
-  };
 
   const isContactExist = contacts?.contacts.find(
     (ct) => ct.user._id === contact.user._id
@@ -119,6 +118,15 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
       onClose();
     }
   }, [isError, onClose]);
+
+  useEffect(() => {
+    setNotificationChecked(contact.notification);
+  }, [contact]);
+
+  const handleNotification = () => {
+    setNotificationChecked((prevVal) => !prevVal);
+    changeNotification(contact.user._id);
+  };
 
   const modal = (
     <Modal isOpen={infoIsOpen} onClose={infoOnClose} isCentered>
@@ -259,38 +267,42 @@ function useContactInfo({ contact }: { contact: ContactInterface }) {
                 {contact.user.userInfo?.username}
               </ListItem>
             </Tooltip>
-            <ListItem display="flex">
-              <ListIcon
-                as={BellIcon}
-                color={iconTheme}
-                fontSize="2rem"
-                me="1.2rem"
-              />
-              <FormControl
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                <FormLabel
-                  htmlFor="notifications"
-                  mb="0"
-                  color={textTheme}
-                  fontSize="1.4rem"
-                  fontFamily="openSans"
-                  fontWeight={400}
-                  lineHeight="1.8rem"
-                  letterSpacing="0.16px"
-                >
-                  notifications
-                </FormLabel>
-                <Switch
-                  id="notifications"
-                  defaultChecked
-                  size="lg"
-                  colorScheme="whatsapp"
+            {'notification' in contact && (
+              <ListItem display="flex">
+                <ListIcon
+                  as={BellIcon}
+                  color={iconTheme}
+                  fontSize="2rem"
+                  me="1.2rem"
                 />
-              </FormControl>
-            </ListItem>
+                <FormControl
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <FormLabel
+                    htmlFor="notifications"
+                    mb="0"
+                    color={textTheme}
+                    fontSize="1.4rem"
+                    fontFamily="openSans"
+                    fontWeight={400}
+                    lineHeight="1.8rem"
+                    letterSpacing="0.16px"
+                  >
+                    notifications
+                  </FormLabel>
+                  <Switch
+                    isChecked={isNotificationChecked}
+                    id="notifications"
+                    defaultChecked
+                    size="lg"
+                    colorScheme="whatsapp"
+                    onChange={handleNotification}
+                  />
+                </FormControl>
+              </ListItem>
+            )}
           </List>
           <Divider />
           <List

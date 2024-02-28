@@ -18,6 +18,8 @@ import { useEffect, useState } from 'react';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import UpdateAccount from '../../components/update-account';
 import useUserOperations from '@/hooks/user';
+import useNotifications from '@/hooks/notifications';
+import useUser from '@/hooks/store/useUser';
 
 interface SettingsProps {
   account: boolean;
@@ -35,6 +37,9 @@ function Settings() {
 
   const { toggleColorMode, colorMode } = useColorMode();
   const { persistData, getPersistedData } = usePersist();
+  const { user } = useUser();
+
+  const { changeNotification } = useNotifications();
 
   const [settingsPreferences, setSettingsPreferences] = useState<SettingsProps>(
     () => {
@@ -267,7 +272,7 @@ function Settings() {
               p="2.2rem"
             >
               <Box textAlign="left" me="2.2rem">
-                <Text>Keep Notifications</Text>
+                <Text>Toggle Notifications</Text>
                 <Text
                   mt="8px"
                   textAlign="left"
@@ -275,14 +280,15 @@ function Settings() {
                   fontWeight={400}
                   color={secondTextTheme}
                 >
-                  Save notifications after they are received
+                  Get notify when new message arrives
                 </Text>
               </Box>
               <Switch
                 id="notifications"
-                defaultChecked
+                isChecked={user?.notification}
                 size="lg"
                 colorScheme="whatsapp"
+                onChange={() => changeNotification('')}
               />
             </Flex>
           </AccordionPanel>
