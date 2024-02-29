@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 
-import UserIcon from '@assets/common/icons8-account-94.png';
+import UserIcon from '@assets/common/icons8-account-94.webp';
 
 import CustomInput from '@/components/auth/CustomInput';
 import useSendVerification from '@/hooks/auth/useSendVerification';

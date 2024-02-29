@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+import paperPlane from '@assets/common/paper-plane.webp';
 import OTPInput from '@/components/auth/OTPInput';
 import CountDown from '@/components/auth/CountDown';
 
@@ -149,11 +150,7 @@ function Verificaton(): JSX.Element {
             </svg>
           </Button>
           <Box w="10rem">
-            <Image
-              src="https://img.icons8.com/3d-fluency/94/paper-plane.png"
-              alt="email icon"
-              loading="eager"
-            />
+            <Image src={paperPlane} alt="email icon" loading="eager" />
           </Box>
           <Heading
             as="h1"

@@ -14,7 +14,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-import passwordIcon from '@assets/common/icons8-password-94.png';
+import passwordIcon from '@assets/common/icons8-password-94.webp';
 
 import useCustomToast from '@/hooks/custom/useCustomToast';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';

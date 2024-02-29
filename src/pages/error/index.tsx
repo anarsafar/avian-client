@@ -2,7 +2,7 @@ import { Box, Button, Flex, Heading, Image } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 import pattern from '@assets/common/pattern.png';
-import errorIcon from '@assets/common/icons8-broken-robot-94.png';
+import errorIcon from '@assets/common/icons8-broken-robot-94.webp';
 
 function ErrorPage() {
   const navigate = useNavigate();
