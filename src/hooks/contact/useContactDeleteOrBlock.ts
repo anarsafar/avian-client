@@ -52,6 +52,7 @@ function useContactDeleteOrBlock(contactId: string, onClose?: () => void) {
       if (onClose) {
         onClose();
       }
+      toast('success', 'Success', { error: 'Contact deleted successfully' });
     },
     onError: (error: ErrorResponse, variables: Action) =>
       toast(

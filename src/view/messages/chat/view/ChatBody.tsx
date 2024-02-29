@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
-import { useInView } from 'react-intersection-observer';
 
 import useMessages from '@hooks/store/useMessages';
 import { ArrowDownIcon } from '@chakra-ui/icons';
@@ -39,13 +38,11 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   const scrollRef = useRef<Scrollbars | null>(null);
-  const updateRef = useRef<boolean>(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { ref, inView } = useInView();
+  const updateRef = useRef<boolean>(true);
 
   const [showScrollToBottomButton, setShowScrollToBottomButton] =
-    useState(false);
-  const [shouldScroll, setScroll] = useState<boolean>(true);
+    useState(true);
 
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
@@ -66,12 +63,45 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     refetchMessages,
   } = useInfiniteMessages(activeConversation?._id);
 
-  const handleScroll = () => scrollRef.current?.scrollToBottom();
+  const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+
+  const smoothScrollTo = (targetPosition: number, duration = 500) => {
+    const startPosition = scrollRef.current?.getScrollTop() || 0;
+    const distance = targetPosition - startPosition;
+    let startTime: number = 0;
+
+    const animationLoop = (currentTime: number) => {
+      if (!startTime) {
+        startTime = currentTime;
+      }
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const easedProgress = easeInOut(progress); // See easing function below
+
+      scrollRef.current?.scrollTop(startPosition + distance * easedProgress);
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animationLoop);
+      }
+    };
+
+    requestAnimationFrame(animationLoop);
+  };
+
+  const handleScroll = () => {
+    smoothScrollTo(scrollRef.current?.getScrollHeight() || 0);
+  };
 
   const displayScrollBottom = () => {
-    const { top } = scrollRef.current?.getValues() || {};
+    const { top, scrollTop } = scrollRef.current?.getValues() || {};
     if (top) {
       setShowScrollToBottomButton(top < 1);
+    }
+
+    const isAtTop = scrollTop && scrollTop < 180;
+    if (isAtTop && hasNextPage && !isFetchingNextPage) {
+      updateRef.current = false;
+      fetchNextPage();
     }
   };
 
@@ -95,12 +125,11 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   }, [contacts?.contacts, socket, user?._id, user?.notification]);
 
   useEffect(() => {
-    displayScrollBottom();
-    if (shouldScroll) {
+    if (updateRef.current) {
       handleScroll();
-      updateRef.current = true;
     }
-  }, [messages, shouldScroll]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
   useEffect(() => {
     const messagesFromDb = data?.pages
@@ -123,6 +152,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     if (socket) {
       socket.auth.room = conversationId;
     }
+    updateRef.current = true;
+
     socket?.emit(
       'join-private-chat',
       conversationId,
@@ -138,18 +169,11 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   ]);
 
   useEffect(() => {
-    if (inView && hasNextPage && updateRef.current) {
-      setScroll(false);
-      fetchNextPage();
-    }
-  }, [inView, fetchNextPage, hasNextPage]);
-
-  useEffect(() => {
     const handlePrivateMessage = (message: MessageI) => {
       if (socket) {
         socket.auth.serverOffset = message.timestamp;
       }
-      setScroll(true);
+      updateRef.current = true;
       setMessages(message);
       refetchMessages();
     };
@@ -295,9 +319,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       </VisuallyHidden>
       <Box flexGrow="1" p="1.6rem 2.4rem 1.6rem 2.4rem" h="auto" me="1rem">
         <Flex direction="column" gap="0.8rem">
-          <VisuallyHidden ref={ref} h="2rem">
-            fetch new data
-          </VisuallyHidden>
           {isFetchingNextPage && (
             <Flex justify="center" align="center" my="1rem">
               <Spinner
@@ -310,7 +331,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
             </Flex>
           )}
           {renderMessages}
-          {showScrollToBottomButton && messages.length > 20 && (
+          {messages.length > 20 && showScrollToBottomButton && (
             <Button
               variant="unstyled"
               bg={dateColor}
@@ -319,7 +340,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
               h="3rem"
               left="50%"
               position="sticky"
-              bottom={0}
+              bottom="0"
               onClick={handleScroll}
             >
               <ArrowDownIcon fontSize="1.6rem" color={textTheme} />
