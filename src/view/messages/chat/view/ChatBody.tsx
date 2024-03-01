@@ -26,6 +26,7 @@ import { useSocket } from '@/context/socket.context';
 import formatDateLabel from '@/utils/formatDate';
 import ObserverMessage from '../../ObservedMessage';
 import useContacts from '@/hooks/contact/useContacts';
+import useConversation from '@/hooks/conversations/useConversation';
 
 function ChatBody({ dateColor }: { dateColor: string }) {
   let lastDisplayedDate = '';
@@ -50,6 +51,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   const socket = useSocket();
   const { user } = useUser();
   const { contacts } = useContacts();
+  const { conversations } = useConversation();
   const { clearMessages, setMessages, messages } = useMessages();
 
   const { activeConversation } = useActiveConversation();
@@ -110,10 +112,18 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       const contact = contacts?.contacts.find(
         (person) => person.user._id === senderId
       );
+      let ifSenderExist;
+      if (!contact) {
+        conversations?.conversations.forEach((conversation) => {
+          ifSenderExist = conversation.participants.find(
+            (participant) => participant._id === senderId
+          );
+        });
+      }
       if (
         recipientId === user?._id &&
-        user.notification &&
-        contact?.notification
+        user?.notification &&
+        (contact?.notification || ifSenderExist)
       ) {
         audioRef.current?.play();
       }
@@ -122,7 +132,13 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     return () => {
       socket?.off('notification');
     };
-  }, [contacts?.contacts, socket, user?._id, user?.notification]);
+  }, [
+    contacts?.contacts,
+    conversations?.conversations,
+    socket,
+    user?._id,
+    user?.notification,
+  ]);
 
   useEffect(() => {
     if (updateRef.current) {
