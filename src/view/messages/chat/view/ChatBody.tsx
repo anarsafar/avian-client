@@ -76,7 +76,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       }
       const timeElapsed = currentTime - startTime;
       const progress = Math.min(timeElapsed / duration, 1);
-      const easedProgress = easeInOut(progress); // See easing function below
+      const easedProgress = easeInOut(progress);
 
       scrollRef.current?.scrollTop(startPosition + distance * easedProgress);
 
@@ -126,7 +126,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
   useEffect(() => {
     if (updateRef.current) {
-      handleScroll();
+      scrollRef.current?.scrollToBottom();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
