@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable react/no-array-index-key */
 import {
   Avatar,
@@ -7,15 +6,13 @@ import {
   Flex,
   Spinner,
   Text,
-  VisuallyHidden,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
+import { ArrowDownIcon } from '@chakra-ui/icons';
 
 import useMessages from '@hooks/store/useMessages';
-import { ArrowDownIcon } from '@chakra-ui/icons';
-import notificationSound from '@assets/sound/notification.mp3';
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
@@ -25,8 +22,6 @@ import { MessageI } from '@/schemas/message';
 import { useSocket } from '@/context/socket.context';
 import formatDateLabel from '@/utils/formatDate';
 import ObserverMessage from '../../ObservedMessage';
-import useContacts from '@/hooks/contact/useContacts';
-import useConversation from '@/hooks/conversations/useConversation';
 
 function ChatBody({ dateColor }: { dateColor: string }) {
   let lastDisplayedDate = '';
@@ -39,7 +34,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   const scrollRef = useRef<Scrollbars | null>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const updateRef = useRef<boolean>(true);
 
   const [showScrollToBottomButton, setShowScrollToBottomButton] =
@@ -50,8 +44,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
   const socket = useSocket();
   const { user } = useUser();
-  const { contacts } = useContacts();
-  const { conversations } = useConversation();
   const { clearMessages, setMessages, messages } = useMessages();
 
   const { activeConversation } = useActiveConversation();
@@ -106,39 +98,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       fetchNextPage();
     }
   };
-
-  useEffect(() => {
-    socket?.on('notification', (senderId: string, recipientId: string) => {
-      const contact = contacts?.contacts.find(
-        (person) => person.user._id === senderId
-      );
-      let ifSenderExist;
-      if (!contact) {
-        conversations?.conversations.forEach((conversation) => {
-          ifSenderExist = conversation.participants.find(
-            (participant) => participant._id === senderId
-          );
-        });
-      }
-      if (
-        recipientId === user?._id &&
-        user?.notification &&
-        (contact?.notification || ifSenderExist)
-      ) {
-        audioRef.current?.play();
-      }
-    });
-
-    return () => {
-      socket?.off('notification');
-    };
-  }, [
-    contacts?.contacts,
-    conversations?.conversations,
-    socket,
-    user?._id,
-    user?.notification,
-  ]);
 
   useEffect(() => {
     if (updateRef.current) {
@@ -330,9 +289,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       ref={scrollRef}
       onScroll={displayScrollBottom}
     >
-      <VisuallyHidden>
-        <audio ref={audioRef} src={notificationSound} />
-      </VisuallyHidden>
       <Box flexGrow="1" p="1.6rem 2.4rem 1.6rem 2.4rem" h="auto" me="1rem">
         <Flex direction="column" gap="0.8rem">
           {isFetchingNextPage && (

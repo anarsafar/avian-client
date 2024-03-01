@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 import {
   Avatar,
   AvatarBadge,
@@ -22,11 +23,12 @@ import {
   TabPanels,
   Tabs,
   Text,
+  VisuallyHidden,
   useColorMode,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   InfoOutlineIcon,
   MoonIcon,
@@ -36,24 +38,27 @@ import {
 import { Helmet } from 'react-helmet-async';
 
 import logout from '@assets/common/logout.svg';
+import notificationSound from '@assets/sound/notification.mp3';
 
 import Sidebar from '@/components/common/Sidebar';
 import { Loading } from '@/components/loading';
 import UpdateAccount from '@/components/update-account';
 import ThemeSwitch from '@/components/theme-switch/ThemeSwitch';
+import Notification from '@/components/notifications';
 
 import useLogout from '@/hooks/auth/useLogout';
 import useSendVerification from '@/hooks/auth/useSendVerification';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
 import useUser from '@/hooks/store/useUser';
+import useNotification from '@/hooks/notification';
+import useNetworkStatus from '@/hooks/network';
 
 import Inbox from '@/view/messages/conversations/Inbox';
 import ChatView from '@/view/messages/chat';
 import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
+
 import { useSocket } from '@/context/socket.context';
-import useNetworkStatus from '@/hooks/network';
-import Notification from '@/components/notifications';
 
 function AppLayout() {
   useSocket();
@@ -70,6 +75,9 @@ function AppLayout() {
   const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  useNotification(audioRef);
 
   const { colorMode } = useColorMode();
   const bg = useColorModeValue('bg-light', 'bg-dark');
@@ -111,6 +119,9 @@ function AppLayout() {
         <title>Avian</title>
         <meta name="description" content="Avian app" />
       </Helmet>
+      <VisuallyHidden>
+        <audio ref={audioRef} src={notificationSound} />
+      </VisuallyHidden>
       <Box
         h="100vh"
         background="linear-gradient(180deg, #C1CAFF 0%, #5C6BC0 100%)"
