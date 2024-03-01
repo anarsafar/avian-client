@@ -11,6 +11,7 @@ import useContacts from '@hooks/contact/useContacts';
 import api, { ErrorResponse, RequestType, SuccessResponse } from '@/api';
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { useSocket } from '@/context/socket.context';
+import { ContactInterface } from '@/utils/contact.interface';
 
 interface ConversationI {
   conversations: ConversationInterface[];
@@ -98,6 +99,16 @@ const useConversation = () => {
       );
       if (newActiveContact) {
         setActiveContact(newActiveContact);
+      } else {
+        conversations?.conversations.forEach((conversation) => {
+          const newActive = conversation.participants.find(
+            (participant) => participant._id === activeContact.user._id
+          );
+          const setContact = { user: newActive } as ContactInterface;
+          if (newActive) {
+            setActiveContact(setContact);
+          }
+        });
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
