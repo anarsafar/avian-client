@@ -175,7 +175,22 @@ function SearchMessage({ isOpen, onClose }: SearchMessageI) {
             }}
             autoHide
           >
-            <Box mx="1rem">{messagesUI}</Box>
+            <Box mx="1rem">
+              {filteredMessages.length === 0 && (
+                <Text
+                  fontSize="1.2rem"
+                  fontWeight={400}
+                  lineHeight="1.8rem"
+                  letterSpacing="0.16px"
+                  color={textTheme}
+                  align="center"
+                  mt="1.2rem"
+                >
+                  You don't have any messages
+                </Text>
+              )}
+              {messagesUI}
+            </Box>
           </Scrollbars>
         </ModalBody>
       </ModalContent>
