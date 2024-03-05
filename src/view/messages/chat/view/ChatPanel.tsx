@@ -9,6 +9,7 @@ import { useSocket } from '@/context/socket.context';
 import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
+import useAddMessage from '@/hooks/messages/add-message';
 
 interface PropTypes {
   textColor: string;
@@ -23,13 +24,18 @@ function ChatPanel({
   inputColor,
   logoColor,
 }: PropTypes) {
-  const [textMessage, setTextMessage] = useState<string>('');
-  const socket = useSocket();
-  const { user } = useUser();
   let timerId: NodeJS.Timeout;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const [textMessage, setTextMessage] = useState<string>('');
+
+  const socket = useSocket();
+  const { user } = useUser();
+
   const { activeConversation } = useActiveConversation();
   const { activeContact } = useActiveContact();
+
+  const { addMessage } = useAddMessage();
 
   const generateRoomIdentifier = (
     senderId: string | undefined,
@@ -64,6 +70,10 @@ function ChatPanel({
       senderId: user?._id,
       recipientId: activeContact?.user._id,
     };
+
+    if (socket?.disconnected) {
+      addMessage(messageContent);
+    }
 
     socket?.emit('private message', messageContent);
     handleStopTyping();
