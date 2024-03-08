@@ -21,7 +21,7 @@ function useNotification(audioRef: RefObject<HTMLAudioElement>) {
       let ifSenderExist;
       if (!contact) {
         conversations?.conversations.forEach((conversation) => {
-          ifSenderExist = conversation.participants.find(
+          ifSenderExist = conversation.conversation.participants.find(
             (participant) => participant._id === senderId
           );
         });

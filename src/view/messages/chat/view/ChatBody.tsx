@@ -55,7 +55,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     fetchNextPage,
     hasNextPage,
     refetchMessages,
-  } = useInfiniteMessages(activeConversation?._id);
+  } = useInfiniteMessages(activeConversation?.conversation._id);
 
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
@@ -123,7 +123,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   }, [activeConversation, clearMessages]);
 
   useEffect(() => {
-    const conversationId = activeConversation?._id || '';
+    const conversationId = activeConversation?.conversation._id || '';
     if (socket) {
       socket.auth.room = conversationId;
     }
@@ -137,7 +137,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     );
   }, [
     activeContact?.user._id,
-    activeConversation?._id,
+    activeConversation?.conversation._id,
     clearMessages,
     socket,
     user?._id,
@@ -173,7 +173,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       'mark-as-read',
       message._id,
       user?._id,
-      activeConversation?._id
+      activeConversation?.conversation._id
     );
   };
 

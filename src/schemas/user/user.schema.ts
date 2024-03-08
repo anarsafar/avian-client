@@ -107,8 +107,12 @@ export const UserZodSchema = z.object({
   notification: z.boolean().default(true),
   contacts: z.array(ContactSchema),
   conversations: z.array(
-    z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {
-      message: 'Invalid ObjectId format',
+    z.object({
+      conversation: z.string().refine((value) => /^[a-f\d]{24}$/i.test(value), {
+        message: 'Invalid ObjectId format',
+      }),
+      muted: z.boolean().default(false),
+      unread: z.number().default(0),
     })
   ),
 });

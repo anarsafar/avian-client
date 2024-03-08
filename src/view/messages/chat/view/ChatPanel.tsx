@@ -66,7 +66,7 @@ function ChatPanel({
         messageBody: trimmedMsg.replace(/\n/g, '<br/>'),
         timeStamp: new Date(),
       },
-      chatId: activeConversation?._id,
+      chatId: activeConversation?.conversation._id,
       senderId: user?._id,
       recipientId: activeContact?.user._id,
     };

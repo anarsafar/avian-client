@@ -43,7 +43,7 @@ function useContactDeleteOrBlock(contactId: string, onClose?: () => void) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contacts'] });
       if (contactId === activeContact?.user._id) {
-        const contact = activeConversation?.participants.find(
+        const contact = activeConversation?.conversation.participants.find(
           (participant) => participant._id !== user?._id
         );
         const newActiceContact = { user: contact } as ContactInterface;

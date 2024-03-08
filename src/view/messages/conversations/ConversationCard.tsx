@@ -31,7 +31,7 @@ function ConversationCard({
   const { setActiveConversation } = useActiveConversation();
   const { activeContact, setActiveContact } = useActiveContact();
 
-  const cardUser = conversation.participants.find(
+  const cardUser = conversation.conversation.participants.find(
     (participant) => participant._id !== user?._id
   );
 
@@ -49,11 +49,25 @@ function ConversationCard({
     }
   };
 
+  function getHourAndMinute(timestamp: string) {
+    const date = new Date(timestamp);
+
+    const timeFormat = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    });
+
+    return timeFormat.format(date);
+  }
+
+  console.log(conversation);
+
   return (
     <Flex
       as="button"
       fontFamily="openSans"
-      gap="8px"
+      gap="1rem"
       p="1.6rem 1.7rem"
       lineHeight="1.8rem"
       letterSpacing="0.16px"
@@ -101,15 +115,16 @@ function ConversationCard({
           overflow="hidden"
           textOverflow="ellipsis"
         >
-          Hello there Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-          Tenetur atque molestias quos nihil eos ipsam facilis ab animi
-          molestiae neque corrupti fugit quae odit, aspernatur quod, architecto
-          mollitia eveniet officia.
+          {conversation.conversation.cardData.lastMessageSender === user?._id &&
+            'You: '}
+          {conversation.conversation.cardData.lastMessageContent}
         </Text>
       </Stack>
       <Stack direction="column" textAlign="right" ms="auto">
         <Text fontSize="1.1rem" fontWeight="400" color={text}>
-          4:00 pm
+          {getHourAndMinute(
+            String(conversation.conversation.cardData.lastMessageDate)
+          )}
         </Text>
         <Flex
           alignSelf="flex-end"
@@ -122,7 +137,7 @@ function ConversationCard({
           p="0.8rem"
         >
           <Text color="#fff" fontSize="8px" fontWeight="600">
-            4
+            3
           </Text>
         </Flex>
       </Stack>

@@ -65,7 +65,9 @@ const useAddConversation = () => {
   const handleActiveContact = (contact: ContactInterface) => {
     setActiveContact(contact);
     const newActiveConversation = conversations?.conversations.find((chat) => {
-      return chat.participants.find((user) => user._id === contact.user._id);
+      return chat.conversation.participants.find(
+        (user) => user._id === contact.user._id
+      );
     });
     if (newActiveConversation) {
       setActiveConversation(newActiveConversation);

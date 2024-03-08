@@ -44,14 +44,14 @@ export function SocketProvider({ children }: SocketI) {
       },
       auth: {
         serverOffset: new Date(),
-        room: activeConversation?._id,
+        room: activeConversation?.conversation._id,
       },
     });
 
     newSocket.on('connect', () => {
       newSocket.emit(
         'join-private-chat',
-        activeConversation?._id,
+        activeConversation?.conversation._id,
         user?._id,
         activeContact?.user._id
       );

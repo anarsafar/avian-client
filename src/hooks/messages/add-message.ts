@@ -22,7 +22,9 @@ const useAddMessage = () => {
   const { getPersistedData } = usePersist();
   const { activeConversation } = useActiveConversation();
 
-  const { refetchMessages } = useInfiniteMessages(activeConversation?._id);
+  const { refetchMessages } = useInfiniteMessages(
+    activeConversation?.conversation._id
+  );
 
   const accessToken = getPersistedData<{ accessToken: string }>(
     'access-token',

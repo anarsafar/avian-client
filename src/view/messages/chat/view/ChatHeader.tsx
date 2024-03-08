@@ -166,7 +166,8 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
       </Flex>
       {modal}
       {confirmModal({
-        action: () => deleteConversation(activeConversation?._id as string),
+        action: () =>
+          deleteConversation(activeConversation?.conversation._id as string),
         isLoading: isConversationDeleting,
         modalHeader: 'Delete Conversation',
       })}

@@ -84,11 +84,14 @@ const useConversation = () => {
   }, [socket]);
 
   useEffect(() => {
-    socket?.on('update-conversations', (userId: string) => {
-      if (userId === userData?._id) {
-        refetchConversations();
+    socket?.on(
+      'update-conversations',
+      (recipientId: string, senderId: string) => {
+        if (recipientId === userData?._id || senderId === userData?._id) {
+          refetchConversations();
+        }
       }
-    });
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 
@@ -101,7 +104,7 @@ const useConversation = () => {
         setActiveContact(newActiveContact);
       } else {
         conversations?.conversations.forEach((conversation) => {
-          const newActive = conversation.participants.find(
+          const newActive = conversation.conversation.participants.find(
             (participant) => participant._id === activeContact.user._id
           );
           const setContact = { user: newActive } as ContactInterface;
@@ -117,7 +120,7 @@ const useConversation = () => {
   useEffect(() => {
     if (activeContact && conversations && !activeConversation) {
       const newActiveConvesation = conversations.conversations.find((chat) => {
-        const conversation = chat.participants.find(
+        const conversation = chat.conversation.participants.find(
           (user) => user._id === activeContact.user._id
         );
         return conversation;
