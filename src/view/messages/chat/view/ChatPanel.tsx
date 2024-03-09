@@ -94,6 +94,12 @@ function ChatPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [activeContact, activeConversation]);
+
   const countLineBreaks = (inputString: string): number => {
     const matches = inputString.match(/\r|\n/g);
     return matches ? matches.length : 0;
