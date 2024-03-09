@@ -1,6 +1,7 @@
 import {
   Avatar,
   AvatarBadge,
+  Box,
   Flex,
   Stack,
   Text,
@@ -61,8 +62,6 @@ function ConversationCard({
     return timeFormat.format(date);
   }
 
-  console.log(conversation);
-
   return (
     <Flex
       as="button"
@@ -99,15 +98,30 @@ function ConversationCard({
         overflow="hidden"
         textOverflow="ellipsis"
       >
-        <Text
-          fontSize="1.3rem"
-          fontWeight="600"
-          color={darkerText}
-          overflow="hidden"
-          textOverflow="ellipsis"
-        >
-          {cardUser?.userInfo.name}
-        </Text>
+        <Flex alignItems="center" gap="0.5rem">
+          <Text
+            fontSize="1.3rem"
+            fontWeight="600"
+            color={darkerText}
+            overflow="hidden"
+            textOverflow="ellipsis"
+          >
+            {cardUser?.userInfo.name}
+          </Text>
+          {conversation.muted && (
+            <Box>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="16"
+                viewBox="0 -960 960 960"
+                width="16"
+                fill={darkerText}
+              >
+                <path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z" />
+              </svg>
+            </Box>
+          )}
+        </Flex>
         <Text
           fontSize="1.1rem"
           fontWeight="400"
@@ -126,20 +140,22 @@ function ConversationCard({
             String(conversation.conversation.cardData.lastMessageDate)
           )}
         </Text>
-        <Flex
-          alignSelf="flex-end"
-          bg="violet-2"
-          alignItems="center"
-          justifyContent="center"
-          borderRadius="50%"
-          w="1rem"
-          h="1rem"
-          p="0.8rem"
-        >
-          <Text color="#fff" fontSize="8px" fontWeight="600">
-            3
-          </Text>
-        </Flex>
+        {conversation.unread > 0 && (
+          <Flex
+            alignSelf="flex-end"
+            bg="violet-2"
+            alignItems="center"
+            justifyContent="center"
+            borderRadius="50%"
+            w="1rem"
+            h="1rem"
+            p="0.8rem"
+          >
+            <Text color="#fff" fontSize="8px" fontWeight="600">
+              {conversation.unread}
+            </Text>
+          </Flex>
+        )}
       </Stack>
     </Flex>
   );

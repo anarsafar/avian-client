@@ -173,7 +173,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
       'mark-as-read',
       message._id,
       user?._id,
-      activeConversation?.conversation._id
+      activeConversation?.conversation._id,
+      activeContact?.user._id
     );
   };
 
