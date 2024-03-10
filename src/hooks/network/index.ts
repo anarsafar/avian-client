@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSocket } from '@/context/socket.context';
 
 type NetworkStatus = {
   isOnline: boolean;
@@ -9,23 +10,25 @@ const useNetworkStatus = (): NetworkStatus => {
     isOnline: navigator.onLine,
   });
 
-  const handleOnline = () => {
-    setNetworkStatus({ isOnline: true });
-  };
-
-  const handleOffline = () => {
-    setNetworkStatus({ isOnline: false });
-  };
+  const socket = useSocket();
 
   useEffect(() => {
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    if (socket) {
+      socket.on('disconnect', () => {
+        setNetworkStatus({ isOnline: false });
+      });
+      socket.on('reconnect', () => {
+        setNetworkStatus({ isOnline: true });
+      });
+    }
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      if (socket) {
+        socket.off('disconnect');
+        socket.off('reconnect');
+      }
     };
-  }, []);
+  }, [socket]);
 
   return networkStatus;
 };

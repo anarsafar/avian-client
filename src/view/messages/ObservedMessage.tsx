@@ -28,10 +28,15 @@ function ObserverMessage({
   });
 
   useEffect(() => {
-    if (inView && onIntersect && !message.isRead) {
+    if (
+      inView &&
+      onIntersect &&
+      !message.isRead &&
+      message.sender !== user?._id
+    ) {
       onIntersect(message);
     }
-  }, [inView, onIntersect, message]);
+  }, [inView, onIntersect, message, user?._id]);
 
   return (
     <Box
