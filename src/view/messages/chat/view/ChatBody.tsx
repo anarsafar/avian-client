@@ -7,6 +7,7 @@ import {
   Spinner,
   Text,
   useColorModeValue,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
@@ -32,7 +33,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     timeZone: 'Asia/Baku',
   };
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
-
+  const [isDateLabelVisible, setDateLabelVisibility] = useState<boolean>(false);
+  let dateLabelInterval: NodeJS.Timeout;
   const scrollRef = useRef<Scrollbars | null>(null);
   const updateRef = useRef<boolean>(true);
 
@@ -56,6 +58,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     hasNextPage,
     refetchMessages,
   } = useInfiniteMessages(activeConversation?.conversation._id);
+
+  const [isGreaterThan1100] = useMediaQuery('(min-width: 1100px)');
 
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
@@ -86,7 +90,11 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     smoothScrollTo(scrollRef.current?.getScrollHeight() || 0);
   };
 
+  //  todo handle label visibility
+  const handleDateLabelVisibility = () => {};
+
   const displayScrollBottom = () => {
+    handleDateLabelVisibility();
     const { top, scrollTop } = scrollRef.current?.getValues() || {};
     if (top) {
       setShowScrollToBottomButton(top < 1);
@@ -191,7 +199,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
     return (
       <Fragment key={index}>
-        {showDateLabel && (
+        {showDateLabel && (isGreaterThan1100 || isDateLabelVisible) && (
           <Flex
             alignItems="center"
             justifyContent="center"

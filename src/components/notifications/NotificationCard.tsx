@@ -76,7 +76,7 @@ function NotificationCard({ notification }: { notification: NotificationI }) {
         >
           {notification.type === 'login' ? 'Recent Login' : 'Reset Password'}
         </Text>
-        <Text fontSize="1.1rem" fontWeight="400" color={textTheme} maxW="27rem">
+        <Text fontSize="1.1rem" fontWeight="400" color={textTheme} maxW="90%">
           {notification.type === 'login'
             ? `There was a recent login to you account ${formatDateLabel(
                 String(notification.timestamp)

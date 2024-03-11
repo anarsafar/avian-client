@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
-  Button,
   Flex,
   FormControl,
   Text,
@@ -18,9 +17,15 @@ interface SidebarProps {
   children: (contactName: string) => ReactNode;
   header: 'Messages' | 'Contacts' | 'Notifications';
   type: 'conversation' | 'contacts' | 'notification';
+  isLessThan600: boolean;
 }
 
-function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
+function Sidebar({
+  children,
+  header,
+  type,
+  isLessThan600,
+}: SidebarProps): JSX.Element {
   const text = useColorModeValue('gray-4', 'text-dark');
   const input = useColorModeValue('input-light', 'input-dark');
   const logo = useColorModeValue('#C5C5C6', '#6b7280');
@@ -53,12 +58,14 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
           lineHeight="1.8rem"
           letterSpacing="0.16px"
           color={text}
+          mb={type === 'notification' ? '1rem' : 'initial'}
         >
           {header}
         </Text>
         {type !== 'notification' && (
-          <Button
-            variant="unstyled"
+          <Flex
+            as="button"
+            me={isLessThan600 ? 0 : '0.5rem'}
             w="1.7rem"
             h="1.7rem"
             onClick={() =>
@@ -100,18 +107,30 @@ function Sidebar({ children, header, type }: SidebarProps): JSX.Element {
                 </svg>
               </Box>
             )}
-          </Button>
+          </Flex>
         )}
       </Flex>
       {type !== 'notification' && (
-        <Box ms="1.7rem" me="2.7rem">
+        <Box ms="1.7rem" me={isLessThan600 ? '1.7rem' : '2.7rem'}>
           <FormControl mt="2.2rem">
             <SearchInput value={contactName} onChange={setContactName} />
           </FormControl>
         </Box>
       )}
-      <Scrollbars style={{ height: 'calc(100vh - 12.5rem)' }} autoHide>
-        <Flex direction="column" mt="2rem" me="1rem">
+      <Scrollbars
+        style={{
+          height: isLessThan600
+            ? 'calc(100vh - 7rem)'
+            : 'calc(100vh - 12.5rem)',
+        }}
+        autoHide
+      >
+        <Flex
+          direction="column"
+          mt={type === 'notification' ? '1rem' : '2rem'}
+          me="1rem"
+          ms={isLessThan600 && type !== 'notification' ? '1.5rem' : 0}
+        >
           {children(contactName)}
         </Flex>
       </Scrollbars>
