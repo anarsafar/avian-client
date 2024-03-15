@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, useMediaQuery } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { MessageI } from '@/schemas/message';
@@ -27,6 +27,8 @@ function ObserverMessage({
     threshold: 0.85,
   });
 
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
+
   useEffect(() => {
     if (
       inView &&
@@ -40,13 +42,13 @@ function ObserverMessage({
 
   return (
     <Box
-      maxW="calc(calc(100vw - 36rem) * 0.3)"
-      fontSize="1.2rem"
+      maxW={isLessThan800 ? '30vw' : 'calc(calc(100vw - 36rem) * 0.3)'}
+      fontSize={isLessThan800 ? '1rem' : '1.2rem'}
       borderRadius={isCurrentUser ? '10px 1px 10px 10px' : '1px 10px 10px 10px'}
       fontWeight={400}
       ms={isCurrentUser || isFirstMessageFromUser ? 'auto' : '4.1rem'}
       color={textTheme}
-      p="1.2rem"
+      p={isLessThan800 ? '0.8rem' : '1.2rem'}
       bg={hoverTheme}
       whiteSpace="pre-wrap"
       ref={user?._id !== message.sender ? ref : null}

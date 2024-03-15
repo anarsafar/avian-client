@@ -33,13 +33,12 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     timeZone: 'Asia/Baku',
   };
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
-  const [isDateLabelVisible, setDateLabelVisibility] = useState<boolean>(false);
-  let dateLabelInterval: NodeJS.Timeout;
   const scrollRef = useRef<Scrollbars | null>(null);
   const updateRef = useRef<boolean>(true);
 
   const [showScrollToBottomButton, setShowScrollToBottomButton] =
     useState(true);
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
 
   const textTheme = useColorModeValue('gray-4', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
@@ -58,8 +57,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     hasNextPage,
     refetchMessages,
   } = useInfiniteMessages(activeConversation?.conversation._id);
-
-  const [isGreaterThan1100] = useMediaQuery('(min-width: 1100px)');
 
   const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
 
@@ -90,11 +87,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     smoothScrollTo(scrollRef.current?.getScrollHeight() || 0);
   };
 
-  //  todo handle label visibility
-  const handleDateLabelVisibility = () => {};
-
   const displayScrollBottom = () => {
-    handleDateLabelVisibility();
     const { top, scrollTop } = scrollRef.current?.getValues() || {};
     if (top) {
       setShowScrollToBottomButton(top < 1);
@@ -199,7 +192,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
 
     return (
       <Fragment key={index}>
-        {showDateLabel && (isGreaterThan1100 || isDateLabelVisible) && (
+        {showDateLabel && (
           <Flex
             alignItems="center"
             justifyContent="center"
@@ -211,7 +204,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
               lineHeight="1.6rem"
               letterSpacing="0.18px"
               fontFamily="openSans"
-              fontSize="1rem"
+              fontSize={isLessThan800 ? '0.9rem' : '1rem'}
               fontWeight={600}
               color={textTheme}
               padding="0.3rem 0.8rem"
@@ -228,7 +221,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
           alignSelf={isCurrentUser ? 'flex-end' : 'flex-start'}
           justifyContent="space-between"
           alignItems="flex-end"
-          gap="0.8rem"
+          gap={isLessThan800 ? '0.4rem' : '0.8rem'}
           lineHeight="1.6rem"
           letterSpacing="0.16px"
           fontFamily="openSans"
@@ -270,7 +263,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
           </Box>
           <Text
             order={isCurrentUser ? '0' : '1'}
-            fontSize="1rem"
+            fontSize={isLessThan800 ? '0.8rem' : '1rem'}
             fontWeight={300}
             lineHeight="1.8rem"
           >
@@ -312,7 +305,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
             </Flex>
           )}
           {renderMessages}
-          {messages.length > 20 && showScrollToBottomButton && (
+          {messages.length > 10 && showScrollToBottomButton && (
             <Button
               variant="unstyled"
               bg={dateColor}

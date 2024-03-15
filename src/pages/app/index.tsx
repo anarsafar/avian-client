@@ -18,6 +18,7 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  SlideFade,
   Tab,
   TabList,
   TabPanel,
@@ -30,7 +31,7 @@ import {
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import {
   InfoOutlineIcon,
   MoonIcon,
@@ -61,9 +62,12 @@ import Contacts from '@/view/contacts/Contacts';
 import Settings from '@/view/settings';
 
 import { useSocket } from '@/context/socket.context';
+import useMobileChatView from '@/hooks/store/useMobileChatView';
+import useActiveContact from '@/hooks/store/useActiveContact';
 
 function AppLayout() {
   useSocket();
+  const { isMobileChatOpen, mobileChatClose } = useMobileChatView();
   const { getPersistedData, persistData } = usePersist();
   const { isOpen: isSettingsOpen, onOpen, onClose } = useDisclosure();
   const { isOnline } = useNetworkStatus();
@@ -73,13 +77,14 @@ function AppLayout() {
     'activeTabIndex',
     StorageType.Session
   );
-  const [isLessThan1100] = useMediaQuery('(max-width: 1100px)');
+
   const [isLessThan800] = useMediaQuery('(max-width: 800px)');
   const [isLessThan600] = useMediaQuery(`(max-width: 600px)`);
 
   const [activeTab, setActiveTab] = useState(() => Number(activeTabIndex) || 0);
   const { logoutHandler } = useLogout();
   const { sendVerificationEmail, isPending } = useSendVerification();
+  const { activeContact } = useActiveContact();
 
   const audioRef = useRef<HTMLAudioElement>(null);
   useNotification(audioRef);
@@ -97,6 +102,12 @@ function AppLayout() {
   const getFillColor = (tabIndex: number) =>
     tabIndex === activeTab ? '#8E99F3' : logo;
 
+  useLayoutEffect(() => {
+    if (!activeContact && isLessThan800) {
+      mobileChatClose();
+    }
+  }, [activeContact, mobileChatClose, isLessThan800]);
+
   if (isPending) {
     return <Loading />;
   }
@@ -110,7 +121,7 @@ function AppLayout() {
       trapFocus={false}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent m="2rem">
         <ModalBody p="2rem" bg={bg}>
           <UpdateAccount onClose={onClose} />
         </ModalBody>
@@ -143,6 +154,7 @@ function AppLayout() {
           lazyBehavior="unmount"
           bg={bg}
           pe="0.5rem"
+          overflow="hidden"
         >
           <Grid
             height="100%"
@@ -158,7 +170,7 @@ function AppLayout() {
                 ? '1fr'
                 : isLessThan800
                 ? '6rem 1fr'
-                : `6rem ${isLessThan1100 ? '30rem' : '30rem'} 1fr`
+                : `6rem 30rem 1fr`
             }
             gridTemplateRows={
               isLessThan600 ? 'calc(100vh - 6rem) 6rem' : 'auto'
@@ -449,6 +461,24 @@ function AppLayout() {
               <GridItem area="chatbox">
                 <ChatView />
               </GridItem>
+            )}
+            {isLessThan800 && (
+              <SlideFade
+                in={isMobileChatOpen}
+                unmountOnExit
+                style={{
+                  zIndex: 10,
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                }}
+                offsetY="0"
+                offsetX="5rem"
+              >
+                <Box w="100vw" h="100vh" bg={bg}>
+                  <ChatView />
+                </Box>
+              </SlideFade>
             )}
           </Grid>
         </Tabs>

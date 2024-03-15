@@ -120,7 +120,7 @@ function Sidebar({
       <Scrollbars
         style={{
           height: isLessThan600
-            ? 'calc(100vh - 7rem)'
+            ? 'calc(100vh - 11rem)'
             : 'calc(100vh - 12.5rem)',
         }}
         autoHide

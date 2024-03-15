@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/jsx-no-duplicate-props */
 import { DeleteIcon, EditIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
@@ -9,6 +11,7 @@ import {
   MenuList,
   Text,
   useColorModeValue,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -21,6 +24,7 @@ import useActiveConversation from '@/hooks/store/useActiveConversation';
 
 import { ContactInterface } from '@/utils/contact.interface';
 import { ConversationInterface } from '@/utils/conversation.interface';
+import useMobileChatView from '@/hooks/store/useMobileChatView';
 
 interface ContactCardInterface {
   textTheme: string;
@@ -34,12 +38,14 @@ function ContactCard({
   const iconTheme = useColorModeValue('#C5C5C6', '#6b7280');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
   const bgTheme = useColorModeValue('bg-light', 'bg-dark');
+  const { mobileChatOpen } = useMobileChatView();
 
   const { modal: infoModal, infoOnOpen } = useContactInfo({
     contact,
   });
   const { setActiveContact, activeContact } = useActiveContact();
   const { setActiveConversation, clearConversation } = useActiveConversation();
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
 
   const queryClient = useQueryClient();
 
@@ -74,6 +80,10 @@ function ContactCard({
     } else {
       clearConversation();
     }
+
+    if (isLessThan800) {
+      mobileChatOpen();
+    }
   };
 
   return (
@@ -83,7 +93,13 @@ function ContactCard({
       variant="unstyled"
       height="auto"
       cursor="pointer"
-      bg={activeContact?.user._id === contact.user._id ? hoverTheme : bgTheme}
+      bg={
+        isLessThan800
+          ? bgTheme
+          : activeContact?.user._id === contact.user._id
+          ? hoverTheme
+          : bgTheme
+      }
       _hover={{
         bg: hoverTheme,
       }}

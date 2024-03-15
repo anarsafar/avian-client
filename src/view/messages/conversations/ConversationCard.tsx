@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import {
   Avatar,
   AvatarBadge,
@@ -6,8 +7,8 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useMediaQuery,
 } from '@chakra-ui/react';
-
 import { ConversationInterface } from '@/utils/conversation.interface';
 import { ContactInterface } from '@/utils/contact.interface';
 
@@ -15,12 +16,15 @@ import useUser from '@/hooks/store/useUser';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
 import useActiveContact from '@/hooks/store/useActiveContact';
 import useContacts from '@/hooks/contact/useContacts';
+import useMobileChatView from '@/hooks/store/useMobileChatView';
 
 function ConversationCard({
   conversation,
 }: {
   conversation: ConversationInterface;
 }): JSX.Element {
+  const { mobileChatOpen } = useMobileChatView();
+
   const text = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
   const hover = useColorModeValue('hover-light', 'accent-dark');
@@ -31,6 +35,8 @@ function ConversationCard({
 
   const { setActiveConversation } = useActiveConversation();
   const { activeContact, setActiveContact } = useActiveContact();
+
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
 
   const cardUser = conversation.conversation.participants.find(
     (participant) => participant._id !== user?._id
@@ -47,6 +53,9 @@ function ConversationCard({
     } else {
       const newActiceContact = { user: cardUser } as ContactInterface;
       setActiveContact(newActiceContact);
+    }
+    if (isLessThan800) {
+      mobileChatOpen();
     }
   };
 
@@ -72,7 +81,13 @@ function ConversationCard({
       letterSpacing="0.16px"
       borderRadius="0.9rem"
       onClick={handleConversation}
-      bg={activeContact?.user._id === cardUser?._id ? hover : bgTheme}
+      bg={
+        isLessThan800
+          ? bgTheme
+          : activeContact?.user._id === cardUser?._id
+          ? hover
+          : bgTheme
+      }
       _hover={{
         bg: hover,
       }}

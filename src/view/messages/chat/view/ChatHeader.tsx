@@ -11,8 +11,14 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
-import { DeleteIcon, InfoOutlineIcon, SearchIcon } from '@chakra-ui/icons';
+import {
+  ArrowBackIcon,
+  DeleteIcon,
+  InfoOutlineIcon,
+  SearchIcon,
+} from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
 import { useSocket } from '@/context/socket.context';
@@ -26,6 +32,7 @@ import useConversation from '@/hooks/conversations/useConversation';
 import useContactInfo from '@/hooks/contact/useContactInfo';
 import useConfiramtion from '@/hooks/custom/useConfirmation';
 import useActiveConversation from '@/hooks/store/useActiveConversation';
+import useMobileChatView from '@/hooks/store/useMobileChatView';
 
 interface PropTypes {
   darkerTextColor: string;
@@ -38,6 +45,8 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
 
   const [typing, setTyping] = useState<boolean>(false);
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
+  const { mobileChatClose } = useMobileChatView();
 
   const { activeContact } = useActiveContact();
   const { activeConversation } = useActiveConversation();
@@ -72,6 +81,15 @@ function ChatHeader({ darkerTextColor, logoColor }: PropTypes) {
       alignItems="center"
       gap="1.2rem"
     >
+      {isLessThan800 && (
+        <Button variant="unstyled">
+          <ArrowBackIcon
+            fontSize="1.5rem"
+            color={textTheme}
+            onClick={mobileChatClose}
+          />
+        </Button>
+      )}
       <Button variant="unstyled" h="auto" onClick={infoOnOpen}>
         <Flex alignItems="center" gap="1.2rem">
           <Avatar

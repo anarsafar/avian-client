@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Accordion,
@@ -13,6 +14,7 @@ import {
   Text,
   useColorMode,
   useColorModeValue,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import usePersist, { StorageType } from '@/hooks/store/usePersist';
@@ -33,6 +35,9 @@ function Settings() {
   const secondTextTheme = useColorModeValue('rgba(0, 0, 0, 0.35)', 'text-dark');
   const hoverTheme = useColorModeValue('hover-light', 'accent-dark');
   const bgTheme = useColorModeValue('bg-light', 'bg-dark');
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
+  const [isLessThan600] = useMediaQuery(`(max-width: 600px)`);
+
   const { updateUser } = useUserOperations();
 
   const { toggleColorMode, colorMode } = useColorMode();
@@ -90,11 +95,27 @@ function Settings() {
       <SlideFade
         in={settingsPreferences.account}
         unmountOnExit
-        style={{ zIndex: 10, position: 'absolute', top: '6.2rem' }}
+        style={{
+          zIndex: 10,
+          position: 'absolute',
+          top: '6.2rem',
+          left: isLessThan600 ? '-1.1rem' : 0,
+        }}
         offsetY="0"
         offsetX="1rem"
       >
-        <Box bg={bgTheme} w="28rem" h="calc(100vh - 11rem)" p="2.2rem">
+        <Box
+          bg={bgTheme}
+          w={
+            isLessThan600
+              ? '100vw'
+              : isLessThan800
+              ? 'calc(100vw - 8rem)'
+              : '28rem'
+          }
+          h={isLessThan600 ? 'calc(100vh - 14rem)' : 'calc(100vh - 11rem)'}
+          p="2.2rem"
+        >
           <UpdateAccount onClose={handleSetttingPreferences} />
         </Box>
       </SlideFade>
@@ -107,7 +128,7 @@ function Settings() {
         letterSpacing="0.16px"
         color={textTheme}
         mb="2.2rem"
-        px="2.2rem"
+        px={isLessThan600 ? '1.2rem' : '2.2rem'}
       >
         Settings
       </Text>
