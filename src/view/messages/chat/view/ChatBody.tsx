@@ -90,7 +90,7 @@ function ChatBody({ dateColor }: { dateColor: string }) {
   const displayScrollBottom = () => {
     const { top, scrollTop } = scrollRef.current?.getValues() || {};
     if (top) {
-      setShowScrollToBottomButton(top < 1);
+      setShowScrollToBottomButton(top < 0.98);
     }
 
     const isAtTop = scrollTop && scrollTop < 180;
@@ -164,7 +164,6 @@ function ChatBody({ dateColor }: { dateColor: string }) {
     return () => {
       socket?.off('private message', handlePrivateMessage);
       socket?.off('update-messages');
-      clearMessages();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
@@ -314,7 +313,8 @@ function ChatBody({ dateColor }: { dateColor: string }) {
               h="3rem"
               left="50%"
               position="sticky"
-              bottom="0"
+              bottom="0rem"
+              zIndex={10}
               onClick={handleScroll}
             >
               <ArrowDownIcon fontSize="1.6rem" color={textTheme} />

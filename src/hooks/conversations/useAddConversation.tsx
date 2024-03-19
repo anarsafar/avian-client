@@ -17,6 +17,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { ReactNode, useState } from 'react';
 import Scrollbars from 'react-custom-scrollbars';
@@ -33,6 +34,7 @@ import { AddContactSkeleton } from '@/components/loading';
 import formatLastSeen from '@/utils/formatLastSeen';
 import { ContactInterface } from '@/utils/contact.interface';
 import { ConversationInterface } from '@/utils/conversation.interface';
+import useMobileChatView from '../store/useMobileChatView';
 
 const useAddConversation = () => {
   const { isOpen, onOpen: addConversationOpen, onClose } = useDisclosure();
@@ -49,6 +51,8 @@ const useAddConversation = () => {
   const { getNewAccessToken } = useToken(() => refetchContacts());
   const { setActiveContact } = useActiveContact();
   const { setActiveConversation, clearConversation } = useActiveConversation();
+  const [isLessThan800] = useMediaQuery('(max-width: 800px)');
+  const { mobileChatOpen } = useMobileChatView();
 
   let contactsUI: ReactNode;
 
@@ -75,6 +79,9 @@ const useAddConversation = () => {
       clearConversation();
     }
     onClose();
+    if (isLessThan800) {
+      mobileChatOpen();
+    }
   };
 
   if (isLoading) {
