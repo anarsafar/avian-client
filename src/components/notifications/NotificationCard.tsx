@@ -10,7 +10,7 @@ function NotificationCard({ notification }: { notification: NotificationI }) {
   const textTheme = useColorModeValue('rgba(0, 0, 0, 0.60)', 'text-dark');
   const darkerText = useColorModeValue('rgba(0, 0, 0, 0.70)', '#eee');
 
-  const API_KEY = import.meta.env.VITE_GEOLOCATION_KEY;
+  const API_KEY = import.meta.env.VITE_GEOLOCATION;
   const query = `latitude=${notification.location?.latitude}&longitude=${notification.location?.longitude}`;
   const API_URL = 'https://api.bigdatacloud.net/data/reverse-geocode';
   const requestURL = `${API_URL}?${query}&localityLanguage=en&key=${API_KEY}`;
