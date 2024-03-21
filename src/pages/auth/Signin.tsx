@@ -16,7 +16,7 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -63,6 +63,8 @@ export default function SignIn() {
   const idString = queryParams.get('id');
   const socialError = queryParams.get('error');
 
+  const runOnce = useRef<boolean>(true);
+
   const { mutateAsync: logIn, isPending } = useMutation({
     mutationFn: (data: LoginInterface) =>
       api<AccessToken, LoginInterface>(data, 'auth/login', RequestType.Post),
@@ -108,8 +110,9 @@ export default function SignIn() {
   }, [addNotification, idString]);
 
   useLayoutEffect(() => {
-    if (socialError) {
+    if (socialError && runOnce.current) {
       toast('error', 'Error during sign up', { error: socialError });
+      runOnce.current = false;
     }
   }, [socialError, toast]);
 
