@@ -9,7 +9,7 @@
   <p align="center">
     A modern chat application designed to streamline communication among users.
     <br />
-    <a href="https://avian-messaging.vercel.app">View Demo</a>
+    <a href="https://app.avian.anarsafarov.xyz">View Demo</a>
     ·
     <a href="https://github.com/anarsafar/avian-client/issues">Report Bug</a>
     ·
