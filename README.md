@@ -94,8 +94,8 @@ This secton contains future updates that I would Like to add
 
 ## Bugs
 
-- [ ] Some user on Firefox may expierence issues when try to login using social SSO's. This is because firefox blocks thirdy party cookies by default.
-- [ ] internet connection indicator issue - indicator may not work as expected
+- [x] Some user on Firefox may expierence issues when try to login using social SSO's. This is because firefox blocks thirdy party cookies by default.
+- [x] internet connection indicator issue - indicator may not work as expected
 
 ## Contact
 
